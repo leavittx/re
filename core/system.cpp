@@ -1,8 +1,6 @@
 #include "system.h"
 
-#include "glwindowsdl.h"
-#include "timersdl.h"
-
+using namespace std;
 using namespace recore;
 
 template<typename TimeT>
@@ -45,5 +43,51 @@ template<typename TimeT>
 	return !escape && !demodone;
 }
 
-//TODO: separate file templateinstantiations.cpp for all explicit instantiations
-template class System<unsigned int>; // explicit instantiation
+template<typename TimeT>
+	bool System<TimeT>::initOpenGL(Config &cfg)
+{
+	// Create main window with opengl rendering support
+	if (!m_glWindow->create(cfg.getScreenWidth(), cfg.getScreenHeight(), 32,
+	                        cfg.getFullscreen()))
+	{
+		g_debug << "ERROR! Could not create window!" << endl;
+		return false;
+	}
+
+	// Initialize glew
+	GLenum err = glewInit();
+	if (err != GLEW_OK)
+	{
+		g_debug << "ERROR! Cannot initialize GLEW!" << endl;
+	}
+
+	return true;
+}
+
+template<typename TimeT>
+	void System<TimeT>::swapBuffers()
+{
+	m_glWindow->swapBuffers();
+}
+
+template<typename TimeT>
+	void System<TimeT>::setWindowTitle(char* title)
+{
+	m_glWindow->setTitle(title);
+}
+
+template<typename TimeT>
+	void System<TimeT>::update()
+{
+//	m_timer->update(getAudioPosition(), m_song->getLength());
+//	updateFPS();
+}
+
+template<typename TimeT>
+	int System<TimeT>::getTime()
+{
+	return m_timer->getTime();
+}
+
+// explicit instantiation
+template class System<>;

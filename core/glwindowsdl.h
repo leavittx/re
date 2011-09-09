@@ -5,8 +5,6 @@
 
 namespace recore {
 
-//class GLWindow;
-
 class GLWindowSDL : public GLWindow
 {
 public:
@@ -15,6 +13,9 @@ public:
 
 	virtual bool create(int width, int height, int bpp, bool fullscreen);
 	virtual void destroy();
+
+	virtual void swapBuffers();
+	virtual void setTitle(char* title);
 
 	virtual int getWidth() const { return m_screen->w; }
 	virtual int getHeight() const { return m_screen->h; }

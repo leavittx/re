@@ -60,3 +60,5 @@ template <typename TimeT>
 {
 	m_cumultime -= m_updatetime;
 }
+
+template class FrameTimer<>; // explicit instantiation

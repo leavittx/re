@@ -1,8 +1,6 @@
 #pragma once
 
-#include "util/singleton.h"
-#include "core/glwindow.h"
-#include "core/timer.h"
+#include "globals.h"
 
 namespace recore {
 
@@ -23,7 +21,10 @@ public:
 	void updateFPS();
 	float getFPS();
 
+	bool initOpenGL(Config &cfg);
 	void swapBuffers();
+	void setWindowTitle(char* title);
+
 	void update();
 
 	int getTime();

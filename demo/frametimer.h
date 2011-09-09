@@ -26,7 +26,8 @@ public:
 	void endStep();
 
 private:
-	TimeT m_dt; //delta time
+	//TODO
+	int m_dt; //delta time
 	TimeT m_prevtime; //time previous frame
 	TimeT m_cumultime; //accumulated time
 	TimeT m_updatetime; //how often the update is done (ms)

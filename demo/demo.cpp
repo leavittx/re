@@ -1,9 +1,4 @@
-#include <algorithm>
-#include "demo.h"
-#include "core/system.h"
-//#include "parser.h"
-#include "math/math.h"
-#include "util/debug.h"
+#include "globals.h"
 
 using namespace std;
 using namespace recore;
@@ -64,9 +59,11 @@ template <typename TimeT>
 
 	if (m_config->getRunFlag())
 	{
-		System<TimeT>::inst()->initOpenGL(*m_config);
+		System<TimeT>::inst().initOpenGL(*m_config);
 
 		//TODO: Sound loading here
+
+		m_start = true;
 	}
 	else
 	{
@@ -82,7 +79,7 @@ template <typename TimeT>
 {
 	g_debug << "demo quitting.." << endl;
 	destroy();
-	System<TimeT>::inst()->kill();
+	System<TimeT>::inst().kill();
 }
 
 template <typename TimeT>
@@ -90,13 +87,13 @@ template <typename TimeT>
 {
 	g_debug << "starting demo now!" << endl;
 	m_running = true;
-	System<TimeT>::inst()->startSong();
+//	System<TimeT>::inst().startSong();
 }
 
 template <typename TimeT>
 	void Demo<TimeT>::stop()
 {
-	System<TimeT>::inst()->stopSong();
+//	System<TimeT>::inst().stopSong();
 	g_debug << "demo stopped!" << endl;
 }
 
@@ -123,7 +120,7 @@ template <typename TimeT>
 		m_scenes.clear();
 
 		//kill audio
-		System<TimeT>::inst()->freeSound();
+//		System<TimeT>::inst().freeSound();
 	}
 }
 
@@ -214,7 +211,7 @@ template <typename TimeT>
 	typename vector< TimelineEntry<TimeT>* >::iterator it;
 	vector< TimelineEntry<TimeT>* > activeEffects;
 
-	int time = System<TimeT>::inst()->getTime();
+	TimeT time = System<TimeT>::inst().getTime();
 	for (it = m_timeline.begin(); it < m_timeline.end(); it++)
 	{
 		TimelineEntry<TimeT> *e = *it;
@@ -239,12 +236,12 @@ template <typename TimeT>
 	if (m_running)
 	{
 		m_running = false;
-		System<TimeT>::inst()->pauseSong(true);
+//		System<TimeT>::inst().pauseSong(true);
 	}
 	else
 	{
 		m_running = true;
-		System<TimeT>::inst()->pauseSong(false);
+//		System<TimeT>::inst().pauseSong(false);
 	}
 }
 
@@ -256,7 +253,7 @@ template <typename TimeT>
 	if (m_running)
 	{
 		typename vector< TimelineEntry<TimeT>* >::iterator it;
-		int time = System<TimeT>::inst()->getTime();
+		TimeT time = System<TimeT>::inst().getTime();
 
 		for (it = m_timeline.begin(); it < m_timeline.end(); it++)
 		{
@@ -276,3 +273,6 @@ template <typename TimeT>
 		}
 	}
 }
+
+// explicit instantiation
+template class Demo<>;

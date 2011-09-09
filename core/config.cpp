@@ -18,6 +18,7 @@ bool Config::run()
 int Config::getScreenWidth()
 {
 	return 1024;
+//	return 1366;
 }
 
 int Config::getScreenHeight()

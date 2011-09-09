@@ -6,7 +6,8 @@ SOURCES += \
     demo/frametimer.cpp \
     core/config.cpp \
     demo/scene.cpp \
-    math/math.cpp
+    math/math.cpp \
+    util/templateinstantiations.cpp
 
 HEADERS += \
     core/glwindow.h \
@@ -20,7 +21,8 @@ HEADERS += \
     core/config.h \
     demo/scene.h \
     util/debug.h \
-    math/math.h
+    math/math.h \
+    globals.h
 
 LIBS += \
     -lSDL \
@@ -30,7 +32,10 @@ LIBS += \
 
 INCLUDEPATH += \
     /usr/include/ \
+    /usr/include/c++/4.6.1/ \
     /usr/lib/gcc/x86_64-pc-linux-gnu/4.5.3/include/g++-v4/
+
+
 
 
 
