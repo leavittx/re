@@ -2,20 +2,17 @@
 
 using namespace redemo;
 
-template <typename TimeT>
-	FrameTimer<TimeT>::FrameTimer()
+FrameTimer::FrameTimer()
 {
 	set(30, 10);
 }
 
-template <typename TimeT>
-	FrameTimer<TimeT>::FrameTimer(TimeT updatetime, int maxiterations)
+FrameTimer::FrameTimer(TimeT updatetime, int maxiterations)
 {
 	set(updatetime, maxiterations);
 }
 
-template <typename TimeT>
-	void FrameTimer<TimeT>::set(TimeT updatetime, int maxiterations)
+void FrameTimer::set(TimeT updatetime, int maxiterations)
 {
 	m_cumultime = 0;
 	m_updatetime = updatetime;
@@ -24,8 +21,7 @@ template <typename TimeT>
 	m_dt = 0;
 }
 
-template <typename TimeT>
-	void FrameTimer<TimeT>::update(TimeT currenttime)
+void FrameTimer::update(TimeT currenttime)
 {
 	//time from the timer
 	m_dt = currenttime - m_prevtime;
@@ -43,22 +39,17 @@ template <typename TimeT>
 	}
 }
 
-template <typename TimeT>
-	TimeT FrameTimer<TimeT>::getDeltaTime()
+TimeT FrameTimer::getDeltaTime()
 {
 	return m_dt;
 }
 
-template <typename TimeT>
-	bool FrameTimer<TimeT>::stepsLeft()
+bool FrameTimer::stepsLeft()
 {
 	return (m_cumultime > m_updatetime);
 }
 
-template <typename TimeT>
-	void FrameTimer<TimeT>::endStep()
+void FrameTimer::endStep()
 {
 	m_cumultime -= m_updatetime;
 }
-
-template class FrameTimer<>; // explicit instantiation

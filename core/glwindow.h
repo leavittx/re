@@ -12,7 +12,7 @@ public:
 	virtual void destroy() = 0;
 
 	virtual void swapBuffers() = 0;
-	virtual void setTitle(char* title) = 0;
+	virtual void setTitle(const char* title) = 0;
 
 	virtual int getWidth() const = 0;
 	virtual int getHeight() const = 0;

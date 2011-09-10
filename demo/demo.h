@@ -1,22 +1,22 @@
 #pragma once
 
-#include <map>
-#include <vector>
+#include "globals.h"
 #include <string>
+#include <vector>
+#include <map>
+#include "demo/frametimer.h"
+#include "demo/scene.h"
 #include "core/config.h"
-#include "frametimer.h"
-#include "scene.h"
+#include "core/configsimple.h"
 
 /**
 	An entry in the timeline.
 	It has a pointer to the actual effect that it'll run, plus a bunch of other related stuff.
 */
 
-namespace redemo
-{
+namespace redemo {
 
-template <typename TimeT = unsigned int>
-	class TimelineEntry
+class TimelineEntry
 {
 public:
 	TimelineEntry();
@@ -29,7 +29,7 @@ public:
 		return m_priority < otherEntry.m_priority;
 	}
 	Scene* m_scene; //ptr to the scene
-	FrameTimer<TimeT>* m_frametimer; //frameskipper
+	FrameTimer* m_frametimer; //frameskipper
 	TimeT m_startTime; //starts here
 	TimeT m_endTime;   //ends then
 	int m_priority;  //priority in which the simultaneous effects will be drawn. bigger priority will be drawn first
@@ -40,8 +40,7 @@ public:
 	The main class for the demo.
 */
 
-template <typename TimeT = unsigned int>
-	class Demo
+class Demo
 {
 public:
 	Demo(std::string& scriptfile);
@@ -76,12 +75,11 @@ public:
 	//clear everything
 	void destroy();
 
-
 private:
 	//this contains all the effects
 	std::map<std::string, Scene*> m_scenes;
 	//this contains all the timeline entries that will be played
-	std::vector< TimelineEntry<TimeT>* > m_timeline;
+	std::vector< TimelineEntry* > m_timeline;
 
 	recore::Config* m_config;
 	bool m_start;

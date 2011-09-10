@@ -7,7 +7,8 @@ SOURCES += \
     core/config.cpp \
     demo/scene.cpp \
     math/math.cpp \
-    util/templateinstantiations.cpp
+    util/templateinstantiations.cpp \
+    core/configsimple.cpp
 
 HEADERS += \
     core/glwindow.h \
@@ -22,7 +23,8 @@ HEADERS += \
     demo/scene.h \
     util/debug.h \
     math/math.h \
-    globals.h
+    globals.h \
+    core/configsimple.h
 
 LIBS += \
     -lSDL \
@@ -34,6 +36,8 @@ INCLUDEPATH += \
     /usr/include/ \
     /usr/include/c++/4.6.1/ \
     /usr/lib/gcc/x86_64-pc-linux-gnu/4.5.3/include/g++-v4/
+
+
 
 
 

@@ -1,20 +1,20 @@
 #include "system.h"
+#include "glwindowsdl.h"
+#include "timersdl.h"
+#include "util/debug.h"
 
 using namespace std;
 using namespace recore;
 
-template<typename TimeT>
-	System<TimeT>::System()
+System::System()
 {
 }
 
-template<typename TimeT>
-	System<TimeT>::~System()
+System::~System()
 {
 }
 
-template<typename TimeT>
-	void System<TimeT>::init()
+void System::init()
 {
 	m_glWindow = new GLWindowSDL();
 
@@ -23,17 +23,15 @@ template<typename TimeT>
 	m_framePreviousTime = 0;
 	m_FPS = 0.0f;
 
-	m_timer = new TimerSDL<TimeT>();
+	m_timer = new TimerSDL();
 }
 
-template<typename TimeT>
-	void System<TimeT>::kill()
+void System::kill()
 {
 	m_glWindow->destroy();
 }
 
-template<typename TimeT>
-	bool System<TimeT>::isRunning()
+bool System::isRunning()
 {
 	//TODO
 	//running if not pressed esc or the song hasn't ended
@@ -43,8 +41,7 @@ template<typename TimeT>
 	return !escape && !demodone;
 }
 
-template<typename TimeT>
-	bool System<TimeT>::initOpenGL(Config &cfg)
+bool System::initOpenGL(Config &cfg)
 {
 	// Create main window with opengl rendering support
 	if (!m_glWindow->create(cfg.getScreenWidth(), cfg.getScreenHeight(), 32,
@@ -64,30 +61,26 @@ template<typename TimeT>
 	return true;
 }
 
-template<typename TimeT>
-	void System<TimeT>::swapBuffers()
+void System::swapBuffers()
 {
 	m_glWindow->swapBuffers();
 }
 
-template<typename TimeT>
-	void System<TimeT>::setWindowTitle(char* title)
+void System::setWindowTitle(const char* title)
 {
 	m_glWindow->setTitle(title);
 }
 
-template<typename TimeT>
-	void System<TimeT>::update()
+void System::update()
 {
-//	m_timer->update(getAudioPosition(), m_song->getLength());
-//	updateFPS();
+	//	m_timer->update(getAudioPosition(), m_song->getLength());
+	//	updateFPS();
 }
 
-template<typename TimeT>
-	int System<TimeT>::getTime()
+int System::getTime()
 {
 	return m_timer->getTime();
 }
 
 // explicit instantiation
-template class System<>;
+//template class System<>;

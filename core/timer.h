@@ -4,8 +4,7 @@
 
 namespace recore {
 
-template <typename TimeT>
-	class Timer
+class Timer
 {
 public:
 	Timer() {}
@@ -27,19 +26,19 @@ public:
 	void addTime(TimeT add)
 	{
 		m_elapsedTime += add;
-		if (m_elapsedTime < 0)
-		{
-			m_elapsedTime = 0;
-		}
+//		if (m_elapsedTime < 0)
+//		{
+//			m_elapsedTime = 0;
+//		}
 	}
 
 	void setTime(TimeT time)
 	{
 		m_elapsedTime = time;
-		if (m_elapsedTime < 0)
-		{
-			m_elapsedTime = 0;
-		}
+//		if (m_elapsedTime < 0)
+//		{
+//			m_elapsedTime = 0;
+//		}
 	}
 
 	void update(TimeT audioPosition, TimeT songLength)

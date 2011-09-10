@@ -1,4 +1,8 @@
-#include "globals.h"
+#include "demo.h"
+#include "core/system.h"
+#include "math/math.h"
+#include "util/debug.h"
+#include <algorithm>
 
 using namespace std;
 using namespace recore;
@@ -6,11 +10,10 @@ using namespace remath;
 using namespace redemo;
 
 /***********************************************
-				TimelineEntry
+	TimelineEntry
 ***********************************************/
 
-template <typename TimeT>
-	TimelineEntry<TimeT>::TimelineEntry()
+TimelineEntry::TimelineEntry()
 {
 	m_endTime = 0;
 	m_startTime = 0;
@@ -20,14 +23,12 @@ template <typename TimeT>
 	m_frametimer = NULL;
 }
 
-template <typename TimeT>
-	TimelineEntry<TimeT>::~TimelineEntry()
+TimelineEntry::~TimelineEntry()
 {
 	destroy();
 }
 
-template <typename TimeT>
-	void TimelineEntry<TimeT>::destroy()
+void TimelineEntry::destroy()
 {
 	if (m_frametimer != NULL)
 	{
@@ -37,29 +38,27 @@ template <typename TimeT>
 }
 
 /***********************************************
-				Demo
+	Demo
 ***********************************************/
 
-template <typename TimeT>
-	bool Demo<TimeT>::initOk()
+bool Demo::initOk()
 {
 	return m_start;
 }
 
-template <typename TimeT>
-	Demo<TimeT>::Demo(string& scriptfile):m_scriptName(scriptfile)
+Demo::Demo(string& scriptfile):m_scriptName(scriptfile)
 {
 	g_debug << "initializing demo" << endl;
 
 	//TODO: script parsing here
 
 	//initialize configuration dialog
-	m_config = new recore::Config();
+	m_config = new recore::ConfigSimple;
 	m_config->run();
 
 	if (m_config->getRunFlag())
 	{
-		System<TimeT>::inst().initOpenGL(*m_config);
+		System::inst().initOpenGL(*m_config);
 
 		//TODO: Sound loading here
 
@@ -74,37 +73,33 @@ template <typename TimeT>
 	delete m_config;
 }
 
-template <typename TimeT>
-	Demo<TimeT>::~Demo()
+Demo::~Demo()
 {
 	g_debug << "demo quitting.." << endl;
 	destroy();
-	System<TimeT>::inst().kill();
+	System::inst().kill();
 }
 
-template <typename TimeT>
-	void Demo<TimeT>::start()
+void Demo::start()
 {
 	g_debug << "starting demo now!" << endl;
 	m_running = true;
-//	System<TimeT>::inst().startSong();
+	//	System::inst().startSong();
 }
 
-template <typename TimeT>
-	void Demo<TimeT>::stop()
+void Demo::stop()
 {
-//	System<TimeT>::inst().stopSong();
+	//	System::inst().stopSong();
 	g_debug << "demo stopped!" << endl;
 }
 
-template <typename TimeT>
-	void Demo<TimeT>::destroy()
+void Demo::destroy()
 {
 	if (m_start)
 	{
 		map<string, Scene *>::iterator it;
 		//TODO: this looks quite scairy
-		typename vector< TimelineEntry<TimeT>* >::iterator it2;
+		typename vector< TimelineEntry* >::iterator it2;
 
 		//clear out all the scenes in the demo
 		for (it = m_scenes.begin(); it != m_scenes.end(); it++)
@@ -120,20 +115,18 @@ template <typename TimeT>
 		m_scenes.clear();
 
 		//kill audio
-//		System<TimeT>::inst().freeSound();
+		//		System::inst().freeSound();
 	}
 }
 
-template <typename TimeT>
-	void Demo<TimeT>::addScene(const string& name, Scene *s)
+void Demo::addScene(const string& name, Scene *s)
 {
 	//insert the scene to the map
 	m_scenes[name] = s;
 	g_debug << "added scene \"" << name << "\" to the demo" << endl;
 }
 
-template <typename TimeT>
-	Scene* Demo<TimeT>::getScene(const string& name)
+Scene* Demo::getScene(const string& name)
 {
 	if (m_scenes.find(name) != m_scenes.end())
 	{
@@ -146,14 +139,13 @@ template <typename TimeT>
 	}
 }
 
-template <typename TimeT>
-	void Demo<TimeT>::addSceneToTimeline(const string& name, TimeT startTime, TimeT endTime, int priority)
+void Demo::addSceneToTimeline(const string& name, TimeT startTime, TimeT endTime, int priority)
 {
 	//check if such a scene exists
 	if (m_scenes.find(name) != m_scenes.end())
 	{
 		//create timeline entry for it
-		TimelineEntry<TimeT>* entry = new TimelineEntry<TimeT>();
+		TimelineEntry* entry = new TimelineEntry();
 
 		entry->m_scene = m_scenes[name];
 		entry->m_startTime = startTime;
@@ -162,7 +154,7 @@ template <typename TimeT>
 		entry->m_name = name;
 		const int FPS = 100;
 		const int MAXITERATIONS = 30;
-		entry->m_frametimer = new FrameTimer<TimeT>(1000/FPS, MAXITERATIONS); //
+		entry->m_frametimer = new FrameTimer(1000/FPS, MAXITERATIONS); //
 		g_debug << "created a timeline entry for scene \"" << name << "\" at [" << startTime << "," << endTime << "]" << endl;
 
 		m_timeline.push_back(entry);
@@ -174,8 +166,7 @@ template <typename TimeT>
 	}
 }
 
-template <typename TimeT>
-	void Demo<TimeT>::initEffects()
+void Demo::initEffects()
 {
 	//call init on all effects
 	map<string, Scene *>::iterator it;
@@ -186,8 +177,7 @@ template <typename TimeT>
 	}
 }
 
-template <typename TimeT>
-	void Demo<TimeT>::releaseEffects()
+void Demo::releaseEffects()
 {
 	//call init on all effects
 	map<string, Scene *>::iterator it;
@@ -199,65 +189,61 @@ template <typename TimeT>
 }
 
 //we need this since STL doesn't know how to sort vectors of pointers
-template <typename TimeT>
-	bool timelineEntryComparisonFunction(const TimelineEntry<TimeT> *a, const TimelineEntry<TimeT> *b)
+bool timelineEntryComparisonFunction(const TimelineEntry *a, const TimelineEntry *b)
 {
 	return a->m_priority < b->m_priority;
 }
 
-template <typename TimeT>
-	void Demo<TimeT>::draw()
+void Demo::draw()
 {
-	typename vector< TimelineEntry<TimeT>* >::iterator it;
-	vector< TimelineEntry<TimeT>* > activeEffects;
+	typename vector< TimelineEntry* >::iterator it;
+	vector< TimelineEntry* > activeEffects;
 
-	TimeT time = System<TimeT>::inst().getTime();
+	TimeT time = System::inst().getTime();
 	for (it = m_timeline.begin(); it < m_timeline.end(); it++)
 	{
-		TimelineEntry<TimeT> *e = *it;
+		TimelineEntry *e = *it;
 
 		if (time >= e->m_startTime && time < e->m_endTime)
 		{
 			activeEffects.push_back(e);
 		}
 	}
-	sort(activeEffects.begin(), activeEffects.end(), timelineEntryComparisonFunction<TimeT>);
+	sort(activeEffects.begin(), activeEffects.end(), timelineEntryComparisonFunction);
 	for (it = activeEffects.begin(); it < activeEffects.end(); it++)
 	{
-		TimelineEntry<TimeT> *e = *it;
+		TimelineEntry *e = *it;
 		e->m_scene->draw();
 	}
 
 }
 
-template <typename TimeT>
-	void Demo<TimeT>::toggleRunning()
+void Demo::toggleRunning()
 {
 	if (m_running)
 	{
 		m_running = false;
-//		System<TimeT>::inst().pauseSong(true);
+		//		System::inst().pauseSong(true);
 	}
 	else
 	{
 		m_running = true;
-//		System<TimeT>::inst().pauseSong(false);
+		//		System::inst().pauseSong(false);
 	}
 }
 
-template <typename TimeT>
-	void Demo<TimeT>::update()
+void Demo::update()
 {
 	// TODO: if developer mode enabled, handle keyboard input (reload effects, etc)
 
 	if (m_running)
 	{
-		typename vector< TimelineEntry<TimeT>* >::iterator it;
-		TimeT time = System<TimeT>::inst().getTime();
+		typename vector< TimelineEntry* >::iterator it;
+		TimeT time = System::inst().getTime();
 
 		for (it = m_timeline.begin(); it < m_timeline.end(); it++)
 		{
-			TimelineEntry<TimeT> *e = *it;
+			TimelineEntry *e = *it;
 			if (time >= e->m_startTime && time < e->m_endTime)
 			{
 				float t = Math::calcPosInt(time, e->m_startTime, e->m_endTime);
@@ -273,6 +259,3 @@ template <typename TimeT>
 		}
 	}
 }
-
-// explicit instantiation
-template class Demo<>;

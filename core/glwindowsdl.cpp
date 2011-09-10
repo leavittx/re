@@ -38,7 +38,6 @@ bool GLWindowSDL::create(int width, int height, int bpp, bool fullscreen)
 		SDL_ShowCursor(SDL_DISABLE);
 		SDL_WarpMouse(x, y);
 	}
-
 	return true;
 }
 
@@ -52,7 +51,7 @@ void GLWindowSDL::swapBuffers()
 	SDL_GL_SwapBuffers();
 }
 
-void GLWindowSDL::setTitle(char* title)
+void GLWindowSDL::setTitle(const char* title)
 {
 	SDL_WM_SetCaption(title, NULL);
 }

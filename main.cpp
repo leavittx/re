@@ -1,5 +1,9 @@
-#include "globals.h"
-
+//#include "globals.h"
+#include "core/config.h"
+#include "core/system.h"
+#include "demo/demo.h"
+#include "demo/scene.h"
+#include "util/debug.h"
 using namespace std;
 using namespace recore;
 using namespace redemo;
@@ -8,32 +12,31 @@ reutil::Debug reutil::g_debug;
 
 int main(void)
 {
-	System<>::inst().init();
+	System::inst().init();
 
 	string scriptfile("data/script.txt");
-	Demo<> *demo = new Demo<>(scriptfile);
+	Demo *demo = new Demo(scriptfile);
 
 	if (demo->initOk())
 	{
 		demo->start();
 
-		System<>::inst().setWindowTitle("BMT::re engine test");
+		System::inst().setWindowTitle("BMT::re engine test");
 
 		bool demorunning = true;
         while (demorunning)
         {
-			System<>::inst().update();
+			System::inst().update();
 
 			demo->update();
             demo->draw();
 
-			System<>::inst().swapBuffers();
+			System::inst().swapBuffers();
 		}
 
 		demo->stop();
 	}
 
 	delete demo;
-
 	return 0;
 }

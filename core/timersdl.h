@@ -5,12 +5,11 @@
 
 namespace recore {
 
-template <typename TimeT>
-	class TimerSDL : public Timer<TimeT>
+class TimerSDL : public Timer
 {
 public:
 	TimerSDL() {}
-	~TimerSDL() {}
+	virtual ~TimerSDL() {}
 
 private:
 	virtual TimeT osGetTimeMsec()

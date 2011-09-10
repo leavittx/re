@@ -1,13 +1,14 @@
 #pragma once
 
+#include "globals.h"
+
 /**
 	A constant framerate timer / frameskipping.
 */
 
 namespace redemo {
 
-template <typename TimeT = unsigned int>
-	class FrameTimer
+class FrameTimer
 {
 public:
 	FrameTimer();

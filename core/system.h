@@ -1,17 +1,22 @@
 #pragma once
 
 #include "globals.h"
+#include "util/singleton.h"
+#include "core/config.h"
+#include "core/glwindow.h"
+#include "core/timer.h"
 
 namespace recore {
 
 //TODO
 //typedef System::inst g_system;
 
-template <typename TimeT = unsigned int>
-	class System : public reutil::Singleton< System<TimeT> >
+//template <typename TimeT = unsigned int>
+//	class System : public reutil::Singleton< System >
+class System : public reutil::Singleton< System >
 {
 	//TODO
-	friend class Singleton;
+	//friend class Singleton;
 public:
 	void init();
 	void kill();
@@ -23,7 +28,7 @@ public:
 
 	bool initOpenGL(Config &cfg);
 	void swapBuffers();
-	void setWindowTitle(char* title);
+	void setWindowTitle(const char* title);
 
 	void update();
 
@@ -45,7 +50,7 @@ public:
 	TimeT m_endTime;
 
 	// Timer
-	Timer<TimeT>* m_timer;
+	Timer* m_timer;
 };
 
 } // end of namespace 'recore'

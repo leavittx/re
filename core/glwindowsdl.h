@@ -15,7 +15,7 @@ public:
 	virtual void destroy();
 
 	virtual void swapBuffers();
-	virtual void setTitle(char* title);
+	virtual void setTitle(const char* title);
 
 	virtual int getWidth() const { return m_screen->w; }
 	virtual int getHeight() const { return m_screen->h; }
