@@ -14,6 +14,7 @@ public:
 	virtual bool create(int width, int height, int bpp, bool fullscreen);
 	virtual void destroy();
 
+	virtual bool pollEvents();
 	virtual void swapBuffers();
 	virtual void setTitle(const char* title);
 

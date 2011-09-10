@@ -4,6 +4,7 @@
 #include "demo/demo.h"
 #include "demo/scene.h"
 #include "util/debug.h"
+
 using namespace std;
 using namespace recore;
 using namespace redemo;
