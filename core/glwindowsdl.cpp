@@ -1,5 +1,6 @@
 #include "glwindowsdl.h"
 #include "keyboardsdl.h"
+#include "inputmanager.h"
 
 using namespace recore;
 
@@ -66,8 +67,7 @@ bool GLWindowSDL::pollEvents()
 //			       event.button.button, event.button.x, event.button.y);
 //			break;
 		case SDL_KEYDOWN:
-//			InputManager::inst().keyboardEvent(
-//			            KeyboardSDL::resolveKeyCode(event.key.keysym.sym));
+			InputManager::inst().sendKeyboardEvent(KeyboardSDL::resolveKeyCode(event.key.keysym.sym));
 			break;
 
 		case SDL_QUIT:

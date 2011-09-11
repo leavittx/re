@@ -29,6 +29,10 @@ int main(void)
         {
 			System::inst().update();
 
+			demorunning =
+					System::inst().pollEvents() &&
+					System::inst().isRunning();
+
 			demo->update();
             demo->draw();
 

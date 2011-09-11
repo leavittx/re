@@ -17,13 +17,16 @@ System::~System()
 void System::init()
 {
 	m_glWindow = new GLWindowSDL();
+	m_timer = new TimerSDL();
+
+	m_endTime = 100000;
 
 	m_frameCount = 0;
 	m_frameTimer = 0;
 	m_framePreviousTime = 0;
 	m_FPS = 0.0f;
 
-	m_timer = new TimerSDL();
+	InputManager::inst().acceptKeyboardEvents(this);
 }
 
 void System::kill()
@@ -33,32 +36,30 @@ void System::kill()
 
 bool System::isRunning()
 {
-	//TODO
-	//running if not pressed esc or the song hasn't ended
-	bool escape = 0;//getKeyDown(VK_ESCAPE);
-	bool demodone = (m_timer->getTime() >= m_endTime);
-
-	return !escape && !demodone;
+	// Running if not pressed esc and the song hasn't ended
+	return !escape && !(m_timer->getTime() >= m_endTime);
 }
 
 bool System::initOpenGL(Config &cfg)
 {
 	// Create main window with opengl rendering support
-	if (!m_glWindow->create(cfg.getScreenWidth(), cfg.getScreenHeight(), 32,
-	                        cfg.getFullscreen()))
+	if (!m_glWindow->create(cfg.getScreenWidth(), cfg.getScreenHeight(), 32, cfg.getFullscreen()))
 	{
 		g_debug << "ERROR! Could not create window!" << endl;
 		return false;
 	}
-
 	// Initialize glew
 	GLenum err = glewInit();
 	if (err != GLEW_OK)
 	{
 		g_debug << "ERROR! Cannot initialize GLEW!" << endl;
 	}
-
 	return true;
+}
+
+bool System::pollEvents()
+{
+	return m_glWindow->pollEvents();
 }
 
 void System::swapBuffers()
@@ -80,6 +81,36 @@ void System::update()
 int System::getTime()
 {
 	return m_timer->getTime();
+}
+
+void System::handleKeyboardEvent(Key key)
+{
+	switch (key)
+	{
+	case KeyEsc:
+		escape = true;
+		break;
+
+	case KeyLeftArrow:
+		//addTime(-adjust);
+		break;
+
+	case KeyRightArrow:
+		//addTime(adjust);
+		break;
+
+	case KeySpace:
+		// Pause/resume
+		//toggleSongPause();
+		break;
+
+	case KeyS:
+		//toggleSound();
+		break;
+
+	default:
+		return;
+	}
 }
 
 // explicit instantiation

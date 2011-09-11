@@ -1,11 +1,7 @@
 #pragma once
 
-#include "globals.h"
-#include <string>
-#include <vector>
-#include <map>
+#include "../globals.h"
 #include "demo/frametimer.h"
-#include "demo/scene.h"
 #include "core/config.h"
 #include "core/configsimple.h"
 
@@ -40,7 +36,7 @@ public:
 	The main class for the demo.
 */
 
-class Demo
+class Demo : public recore::KeyboardEventsListener
 {
 public:
 	Demo(std::string& scriptfile);
@@ -75,11 +71,13 @@ public:
 	//clear everything
 	void destroy();
 
+	virtual void handleKeyboardEvent(recore::Key key);
+
 private:
 	//this contains all the effects
 	std::map<std::string, Scene*> m_scenes;
 	//this contains all the timeline entries that will be played
-	std::vector< TimelineEntry* > m_timeline;
+	std::vector<TimelineEntry*> m_timeline;
 
 	recore::Config* m_config;
 	bool m_start;

@@ -1,10 +1,11 @@
 #pragma once
 
-#include "globals.h"
-#include "util/singleton.h"
+#include "../globals.h"
+//#include "util/singleton.h"
 #include "core/config.h"
 #include "core/glwindow.h"
 #include "core/timer.h"
+//#include "core/inputmanager.h"
 
 namespace recore {
 
@@ -12,11 +13,9 @@ namespace recore {
 //typedef System::inst g_system;
 
 //template <typename TimeT = unsigned int>
-//	class System : public reutil::Singleton< System >
-class System : public reutil::Singleton< System >
+//	class System : public reutil::Singleton< System<TimeT> >
+class System : public reutil::Singleton<System>, public KeyboardEventsListener
 {
-	//TODO
-	//friend class Singleton;
 public:
 	void init();
 	void kill();
@@ -27,6 +26,7 @@ public:
 	float getFPS();
 
 	bool initOpenGL(Config &cfg);
+	bool pollEvents();
 	void swapBuffers();
 	void setWindowTitle(const char* title);
 
@@ -34,12 +34,19 @@ public:
 
 	int getTime();
 
-public:
+	virtual void handleKeyboardEvent(Key key);
+
+private:
+	friend class Singleton;
 	System();
 	~System();
 
 	// GL stuff
 	GLWindow* m_glWindow;
+	// Timer
+	Timer* m_timer;
+
+	TimeT m_endTime;
 
 	// FPS
 	int m_frameCount;
@@ -47,10 +54,8 @@ public:
 	int m_frameTimer;
 	float m_FPS;
 
-	TimeT m_endTime;
+	bool escape;
 
-	// Timer
-	Timer* m_timer;
 };
 
 } // end of namespace 'recore'

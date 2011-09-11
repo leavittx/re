@@ -259,3 +259,22 @@ void Demo::update()
 		}
 	}
 }
+
+
+void Demo::handleKeyboardEvent(Key key)
+{
+	switch (key)
+	{
+	case KeySpace:
+		// Pause/resume
+		m_running = !m_running;
+		break;
+
+	case KeyEnter:
+		g_debug << System::inst().getTime() << endl;
+		break;
+
+	default:
+		break;
+	}
+}

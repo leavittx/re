@@ -19,7 +19,9 @@ typedef unsigned int TimeT;
 //#include "core/glwindowsdl.h"
 //#include "core/timer.h"
 //#include "core/timersdl.h"
-#include "core/system.h"
+#include "core/keyboard.h"
+#include "core/inputmanager.h"
+//#include "core/system.h"
 
 #include "demo/scene.h"
 //#include "demo/demo.h"

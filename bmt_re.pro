@@ -10,7 +10,8 @@ SOURCES += \
     util/templateinstantiations.cpp \
     core/configsimple.cpp \
     fx/sphere.cpp \
-    fx/test.cpp
+    fx/test.cpp \
+    core/inputmanager.cpp
 
 HEADERS += \
     core/glwindow.h \
@@ -43,6 +44,7 @@ INCLUDEPATH += \
     /usr/include/ \
     /usr/include/c++/4.6.1/ \
     /usr/lib/gcc/x86_64-pc-linux-gnu/4.5.3/include/g++-v4/
+
 
 
 
