@@ -12,7 +12,7 @@ SOURCES += \
     fx/sphere.cpp \
     fx/test.cpp \
     core/inputmanager.cpp \
-    math/vector3.cpp
+    render/glhelper.cpp
 
 HEADERS += \
     core/glwindow.h \
@@ -36,7 +36,9 @@ HEADERS += \
     core/inputmanager.h \
     math/matrix4.h \
     math/vector3.h \
-    math/vector2.h
+    math/vector2.h \
+    render/glhelper.h \
+    math/rect.h
 
 LIBS += \
     -lSDL \
@@ -48,6 +50,12 @@ INCLUDEPATH += \
     /usr/include/ \
     /usr/include/c++/4.6.1/ \
     /usr/lib/gcc/x86_64-pc-linux-gnu/4.5.3/include/g++-v4/
+
+
+
+
+
+
 
 
 

@@ -1,12 +1,9 @@
 #pragma once
 
 #include "vector2.h"
-#include "matrix4.h"
 #include <cmath>
 
 namespace remath {
-
-class Matrix;
 
 /**
 	A simple three-dimensional vector class
@@ -107,8 +104,8 @@ public:
 		return Vector3(x, y, z);
 	}
 
-	Vector3 operator * (Matrix const &mat);
-	Vector3 operator *= (Matrix const &mat);
+	//Vector3 operator * (Matrix const &mat);
+	//Vector3 operator *= (Matrix const &mat);
 
 	Vector3 operator * (const float &value)
 	{

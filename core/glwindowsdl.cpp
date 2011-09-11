@@ -1,6 +1,7 @@
 #include "glwindowsdl.h"
 #include "keyboardsdl.h"
 #include "inputmanager.h"
+#include "render/glhelper.h"
 
 using namespace recore;
 
@@ -33,7 +34,7 @@ bool GLWindowSDL::create(int width, int height, int bpp, bool fullscreen)
 		return false;
 	}
 
-	// TODO: some option for that
+	// TODO: some option for hiding mouse
 	// Hide mouse cursor (in both fullscreen and windowed modes)
 	if (fullscreen || !fullscreen)
 	{
@@ -42,6 +43,9 @@ bool GLWindowSDL::create(int width, int height, int bpp, bool fullscreen)
 		SDL_ShowCursor(SDL_DISABLE);
 		SDL_WarpMouse(x, y);
 	}
+
+	render::gl::init(getWidth(), getHeight(), render::gl::ASPECTRATIO_4_3);
+
 	return true;
 }
 
@@ -60,6 +64,7 @@ bool GLWindowSDL::pollEvents()
 		switch (event.type)
 		{
 		case SDL_VIDEORESIZE:
+			render::gl::resize(getWidth(), getHeight(), render::gl::ASPECTRATIO_4_3);
 			break;
 
 		case SDL_KEYDOWN:

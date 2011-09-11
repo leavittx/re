@@ -13,23 +13,19 @@ typedef unsigned int TimeT;
 
 #include "util/singleton.h"
 
-//#include "core/config.h"
-//#include "core/glwindow.h"
-//#include "core/glwindowsdl.h"
-//#include "core/timer.h"
-//#include "core/timersdl.h"
 #include "core/keyboard.h"
 #include "core/inputmanager.h"
-//#include "core/system.h"
 
 #include "demo/scene.h"
-//#include "demo/demo.h"
-//#include "demo/frametimer.h"
 
 #include "util/debug.h"
 
 #include "math/math.h"
+#include "math/vector2.h"
+#include "math/vector3.h"
 #include "math/matrix4.h"
+#include "math/rect.h"
+
+#include "render/glhelper.h"
 
 //#include "util/templateinstantiations.cpp"
-
