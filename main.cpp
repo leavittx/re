@@ -1,13 +1,14 @@
-//#include "globals.h"
-#include "core/config.h"
+#include "globals.h"
+
 #include "core/system.h"
 #include "demo/demo.h"
-#include "demo/scene.h"
-#include "util/debug.h"
 
-using namespace std;
+#include "fx/test.h"
+#include "fx/sphere.h"
+
 using namespace recore;
 using namespace redemo;
+using namespace std;
 
 reutil::Debug reutil::g_debug;
 
@@ -20,18 +21,36 @@ int main(void)
 
 	if (demo->initOk())
 	{
+		demo->addScene("test", new TestScene());
+		demo->addSceneToTimeline("test", 0, 20000, 0);
+
 		demo->start();
 
 		System::inst().setWindowTitle("BMT::re engine test");
+
+//		for (int i = 0; i < 500; i++)
+//		{
+//			System::inst().update();
+
+//			stringstream ss;
+//			ss << "time = " << System::inst().getTime() + i << " fps = " << System::inst().getFPS();
+//			System::inst().setWindowTitle(ss.str().c_str());
+
+//			System::inst().swapBuffers();
+//		}
 
 		bool demorunning = true;
         while (demorunning)
         {
 			System::inst().update();
 
-			demorunning =
-					System::inst().pollEvents() &&
-					System::inst().isRunning();
+			//TODO: kills gnome-shell
+//			stringstream ss;
+//			ss << "time = " << System::inst().getTime() << " fps = " << System::inst().getFPS();
+//			System::inst().setWindowTitle(ss.str().c_str());
+
+			demorunning = System::inst().pollEvents() &&
+						  System::inst().isRunning();
 
 			demo->update();
             demo->draw();

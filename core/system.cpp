@@ -40,6 +40,33 @@ bool System::isRunning()
 	return !escape && !(m_timer->getTime() >= m_endTime);
 }
 
+void System::updateFPS()
+{
+	int currentTime = getTime();
+	int dt = currentTime - m_framePreviousTime;
+	m_framePreviousTime = currentTime;
+
+	if (dt < 0)
+		dt = -dt;
+
+	m_frameCount++;
+	m_frameTimer += dt;
+
+	//update per second
+	if (m_frameTimer > 1000)
+	{
+		m_FPS = 1000.0f * (m_frameCount / (float)m_frameTimer);
+		m_frameCount = 0;
+		m_frameTimer = 0;
+	}
+
+}
+
+float System::getFPS()
+{
+	return m_FPS;
+}
+
 bool System::initOpenGL(Config &cfg)
 {
 	// Create main window with opengl rendering support
@@ -54,6 +81,8 @@ bool System::initOpenGL(Config &cfg)
 	{
 		g_debug << "ERROR! Cannot initialize GLEW!" << endl;
 	}
+	//TODO
+	m_timer->init();
 	return true;
 }
 
@@ -74,8 +103,10 @@ void System::setWindowTitle(const char* title)
 
 void System::update()
 {
-	//	m_timer->update(getAudioPosition(), m_song->getLength());
-	//	updateFPS();
+	//TODO
+	//m_timer->update(getAudioPosition(), m_song->getLength());
+	m_timer->update(m_timer->osGetTimeMsec(), 1000000);
+	updateFPS();
 }
 
 int System::getTime()

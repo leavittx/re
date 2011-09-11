@@ -11,7 +11,8 @@ SOURCES += \
     core/configsimple.cpp \
     fx/sphere.cpp \
     fx/test.cpp \
-    core/inputmanager.cpp
+    core/inputmanager.cpp \
+    math/vector3.cpp
 
 HEADERS += \
     core/glwindow.h \
@@ -32,7 +33,10 @@ HEADERS += \
     fx/sphere.h \
     core/keyboard.h \
     core/keyboardsdl.h \
-    core/inputmanager.h
+    core/inputmanager.h \
+    math/matrix4.h \
+    math/vector3.h \
+    math/vector2.h
 
 LIBS += \
     -lSDL \
@@ -44,6 +48,10 @@ INCLUDEPATH += \
     /usr/include/ \
     /usr/include/c++/4.6.1/ \
     /usr/lib/gcc/x86_64-pc-linux-gnu/4.5.3/include/g++-v4/
+
+
+
+
 
 
 

@@ -71,6 +71,8 @@ Demo::Demo(string& scriptfile):m_scriptName(scriptfile)
 
 	//TODO: maybe Config singleton
 	delete m_config;
+
+	InputManager::inst().acceptKeyboardEvents(this);
 }
 
 Demo::~Demo()
@@ -161,8 +163,8 @@ void Demo::addSceneToTimeline(const string& name, TimeT startTime, TimeT endTime
 	}
 	else
 	{
-		g_debug << "ERROR! no scene with name \"" << name << "\" exists!" << endl;
 		//no such scene exists
+		g_debug << "ERROR! no scene with name \"" << name << "\" exists!" << endl;
 	}
 }
 
@@ -215,27 +217,24 @@ void Demo::draw()
 		TimelineEntry *e = *it;
 		e->m_scene->draw();
 	}
-
 }
 
-void Demo::toggleRunning()
-{
-	if (m_running)
-	{
-		m_running = false;
-		//		System::inst().pauseSong(true);
-	}
-	else
-	{
-		m_running = true;
-		//		System::inst().pauseSong(false);
-	}
-}
+//void Demo::toggleRunning()
+//{
+//	if (m_running)
+//	{
+//		m_running = false;
+//		//		System::inst().pauseSong(true);
+//	}
+//	else
+//	{
+//		m_running = true;
+//		//		System::inst().pauseSong(false);
+//	}
+//}
 
 void Demo::update()
 {
-	// TODO: if developer mode enabled, handle keyboard input (reload effects, etc)
-
 	if (m_running)
 	{
 		typename vector< TimelineEntry* >::iterator it;
@@ -260,9 +259,9 @@ void Demo::update()
 	}
 }
 
-
 void Demo::handleKeyboardEvent(Key key)
 {
+	// TODO: if developer mode enabled, handle keyboard input (reload effects, etc)
 	switch (key)
 	{
 	case KeySpace:

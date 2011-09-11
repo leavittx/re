@@ -25,6 +25,8 @@ bool GLWindowSDL::create(int width, int height, int bpp, bool fullscreen)
 		sdlFlags |= SDL_RESIZABLE;
 	}
 
+	sdlFlags |= SDL_OPENGL;
+
 	m_screen = SDL_SetVideoMode(width, height, bpp, sdlFlags);
 	if (m_screen == NULL)
 	{
@@ -57,6 +59,13 @@ bool GLWindowSDL::pollEvents()
 	{
 		switch (event.type)
 		{
+		case SDL_VIDEORESIZE:
+			break;
+
+		case SDL_KEYDOWN:
+			InputManager::inst().sendKeyboardEvent(KeyboardSDL::resolveKeyCode(event.key.keysym.sym));
+			break;
+
 //		case SDL_MOUSEMOTION:
 //			printf("Mouse moved by %d,%d to (%d,%d)\n",
 //			       event.motion.xrel, event.motion.yrel,
@@ -66,9 +75,6 @@ bool GLWindowSDL::pollEvents()
 //			printf("Mouse button %d pressed at (%d,%d)\n",
 //			       event.button.button, event.button.x, event.button.y);
 //			break;
-		case SDL_KEYDOWN:
-			InputManager::inst().sendKeyboardEvent(KeyboardSDL::resolveKeyCode(event.key.keysym.sym));
-			break;
 
 		case SDL_QUIT:
 			return false;
@@ -83,6 +89,7 @@ bool GLWindowSDL::pollEvents()
 
 void GLWindowSDL::swapBuffers()
 {
+	//SDL_UpdateRect(m_screen,0,0,0,0);
 	SDL_GL_SwapBuffers();
 }
 

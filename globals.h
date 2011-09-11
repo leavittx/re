@@ -7,8 +7,7 @@
 #include <string>
 #include <vector>
 #include <map>
-//#include <algorithm>
-//#include <fstream>
+#include <sstream>
 
 typedef unsigned int TimeT;
 
@@ -29,7 +28,8 @@ typedef unsigned int TimeT;
 
 #include "util/debug.h"
 
-//#include "math/math.h"
+#include "math/math.h"
+#include "math/matrix4.h"
 
 //#include "util/templateinstantiations.cpp"
 

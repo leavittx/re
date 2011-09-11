@@ -56,8 +56,9 @@ public:
 	void initEffects();
 	//releases all effects
 	void releaseEffects();
-	//toggles running state
-	void toggleRunning();
+
+//	//toggles running state
+//	void toggleRunning();
 
 	//start the demo
 	void start();
