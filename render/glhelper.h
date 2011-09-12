@@ -4,8 +4,6 @@
 
 namespace render {
 
-using namespace remath;
-
 class glHelper
 {
 public:
@@ -75,9 +73,6 @@ private:
 public:
 	static void init(int w, int h, AspectRatio aspect)
 	{
-		m_width = w;
-		m_height = h;
-
 		m_fov = 45.0f;
 		m_zNear = 0.1f;
 		m_zFar = 14000.0f;
@@ -91,7 +86,7 @@ public:
 		glEnable(GL_DEPTH_TEST);
 
 		glDepthFunc(GL_LEQUAL);
-		glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
+		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 		glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
 		glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
@@ -103,7 +98,8 @@ public:
 
 	static void resize(int w, int h, AspectRatio aspect)
 	{
-//		if(height == 0) height = 1;
+		m_width = w;
+		m_height = h;
 
 		switch (aspect)
 		{
@@ -151,11 +147,11 @@ public:
 		glLoadIdentity();
 	}
 
-	static void loadMatrix(Matrix4f& m)
+	static void loadMatrix(remath::Matrix4f& m)
 	{
 //		if (glLoadTransposeMatrixf is null)
 //		{
-//			Matrix4f& tr = m.transposed();
+//			remath::Matrix4f& tr = m.transposed();
 //			glLoadMatrixf(tr.ptr());
 //		} else
 //		{
@@ -163,11 +159,11 @@ public:
 //		}
 	}
 
-	static void multMatrix(Matrix4f& m)
+	static void multMatrix(remath::Matrix4f& m)
 	{
 //		if (glMultTransposeMatrixf is null)
 //		{
-//			Matrix4f& tr = m.transposed();
+//			remath::Matrix4f& tr = m.transposed();
 //			glMultMatrixf(tr.ptr());
 //		} else
 //		{
@@ -175,35 +171,35 @@ public:
 //		}
 	}
 
-	static void lookAt(Vector3 eye, Vector3 target, Vector3 up)
+	static void lookAt(remath::Vector3f& eye, remath::Vector3f& target, remath::Vector3f& up)
 	{
 		gluLookAt(eye.x, eye.y, eye.z, target.x, target.y, target.z, up.x, up.y, up.z);
 	}
 
-	static Matrix4f projectionMatrix()
+	static remath::Matrix4f projectionMatrix()
 	{
-		Matrix4f m;
+		remath::Matrix4f m;
 		glGetFloatv(GL_PROJECTION_MATRIX, m.ptr());
 		m.Transpose();
 		return m;
 	}
 
-	static Matrix4f projectionMatrix(Matrix4f& m)
+	static remath::Matrix4f projectionMatrix(remath::Matrix4f& m)
 	{
 		glMatrixMode(GL_PROJECTION);
 		loadMatrix(m);
 		return m;
 	}
 
-	static Matrix4f modelviewMatrix()
+	static remath::Matrix4f modelviewMatrix()
 	{
-		Matrix4f m;
+		remath::Matrix4f m;
 		glGetFloatv(GL_MODELVIEW_MATRIX, m.ptr());
 		m.Transpose();
 		return m;
 	}
 
-	static Matrix4f modelviewMatrix(Matrix4f& m)
+	static remath::Matrix4f modelviewMatrix(remath::Matrix4f& m)
 	{
 		glMatrixMode(GL_MODELVIEW);
 		loadMatrix(m);
@@ -233,19 +229,20 @@ public:
 	static void setCullMode(CullMode front, CullMode back)
 	{
 		bool cullFront = (NONE == front),
-			 cullBack = (NONE == back);
+			 cullBack  = (NONE == back);
 
 		if ( (!cullFront) && (!cullBack))
 		{
 			glDisable(GL_CULL_FACE);
-		} else
+		}
+		else
 		{
 			glEnable(GL_CULL_FACE);
 			GLenum toHide = cullFront ? (cullBack ? GL_FRONT_AND_BACK : GL_FRONT) : GL_BACK;
 			glCullFace(toHide);
 
-			if ( !cullFront ) glPolygonMode(GL_FRONT, cullMode_toGL[front]);
-			if ( !cullBack ) glPolygonMode(GL_BACK, cullMode_toGL[back]);
+			if (!cullFront) glPolygonMode(GL_FRONT, cullMode_toGL[front]);
+			if (!cullBack)  glPolygonMode(GL_BACK,  cullMode_toGL[back]);
 		}
 		glHelper::check();
 	}
@@ -256,25 +253,27 @@ public:
 		return new_pointSize;
 	}
 
-//	static vec4f clearColor(vec4f c)
+//	static vec4f clearColor(vec4f& c)
 //	{
 //		glClearColor(c.x, c.y, c.z, c.w);
 //		return c;
 //	}
 
-//	static Vector3 color(Vector3 c)
-//	{
-//		glColor3fv(c.ptr());
-//		return c;
-//	}
+	//TODO: void
+	static remath::Color3 color(const remath::Color3& c)
+	{
+		//glColor3fv(c.ptr());
+		//glColor3f(c.x, c.y, c.z);
+		glColor3fv(&c.r);
+		return c;
+	}
 
-//	static vec4f color(vec4f c)
-//	{
-//		glColor4fv(c.ptr());
-//		return c;
-//	}
-
-
+	static remath::Color4 color(const remath::Color4& c)
+	{
+		//glColor4fv(c.ptr());
+		glColor4fv(&c.r);
+		return c;
+	}
 
 	static float clearDepth(float depth)
 	{
@@ -288,10 +287,10 @@ public:
 //		if ((glBlendEquationSeparate !is null) && (glBlendFuncSeparate !is null))
 //		{
 			glBlendEquationSeparate(blendMode_toGL[RGBOperation], blendMode_toGL[AlphaOperation]);
-			glBlendFuncSeparate( blendFactor_toGL[srcRGBFactor],
-								 blendFactor_toGL[dstRGBFactor],
-								 blendFactor_toGL[srcAlphaFactor],
-								 blendFactor_toGL[dstAlphaFactor] );
+			glBlendFuncSeparate(blendFactor_toGL[srcRGBFactor],
+								blendFactor_toGL[dstRGBFactor],
+								blendFactor_toGL[srcAlphaFactor],
+								blendFactor_toGL[dstAlphaFactor]);
 //		} else
 //		{
 //			// try to approximate the desired blend
@@ -301,13 +300,14 @@ public:
 //		}
 	}
 
-	/*deprecated */static void setViewport(int x, int y, int width, int height)
+	//deprecated
+	static void setViewport(int x, int y, int width, int height)
 	{
 		glViewport(x,y,width,height);
 		glHelper::check();
 	}
 
-	static void viewport(Recti view)
+	static void viewport(remath::Recti view)
 	{
 		glViewport(view.x1(), view.y1(), view.width(), view.height());
 		glHelper::check();
@@ -329,26 +329,43 @@ public:
 	}
 
 //	static void vertex(vec2f[] vs...)	{	foreach(v; vs) glVertex2fv(v.ptr());	}
-//	static void vertex(Vector3[] vs...)	{	foreach(v; vs) glVertex3fv(v.ptr());	}
+//	static void vertex(remath::Vector3[] vs...)	{	foreach(v; vs) glVertex3fv(v.ptr());	}
 //	static void vertex(vec4f[] vs...)	{	foreach(v; vs) glVertex4fv(v.ptr());	}
 
 //	static void normal(float x, float y, float z) {	glNormal3f(x, y, z); }
-//	static void normal(Vector3 nml)		{	glNormal3fv(nml.ptr());	}
+//	static void normal(remath::Vector3 nml)		{	glNormal3fv(nml.ptr());	}
 
-	static void translate(float x, float y, float z){	glTranslatef(x, y, z); }
-	static void translate(Vector3 v)					{	glTranslatef(v.x, v.y, v.z);	}
+	static void translate(float x, float y, float z)
+	{
+		glTranslatef(x, y, z);
+	}
+	static void translate(remath::Vector3f& v)
+	{
+		glTranslatef(v.x, v.y, v.z);
+	}
 
-	static void scale(float x, float y, float z)	{	glScalef(x, y, z); }
-	static void scale(Vector3 v)						{	glScalef(v.x, v.y, v.z);	}
+	static void scale(float x, float y, float z)
+	{
+		glScalef(x, y, z);
+	}
+	static void scale(remath::Vector3f& v)
+	{
+		glScalef(v.x, v.y, v.z);
+	}
 
-	static void rotate(float angle, float x, float y, float z)  {	glRotatef(angle, x, y, z); }
-//	static void rotate(vec4f v)									{	glRotatef(v.x, v.y, v.z, v.z);	}
+	static void rotate(float angle, float x, float y, float z)
+	{
+		glRotatef(angle, x, y, z);
+	}
+//	static void rotate(vec4f v)
+//{
+//	glRotatef(v.x, v.y, v.z, v.z);
+//}
 
 	static void pushAttrib(int attribs)
 	{
 		glPushAttrib(attribs);
 	}
-
 	static void popAttrib()
 	{
 		glPopAttrib();
@@ -358,7 +375,6 @@ public:
 	{
 		glPushMatrix();
 	}
-
 	static void popMatrix()
 	{
 		glPopMatrix();

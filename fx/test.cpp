@@ -6,6 +6,7 @@
 using namespace redemo;
 using namespace recore;
 using namespace render;
+using namespace remath;
 
 void TestScene::init()
 {
@@ -33,7 +34,8 @@ void TestScene::draw()
 
 	float size = 1.0f;
 	float scale = fabs(sin(System::inst().getTime() / 500.0));
-	glColor4f(0.1f, 0.4f, 1.0f, 0.0f);
+	//glColor4f(0.1f, 0.4f, 1.0f, 0.0f);
+	gl::color(Color3(1.0f, 0.0f, 1.0f));
 	glBegin(GL_QUADS);
 		glVertex2f(0, 0);
 		glVertex2f(size*scale, 0);

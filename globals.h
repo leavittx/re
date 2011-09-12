@@ -11,6 +11,7 @@
 
 typedef unsigned int TimeT;
 
+#include "util/debug.h"
 #include "util/singleton.h"
 
 #include "core/keyboard.h"
@@ -18,11 +19,10 @@ typedef unsigned int TimeT;
 
 #include "demo/scene.h"
 
-#include "util/debug.h"
-
 #include "math/math.h"
 #include "math/vector2.h"
 #include "math/vector3.h"
+#include "math/vector4.h"
 #include "math/matrix4.h"
 #include "math/rect.h"
 

@@ -38,7 +38,8 @@ HEADERS += \
     math/vector3.h \
     math/vector2.h \
     render/glhelper.h \
-    math/rect.h
+    math/rect.h \
+    math/vector4.h
 
 LIBS += \
     -lSDL \
@@ -50,6 +51,7 @@ INCLUDEPATH += \
     /usr/include/ \
     /usr/include/c++/4.6.1/ \
     /usr/lib/gcc/x86_64-pc-linux-gnu/4.5.3/include/g++-v4/
+
 
 
 

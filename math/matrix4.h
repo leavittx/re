@@ -90,7 +90,7 @@ public:
 			for(int j = 0; j < 4; j++)
 				m[i][j] = m[j][i];
 	}
-	static Matrix4 Translation(const Vector3 &V)
+	static Matrix4 Translation(const Vector3<T> &V)
 	{
 		Matrix4 M;
 
@@ -137,7 +137,7 @@ public:
 		M.m[1][0] = s; M.m[1][1] = c;
 		return M;
 	}
-	static Matrix4 RotationWithAxis(const Vector3 &axis, float ang) {
+	static Matrix4 RotationWithAxis(const Vector3<T> &axis, float ang) {
 		Matrix4 M;
 
 		M.MakeIdentity();
@@ -154,7 +154,7 @@ public:
 		M.m[2][2] = c + az * az * (1 - c);
 		return M;
 	}
-	static Matrix4 Scaling(const Vector3 &S) {
+	static Matrix4 Scaling(const Vector3<T> &S) {
 		Matrix4 M;
 
 		M.MakeIdentity();
