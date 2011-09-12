@@ -1,11 +1,9 @@
 #pragma once
 
 #include "../globals.h"
-//#include "util/singleton.h"
 #include "core/config.h"
 #include "core/glwindow.h"
 #include "core/timer.h"
-//#include "core/inputmanager.h"
 
 namespace recore {
 

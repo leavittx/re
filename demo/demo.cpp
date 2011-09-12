@@ -1,13 +1,11 @@
 #include "demo.h"
 #include "core/system.h"
-#include "math/math.h"
-#include "util/debug.h"
 #include <algorithm>
 
-using namespace std;
+using namespace redemo;
 using namespace recore;
 using namespace remath;
-using namespace redemo;
+using namespace std;
 
 /***********************************************
 	TimelineEntry
@@ -46,9 +44,9 @@ bool Demo::initOk()
 	return m_start;
 }
 
-Demo::Demo(string& scriptfile):m_scriptName(scriptfile)
+Demo::Demo()
 {
-	g_debug << "initializing demo" << endl;
+	g_debug << "Demo init" << endl;
 
 	//TODO: script parsing here
 
@@ -77,14 +75,14 @@ Demo::Demo(string& scriptfile):m_scriptName(scriptfile)
 
 Demo::~Demo()
 {
-	g_debug << "demo quitting.." << endl;
+	g_debug << "Demo close" << endl;
 	destroy();
 	System::inst().kill();
 }
 
 void Demo::start()
 {
-	g_debug << "starting demo now!" << endl;
+	g_debug << "Demo start" << endl;
 	m_running = true;
 	//	System::inst().startSong();
 }
@@ -92,7 +90,7 @@ void Demo::start()
 void Demo::stop()
 {
 	//	System::inst().stopSong();
-	g_debug << "demo stopped!" << endl;
+	g_debug << "Demo stop" << endl;
 }
 
 void Demo::destroy()
@@ -125,7 +123,7 @@ void Demo::addScene(const string& name, Scene *s)
 {
 	//insert the scene to the map
 	m_scenes[name] = s;
-	g_debug << "added scene \"" << name << "\" to the demo" << endl;
+	g_debug << "Added scene \"" << name << "\" to the demo" << endl;
 }
 
 Scene* Demo::getScene(const string& name)
@@ -136,7 +134,7 @@ Scene* Demo::getScene(const string& name)
 	}
 	else
 	{
-		g_debug << "error! Trying to fetch scene " << name << " but it does not exist\n";
+		g_debug << "ERROR! Trying to fetch scene " << name << " but it does not exist\n";
 		return 0;
 	}
 }
@@ -157,7 +155,7 @@ void Demo::addSceneToTimeline(const string& name, TimeT startTime, TimeT endTime
 		const int FPS = 100;
 		const int MAXITERATIONS = 30;
 		entry->m_frametimer = new FrameTimer(1000/FPS, MAXITERATIONS); //
-		g_debug << "created a timeline entry for scene \"" << name << "\" at [" << startTime << "," << endTime << "]" << endl;
+		g_debug << "Created a timeline entry for scene \"" << name << "\" at [" << startTime << "," << endTime << "]" << endl;
 
 		m_timeline.push_back(entry);
 	}
@@ -274,6 +272,6 @@ void Demo::handleKeyboardEvent(Key key)
 		break;
 
 	default:
-		break;
+		return;
 	}
 }

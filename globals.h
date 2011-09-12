@@ -8,6 +8,8 @@
 #include <vector>
 #include <map>
 #include <sstream>
+#include <cstdlib>
+#include <cmath>
 
 typedef unsigned int TimeT;
 
@@ -16,6 +18,7 @@ typedef unsigned int TimeT;
 
 #include "core/keyboard.h"
 #include "core/inputmanager.h"
+//#include "core/time.h"
 
 #include "demo/scene.h"
 
@@ -27,5 +30,7 @@ typedef unsigned int TimeT;
 #include "math/rect.h"
 
 #include "render/glhelper.h"
+#include "render/shadermanager.h"
+//#include "render/texturemanager.h"
 
 //#include "util/templateinstantiations.cpp"

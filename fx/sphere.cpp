@@ -1,8 +1,4 @@
 #include "sphere.h"
-#include "util/debug.h"
-#include <string>
-#include <cstdlib>
-#include <cmath>
 
 using namespace std;
 

@@ -46,7 +46,8 @@ bool GLWindowSDL::create(int width, int height, int bpp, bool fullscreen)
 
 void GLWindowSDL::destroy()
 {
-	// None ... since SDL does everything
+	SDL_Quit();
+	// None (else) ... since SDL does everything
 }
 
 bool GLWindowSDL::pollEvents()

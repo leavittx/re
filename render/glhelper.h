@@ -126,6 +126,15 @@ public:
 		glLoadIdentity();
 	}
 
+	static void frustum(float size, float zNear, float zFar)
+	{
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glFrustum(-size, size, size * (double)-m_height / m_height, size * (double)m_height / m_width, zNear, zFar);
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+	}
+
 //	static void enable(GLint[] features...)
 //	{
 //		foreach (GLint i; features) glEnable(i);
@@ -226,6 +235,41 @@ public:
 		}
 	}
 
+	static void debug(const std::string& text)
+	{
+		GLenum error = glGetError();
+		switch (error)
+		{
+			case GL_NO_ERROR:
+	//			reutil::g_debug << text << ": OK!" << std::endl;
+				break;
+
+			case GL_INVALID_ENUM:
+				reutil::g_debug << "OpenGL error! " << text << " : GL_INVALID_ENUM" << std::endl;
+				break;
+
+			case GL_INVALID_VALUE:
+				reutil::g_debug << "OpenGL error! " << text << " : GL_INVALID_VALUE" << std::endl;
+				break;
+
+			case GL_INVALID_OPERATION:
+				reutil::g_debug << "OpenGL error! " << text << " : GL_INVALID_OPERATION" << std::endl;
+				break;
+
+			case GL_STACK_OVERFLOW:
+				reutil::g_debug << "OpenGL error! " << text << " : GL_STACK_OVERFLOW" << std::endl;
+				break;
+
+			case GL_STACK_UNDERFLOW:
+				reutil::g_debug << "OpenGL error! " << text << " : GL_STACK_UNDERFLOW" << std::endl;
+				break;
+
+			case GL_OUT_OF_MEMORY:
+				reutil::g_debug << "OpenGL error! " << text << " : GL_OUT_OF_MEMORY" << std::endl;
+				break;
+		}
+	}
+
 	static void setCullMode(CullMode front, CullMode back)
 	{
 		bool cullFront = (NONE == front),
@@ -253,11 +297,11 @@ public:
 		return new_pointSize;
 	}
 
-//	static vec4f clearColor(vec4f& c)
-//	{
-//		glClearColor(c.x, c.y, c.z, c.w);
-//		return c;
-//	}
+	static remath::Color4 clearColor(const remath::Color4& c)
+	{
+		glClearColor(c.x, c.y, c.z, c.w);
+		return c;
+	}
 
 	//TODO: void
 	static remath::Color3 color(const remath::Color3& c)
@@ -303,7 +347,7 @@ public:
 	//deprecated
 	static void setViewport(int x, int y, int width, int height)
 	{
-		glViewport(x,y,width,height);
+		glViewport(x, y, width, height);
 		glHelper::check();
 	}
 

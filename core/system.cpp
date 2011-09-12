@@ -1,7 +1,6 @@
 #include "system.h"
 #include "glwindowsdl.h"
 #include "timersdl.h"
-#include "util/debug.h"
 
 using namespace std;
 using namespace recore;
@@ -19,7 +18,7 @@ void System::init()
 	m_glWindow = new GLWindowSDL();
 	m_timer = new TimerSDL();
 
-	m_endTime = 100000;
+	m_endTime = 1000000;
 
 	m_frameCount = 0;
 	m_frameTimer = 0;
@@ -122,11 +121,11 @@ void System::handleKeyboardEvent(Key key)
 		escape = true;
 		break;
 
-	case KeyLeftArrow:
+	case KeyLeft:
 		//addTime(-adjust);
 		break;
 
-	case KeyRightArrow:
+	case KeyRight:
 		//addTime(adjust);
 		break;
 

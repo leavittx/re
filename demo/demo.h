@@ -39,7 +39,7 @@ public:
 class Demo : public recore::KeyboardEventsListener
 {
 public:
-	Demo(std::string& scriptfile);
+	Demo();
 	~Demo();
 
 	//returns true if we are all go for launch
@@ -82,7 +82,6 @@ private:
 
 	recore::Config* m_config;
 	bool m_start;
-	std::string m_scriptName;
 	bool m_running;
 };
 
