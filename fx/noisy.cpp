@@ -96,7 +96,7 @@ void NoisyScene::handleKeyboardEvent(Key key)
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		break;
 
-	case KeyLCtrl:
+	case KeySpace:
 		m_texture = !m_texture;
 		break;
 
@@ -128,12 +128,13 @@ void NoisyScene::handleKeyboardEvent(Key key)
 			m_turbOmega--;
 		break;
 
-	case KeyLAlt:
-		glScaled(1, 1, 1.05);
+	case KeyLCtrl:
+		if (m_landscapeSize > 0)
+			m_landscapeSize -= 0.1;
 		break;
 
-	case KeyRAlt:
-		glScaled(1, 1, 0.95);
+	case KeyRCtrl:
+		m_landscapeSize += 0.1;
 		break;
 
 	default:
