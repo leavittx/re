@@ -20,6 +20,12 @@ public:
 	virtual void handleKeyboardEvent(recore::Key key);
 
 private:
+	unsigned int m_bufferID;
+	int m_numVertices;
+	GLfloat *m_vertexArray;
+
+	void regenerateTerrain(void);
+
 	bool m_wireframe;
 	bool m_texture;
 
