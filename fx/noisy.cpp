@@ -12,11 +12,17 @@ void NoisyScene::init()
 	m_wireframe = false;
 	m_texture = false;
 
-	m_landscapeSize = 3.0f;
+	m_landscapeSize = 2.0f;
 	m_step = 0.04f;
-	m_turbOmega = 2;
-	m_turbK = 1;
+	m_turbOmega = 6;//2;
+	m_turbK = 3;//1;
 	m_texCoordK = 1.0f;
+
+	m_nStars = 2000;
+	m_starsSpeed = 1.0f;
+	m_stars.resize(m_nStars);
+	for (int i = 0; i < m_nStars; i++)
+		generateNewStar(i);
 
 	SetTab1();
 	SetTab2();
@@ -39,6 +45,21 @@ void NoisyScene::draw()
 
 //	gl::clearColor(Color4((GLclampf)62 / 255, (GLclampf)92 / 255, (GLclampf)24 / 255, 1.0f));
 	gl::clear(gl::ALL);
+
+	// Stars
+	gl::pointSize(1.0f);
+	gl::color(Color3(1.0f, 1.0f, 1.0f));
+    glPushMatrix();
+    glBegin(GL_POINTS);
+	for (int i = 0; i < (int)m_stars.size(); i++)
+    {
+		glVertex3f(m_stars[i].x, m_stars[i].y, m_stars[i].z);
+        m_stars[i].z += m_starsSpeed;
+        if (m_stars[i].z >= 10)
+			generateNewStar(i);
+    }
+    glEnd();
+    glPopMatrix();
 
 	// 1-dimensional noise
 //	gl::pushMatrix();
@@ -237,6 +258,14 @@ void NoisyScene::draw_smth()
 
 void NoisyScene::SetColormap()
 {
+//	m_colormap[0].n = 0.3;
+//	m_colormap[0].col = Color3( 19, 117, 207);
+//	m_colormap[1].n = 0.4;
+//	m_colormap[1].col = Color3(  9, 201,  22);
+//	m_colormap[2].n = 0.5;
+//	m_colormap[2].col = Color3(133, 106,  42);
+//	m_colormap[3].n = 0.6;
+//	m_colormap[3].col = Color3(181, 101, 211);
 	m_colormap[0].n = 0.3;
 	m_colormap[0].col = Color3( 19, 117, 207);
 	m_colormap[1].n = 0.4;
@@ -356,4 +385,11 @@ float NoisyScene::bezier(float x)
 		   Tab1[ix] * (3 * fx * fx * fx - 6 * fx * fx + 4) +
 		   Tab1[ix + 1] * (-3 * fx * fx * fx + 3 * fx * fx + 3 * fx + 1)+
 		   Tab1[ix + 2] * fx * fx * fx;
+}
+
+
+void NoisyScene::generateNewStar(int i)
+{
+	m_stars[i] = Vector3f(rand() % 400 - 100, rand() % 300 - 100,
+	                    -(rand() % 100 + 50));
 }

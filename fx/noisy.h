@@ -58,4 +58,10 @@ private:
 	float noise1d_turb(float t, int omega);
 	float noise2d_turb(float t1, float t2, int omega);
 	float bezier(float x);
+
+	std::vector<remath::Vector3f> m_stars;
+	int m_nStars;
+	float m_starsSpeed;
+
+	void generateNewStar(int i);
 };
