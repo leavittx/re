@@ -1,6 +1,5 @@
 #pragma once
 
-//#include "../globals.h"
 #include "core/system.h"
 
 namespace recore {
@@ -25,11 +24,6 @@ public:
 	{
 		return System::inst().getTime() * 0.001f;
 	}
-
-	//	static TimeT operator () ()
-	//	{
-	//		return System::inst().getTime();
-	//	}
 };
 
 typedef Time t;

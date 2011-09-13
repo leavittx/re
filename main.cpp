@@ -30,8 +30,10 @@ int main(void)
 
 		demo->addScene("test", new TestScene());
 		demo->addScene("noisy", new NoisyScene());
+//		demo->addScene("sphere", new SphereScene());
 		demo->addSceneToTimeline("noisy",      0,  100000, 0);
-//		demo->addSceneToTimeline("test",   10000, 1000000, 0);
+//		demo->addSceneToTimeline("sphere",     0,  100000, 1);
+//		demo->addSceneToTimeline("test",      0, 1000000, 0);
 
 		TextureManager::inst().uploadImages();
 		ShaderManager::inst().loadShaders();

@@ -4,8 +4,7 @@
 	An abstract base class for a single scene/effect in the demo. The timeline contains references to these.
 */
 
-namespace redemo
-{
+namespace redemo {
 
 class Scene
 {

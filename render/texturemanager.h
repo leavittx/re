@@ -29,9 +29,6 @@ public:
 	void bindTextureFBO(const std::string& name);
 	void unbindFBO();
 
-	//debug
-	void dumpUnusedImages();
-
 private:
 	friend class Singleton;
 	TextureManager();

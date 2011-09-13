@@ -80,7 +80,6 @@ bool System::initOpenGL(Config &cfg)
 	{
 		g_debug << "ERROR! Cannot initialize GLEW!" << endl;
 	}
-	//TODO
 	m_timer->init();
 	return true;
 }
@@ -142,6 +141,3 @@ void System::handleKeyboardEvent(Key key)
 		return;
 	}
 }
-
-// explicit instantiation
-//template class System<>;

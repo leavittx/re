@@ -4,7 +4,6 @@
 	#include <stdlib.h>
 	#include <dirent.h>
 	#include <glob.h>
-//	#include <libgen.h>
 #endif
 
 using namespace reutil;

@@ -130,12 +130,11 @@ void FBOManager::init()
 		// All ok
 		break;
 	case GL_FRAMEBUFFER_UNSUPPORTED_EXT:
-		g_debug << "GL_FRAMEBUFFER_UNSUPPORTED_EXT!\nYour graphics card does not support framebuffer objects.\nYou either need to upgrade drivers or buy a better one\n";
-		//TODO
+		g_debug << "GL_FRAMEBUFFER_UNSUPPORTED_EXT!" << endl;
 //		exit(0);
 		break;
 	default:
-		g_debug << "something strange happened\n" << endl;
+		g_debug << "something strange happened" << endl;
 //		exit(0);
 		break;
 	}
@@ -259,8 +258,8 @@ void FBOManager::unbindFBO()
 {
 	//zero is the regular rendering context
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
-	//TODO
-//	System::inst()->resetViewport();
+
+	gl::resetViewport();
 }
 
 

@@ -17,6 +17,7 @@ class TimelineEntry
 public:
 	TimelineEntry();
 	~TimelineEntry();
+
 	void destroy();
 
 	//comparison operator for STL sort

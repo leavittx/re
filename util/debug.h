@@ -6,10 +6,8 @@
 	Debug class used for writing the log file.
 */
 
-namespace reutil
-{
+namespace reutil {
 
-//TODO
 class Debug;
 extern Debug g_debug;
 

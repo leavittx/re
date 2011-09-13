@@ -12,7 +12,6 @@ template <typename T>
 class Vector2
 {
 public:
-
 	Vector2()
 	{
 		x = y = 0;

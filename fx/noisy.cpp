@@ -1,5 +1,6 @@
 #include "noisy.h"
 #include "core/time.h"
+#include "render/texturemanager.h"
 
 using namespace redemo;
 using namespace recore;
@@ -15,6 +16,7 @@ void NoisyScene::init()
 	m_step = 0.04f;
 	m_turbOmega = 2;
 	m_turbK = 1;
+	m_texCoordK = 1.0f;
 
 	SetTab1();
 	SetTab2();
@@ -35,7 +37,7 @@ void NoisyScene::draw()
 {
 	gl::frustum(2.0f, 1.0f, 150.0f);
 
-	gl::clearColor(Color4((GLclampf)62 / 255, (GLclampf)92 / 255, (GLclampf)24 / 255, 1.0f));
+//	gl::clearColor(Color4((GLclampf)62 / 255, (GLclampf)92 / 255, (GLclampf)24 / 255, 1.0f));
 	gl::clear(gl::ALL);
 
 	// 1-dimensional noise
@@ -56,7 +58,7 @@ void NoisyScene::draw()
 
 //	draw_axes();
 //	draw_smth();
-	draw_2d_noise(Time::get());
+	draw_2d_noise(Time::get()*0.001);
 //  draw_my_image(&image, 0, 0);
 	gl::popMatrix();
 }
@@ -115,7 +117,7 @@ void NoisyScene::handleKeyboardEvent(Key key)
 
 	default:
 		return;
-}
+	}
 }
 
 void NoisyScene::draw_1d_noise(TimeT Time)
@@ -136,27 +138,29 @@ void NoisyScene::draw_1d_noise(TimeT Time)
 
 void NoisyScene::draw_2d_noise(TimeT Time)
 {
+	TextureManager::inst().bindTexture("color_tile.png");
+
 	for (float i = -m_landscapeSize; i < m_landscapeSize; i += m_step)
 	{
 		glBegin(GL_TRIANGLE_STRIP);
 		for (float j = -m_landscapeSize; j < m_landscapeSize; j += m_step)
 		{
-//			if (lcontrol_state)
-//				glTexCoord2d((i + 0.8) / 1.6 * m_tex_coord_k, (j + 0.8) / 1.6 * m_tex_coord_k);
+//			if (m_texture)
+//				glTexCoord2d((i + 0.8) / 1.6 * m_texCoordK, (j + 0.8) / 1.6 * m_texCoordK);
 //			glColor3d(1, 1, noise2d_turb(j, i, 3));
 //			glVertex3d(j, i, noise2d_turb(i * m_turbK, j * m_turbK, m_turbOmega));
 //			glVertex3d(j, i + m_step, noise2d_turb((i + m_step) * m_turbK, j * m_turbK, m_turbOmega));
 
-			//TODO: texture
-//			if (lcontrol_state)
-//				glTexCoord2d((i + 0.8) / 1.6 * m_tex_coord_k, (j + 0.8) / 1.6 * m_tex_coord_k);
+			if (m_texture)
+				glTexCoord2d((i + 0.8) / 1.6 * m_texCoordK, (j + 0.8) / 1.6 * m_texCoordK);
 
 			float h = noise2d_turb(i * m_turbK, j * m_turbK, m_turbOmega);
-
 			Color3 col = get_color(h);
 			glColor3d(col.r / 255.0, col.g / 255.0, col.b / 255.0);
-			glVertex3d(j/* + Time*/, i/* + Time*/, /*noise2d_turb(i * m_turbK, j * m_turbK, m_turbOmega)*/h);
-			glVertex3d(j/* + Time*/, (i + m_step)/* + Time*/, noise2d_turb((i + m_step) * m_turbK, j * m_turbK, m_turbOmega));
+//			glVertex3d(j + Time, i + Time, noise2d_turb(i * m_turbK, j * m_turbK, m_turbOmega));
+//			glVertex3d(j + Time, (i + m_step) + Time, noise2d_turb((i + m_step) * m_turbK, j * m_turbK, m_turbOmega));
+			glVertex3d(j, i, h);
+			glVertex3d(j, (i + m_step), noise2d_turb((i + m_step) * m_turbK, j * m_turbK, m_turbOmega));
 		}
 		glEnd();
 	}
@@ -181,24 +185,6 @@ void NoisyScene::draw_2d_noise_(TimeT Time)
 		}
 	glEnd();
 }
-
-//void draw_my_image( G24 *image, float x, float y)
-//{
-//  int i, j;
-//  glPointSize(2.0);
-//  for (i = 0; i < image->W; i ++)
-//  {
-//	glBegin(GL_POINTS);
-//	for (j = 0; j < image->H; j ++)
-//	{
-//	  glColor3d(image->Rows[(j * image->W + i) * 3 + 2] / 256.0,
-//		(image->Rows[(j * image->W + i) * 3 + 1]) / 256.0,
-//		(image->Rows[(j * image->W + i) * 3]) / 256.0);
-//	  glVertex3d(0, -(j + y) / (float)image->H, -(i + x) / (float)image->W);
-//	}
-//	glEnd();
-//  }
-//}
 
 void NoisyScene::draw_axes()
 {

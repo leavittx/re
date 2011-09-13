@@ -20,16 +20,6 @@ public:
 		// constructors //
 		//////////////////
 
-//		static rect opCall(T x1, T y1, T x2, T y2)
-//		{
-//			rect v = void;
-//			v.m_x1 = min(x1, x2);
-//			v.m_x2 = max(x1, x2);
-//			v.m_y1 = min(y1, y2);
-//			v.m_y2 = max(y1, y2);
-//			return v;
-//		}
-
 		Rect(T x1, T y1, T x2, T y2)
 		{
 			m_x1 = min(x1, x2);
@@ -37,7 +27,6 @@ public:
 			m_y1 = min(y1, y2);
 			m_y2 = max(y1, y2);
 		}
-
 
 		// construct from 2 point
 		Rect(Vector2<T> x, Vector2<T> y)// : Rect(x.x, x.y, y.x, y.y)
@@ -65,33 +54,6 @@ public:
 		T height() { return m_y2 - m_y1; }
 
 		double ratio() { return width / static_cast<double>(height); }
-
-//		char[] toString()
-//		{
-//			return format("( %s , %s ) - ( %s , %s )", m_x1, m_y1, m_x2, m_y2);
-//		}
-
-		// returns the largest rect within with asked ratio
-//		rect subRectWithRatio(double asked_ratio)
-//		{
-//			rect r = *this;
-
-//			if (ratio < asked_ratio) // crop because of ratio if needed
-//			{
-//				auto new_height = width * (1.0 / asked_ratio);
-//				auto diff = height - new_height;
-//				r.m_y1 += cast(T)round(diff * 0.5);
-//				r.m_y2 -= cast(T)round(diff * 0.5);
-//			}
-//			else if (ratio > asked_ratio)
-//			{
-//				auto new_width = height * asked_ratio;
-//				auto diff = width - new_width;
-//				r.m_x1 += cast(T)round(diff * 0.5);
-//				r.m_x2 -= cast(T)round(diff * 0.5);
-//			}
-//			return r;
-//		}
 };
 
 typedef Rect<int>    Recti;

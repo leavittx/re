@@ -27,6 +27,7 @@ private:
 	float m_step;
 	float m_turbOmega;
 	float m_turbK;
+	float m_texCoordK;
 
 	struct Colormap
 	{

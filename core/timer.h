@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../globals.h"
-#include <cstdlib>
 
 namespace recore {
 
@@ -79,7 +78,6 @@ protected:
 	// Get system time in miliseconds
 	virtual TimeT osGetTimeMsec() = 0;
 
-	//TODO
 	friend class System;
 };
 

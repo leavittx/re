@@ -98,8 +98,7 @@ void Demo::destroy()
 	if (m_start)
 	{
 		map<string, Scene *>::iterator it;
-		//TODO: this looks quite scairy
-		typename vector< TimelineEntry* >::iterator it2;
+		typename vector<TimelineEntry*>::iterator it2;
 
 		//clear out all the scenes in the demo
 		for (it = m_scenes.begin(); it != m_scenes.end(); it++)
@@ -259,7 +258,7 @@ void Demo::update()
 
 void Demo::handleKeyboardEvent(Key key)
 {
-	// TODO: if developer mode enabled, handle keyboard input (reload effects, etc)
+	// TODO: handle keyboard events only if developer mode enabled
 	switch (key)
 	{
 	case KeySpace:

@@ -126,6 +126,11 @@ public:
 		glLoadIdentity();
 	}
 
+	static void resetViewport()
+	{
+		glViewport(0, 0, m_width, m_height);
+	}
+
 	static void frustum(float size, float zNear, float zFar)
 	{
 		glMatrixMode(GL_PROJECTION);
@@ -134,16 +139,6 @@ public:
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 	}
-
-//	static void enable(GLint[] features...)
-//	{
-//		foreach (GLint i; features) glEnable(i);
-//	}
-
-//	static void disable(GLint[] features...)
-//	{
-//		foreach (GLint i; features) glDisable(i);
-//	}
 
 	static GLint matrixMode(GLint mm)
 	{
@@ -158,26 +153,12 @@ public:
 
 	static void loadMatrix(remath::Matrix4f& m)
 	{
-//		if (glLoadTransposeMatrixf is null)
-//		{
-//			remath::Matrix4f& tr = m.transposed();
-//			glLoadMatrixf(tr.ptr());
-//		} else
-//		{
-			glLoadTransposeMatrixf(m.ptr());
-//		}
+		glLoadTransposeMatrixf(m.ptr());
 	}
 
 	static void multMatrix(remath::Matrix4f& m)
 	{
-//		if (glMultTransposeMatrixf is null)
-//		{
-//			remath::Matrix4f& tr = m.transposed();
-//			glMultMatrixf(tr.ptr());
-//		} else
-//		{
-			glMultTransposeMatrixf(m.ptr());
-//		}
+		glMultTransposeMatrixf(m.ptr());
 	}
 
 	static void lookAt(remath::Vector3f& eye, remath::Vector3f& target, remath::Vector3f& up)
@@ -217,21 +198,11 @@ public:
 
 	static void check()
 	{
-//		version(Release)
-//		{
-//			// do nothing in release mode !
-//		}
-//		else
+		GLint r = glGetError();
+		if (r != GL_NO_ERROR)
 		{
-			GLint r = glGetError();
-			if (r != GL_NO_ERROR)
-			{
-			//	trace(format("error %s", r));
-				reutil::g_debug << gluErrorString(r) << std::endl;
+			reutil::g_debug << gluErrorString(r) << std::endl;
 
-//				assert(false);
-				//throw new GLError(msg);
-			}
 		}
 	}
 
@@ -303,18 +274,14 @@ public:
 		return c;
 	}
 
-	//TODO: void
 	static remath::Color3 color(const remath::Color3& c)
 	{
-		//glColor3fv(c.ptr());
-		//glColor3f(c.x, c.y, c.z);
 		glColor3fv(&c.r);
 		return c;
 	}
 
 	static remath::Color4 color(const remath::Color4& c)
 	{
-		//glColor4fv(c.ptr());
 		glColor4fv(&c.r);
 		return c;
 	}
@@ -328,20 +295,15 @@ public:
 	static void setBlend(BlendMode RGBOperation, BlendFactor srcRGBFactor, BlendFactor dstRGBFactor,
 						 BlendMode AlphaOperation, BlendFactor srcAlphaFactor, BlendFactor dstAlphaFactor )
 	{
-//		if ((glBlendEquationSeparate !is null) && (glBlendFuncSeparate !is null))
-//		{
-			glBlendEquationSeparate(blendMode_toGL[RGBOperation], blendMode_toGL[AlphaOperation]);
-			glBlendFuncSeparate(blendFactor_toGL[srcRGBFactor],
-								blendFactor_toGL[dstRGBFactor],
-								blendFactor_toGL[srcAlphaFactor],
-								blendFactor_toGL[dstAlphaFactor]);
-//		} else
-//		{
-//			// try to approximate the desired blend
-//			glBlendFunc( blendFactor_toGL[srcRGBFactor], blendFactor_toGL[dstRGBFactor]);
-//			glBlendFunc( blendFactor_toGL[srcRGBFactor], blendFactor_toGL[dstRGBFactor]);
-//			glBlendEquation( blendMode_toGL[RGBOperation] );
-//		}
+		glBlendEquationSeparate(blendMode_toGL[RGBOperation], blendMode_toGL[AlphaOperation]);
+		glBlendFuncSeparate(blendFactor_toGL[srcRGBFactor],
+							blendFactor_toGL[dstRGBFactor],
+							blendFactor_toGL[srcAlphaFactor],
+							blendFactor_toGL[dstAlphaFactor]);
+//		// try to approximate the desired blend
+//		glBlendFunc( blendFactor_toGL[srcRGBFactor], blendFactor_toGL[dstRGBFactor]);
+//		glBlendFunc( blendFactor_toGL[srcRGBFactor], blendFactor_toGL[dstRGBFactor]);
+//		glBlendEquation( blendMode_toGL[RGBOperation] );
 	}
 
 	//deprecated
@@ -372,13 +334,6 @@ public:
 		return b ? GL_TRUE : GL_FALSE;
 	}
 
-//	static void vertex(vec2f[] vs...)	{	foreach(v; vs) glVertex2fv(v.ptr());	}
-//	static void vertex(remath::Vector3[] vs...)	{	foreach(v; vs) glVertex3fv(v.ptr());	}
-//	static void vertex(vec4f[] vs...)	{	foreach(v; vs) glVertex4fv(v.ptr());	}
-
-//	static void normal(float x, float y, float z) {	glNormal3f(x, y, z); }
-//	static void normal(remath::Vector3 nml)		{	glNormal3fv(nml.ptr());	}
-
 	static void translate(float x, float y, float z)
 	{
 		glTranslatef(x, y, z);
@@ -401,10 +356,11 @@ public:
 	{
 		glRotatef(angle, x, y, z);
 	}
-//	static void rotate(vec4f v)
-//{
-//	glRotatef(v.x, v.y, v.z, v.z);
-//}
+
+	static void rotate(remath::Vector4f& v)
+	{
+		glRotatef(v.x, v.y, v.z, v.z);
+	}
 
 	static void pushAttrib(int attribs)
 	{

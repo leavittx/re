@@ -7,11 +7,6 @@
 
 namespace recore {
 
-//TODO
-//typedef System::inst g_system;
-
-//template <typename TimeT = unsigned int>
-//	class System : public reutil::Singleton< System<TimeT> >
 class System : public reutil::Singleton<System>, public KeyboardEventsListener
 {
 public:

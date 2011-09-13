@@ -103,9 +103,6 @@ public:
 		return Vector3<T>(x, y, z);
 	}
 
-	//Vector3 operator * (Matrix const &mat);
-	//Vector3 operator *= (Matrix const &mat);
-
 	Vector3<T> operator * (const float &value)
 	{
 		float tx, ty, tz;

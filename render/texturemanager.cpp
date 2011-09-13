@@ -51,6 +51,7 @@ void TextureManager::addImage(string& name, Image *image)
 {
 	m_images[name] = image;
 }
+
 void TextureManager::bindTexture(const string& name, int texunit)
 {
 	int texunitoffset = texunit - GL_TEXTURE0_ARB;
@@ -61,68 +62,23 @@ void TextureManager::bindTexture(const string& name, int texunit)
 	}
 	if (m_textures.find(name) != m_textures.end())
 	{
-		//g_debug << "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << "\n";
-		TextureParameters &oldparams = *m_textureParameters[m_lastBoundTexture[texunitoffset]];
-		TextureParameters &newparams = *m_textureParameters[name];
-		/*
-   g_debug << "old texture name = " << m_lastBoundTexture[texunitoffset] << "\n";
-   g_debug << "oldparams.repeat = " << oldparams.m_repeat << "\n";
-   g_debug << "oldparams.linear = " << oldparams.m_linear << "\n\n";
-
-   g_debug << "new texture name = " << name << "\n";
-   g_debug << "newparams.repeat = " << newparams.m_repeat << "\n";
-   g_debug << "newparams.linear = " << newparams.m_linear << "\n";
-
-   GLint wrap_s, wrap_t;
-   glGetTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, &wrap_s);
-   glGetTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, &wrap_t);
-
-   if (wrap_s == GL_REPEAT)
-	g_debug << "wrap_s = GL_REPEAT\n";
-   else if (wrap_s == GL_CLAMP_TO_EDGE)
-	g_debug << "wrap_s = GL_CLAMP_TO_EDGE\n";
-   else if (wrap_s == GL_CLAMP)
-	g_debug << "wrap_s = GL_CLAMP\n";
-   else
-	g_debug << "wrap_s = " << wrap_s << " (unknown!)\n";
-
-   if (wrap_t == GL_REPEAT)
-	g_debug << "wrap_t = GL_REPEAT\n";
-   else if (wrap_t == GL_CLAMP_TO_EDGE)
-	g_debug << "wrap_t = GL_CLAMP_TO_EDGE\n";
-   else if (wrap_t == GL_CLAMP)
-	g_debug << "wrap_t = GL_CLAMP\n";
-   else
-	g_debug << "wrap_t = " << wrap_t << " (unknown!)\n";
- */
-		//glActiveTexture(texunit);
-		//we need to change the linear/nearest settings
-
-		/*
-   if (name == "kohina1.png" || name == "kohina2.png" || name == "kohina3.png" ||
-	name == "noise1.jpg" || name == "noise2.jpg" || name == "noise3.jpg")
-   {
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-   }
-   else*/
-		{
-			if (newparams.m_linear != oldparams.m_linear)
-			{
-				//g_debug << "set texture " << name << " to linear filter mode " << newparams.m_linear << "\n";
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, newparams.m_linear ? GL_LINEAR : GL_NEAREST);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, newparams.m_linear ? GL_LINEAR : GL_NEAREST);
-			}
-			if (newparams.m_repeat != oldparams.m_repeat)
-			{
-				int wrap = GL_CLAMP_TO_EDGE;//newparams.m_repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE;
-				glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S, wrap);
-				glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T, wrap);
-			}
-		}
-		//there is a bug here
-		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+//		TextureParameters &oldparams = *m_textureParameters[m_lastBoundTexture[texunitoffset]];
+//		TextureParameters &newparams = *m_textureParameters[name];
+//		if (newparams.m_linear != oldparams.m_linear)
+//		{
+//			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, newparams.m_linear ? GL_LINEAR : GL_NEAREST);
+//			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, newparams.m_linear ? GL_LINEAR : GL_NEAREST);
+//		}
+//		if (newparams.m_repeat != oldparams.m_repeat)
+//		{
+//			int wrap = newparams.m_repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE;
+//			glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S, wrap);
+//			glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T, wrap);
+//		}
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T, GL_REPEAT);
 		m_textures[name]->bind(texunit);
 		m_lastBoundTexture[texunitoffset] = name;
 	}
@@ -191,9 +147,6 @@ void TextureManager::loadImages()
 	string directory = "data/graphics/";
 	reutil::StringUtils::iterateDirectory(directory, filenames, false);
 
-	//add steps, one for uploading and one for loading
-//	democore::System::inst()->addLoadingScreenSteps(filenames.size() * 2);
-
 	vector<string>::iterator it;
 	for (it = filenames.begin(); it < filenames.end(); it++)
 	{
@@ -208,7 +161,6 @@ void TextureManager::loadImages()
 			{
 				addImage(filename, image);
 			}
-//			democore::System::inst()->advanceLoadingScreen(1);
 		}
 		else if (suffix == "png")
 		{
@@ -217,13 +169,11 @@ void TextureManager::loadImages()
 			{
 				addImage(filename, image);
 			}
-//			democore::System::inst()->advanceLoadingScreen(1);
 		}
 		else
 		{
 			g_debug << "non-image file " << filename << " found in graphics directory!" << endl;
 		}
-//		democore::System::inst()->drawLoadingScreen();
 	}
 }
 
@@ -278,10 +228,6 @@ void TextureManager::uploadImages()
 		{
 			image->releaseData();
 		}
-
-		//update and draw loading screen
-//		democore::System::inst()->advanceLoadingScreen(1);
-//		democore::System::inst()->drawLoadingScreen();
 	}
 	g_debug << "uploaded " << count << " textures, total video memory usage: " << (videoMemoryConsumption/1000) << "k" << endl;
 }
@@ -289,25 +235,6 @@ void TextureManager::uploadImages()
 Image& TextureManager::image(const string& name)
 {
 	return *m_images[name];
-}
-
-void TextureManager::dumpUnusedImages()
-{
-	g_debug << "" << endl;
-	g_debug << "TextureManager::dumpUnusedImages()" << endl;
-	g_debug << "-------------------" << endl;
-
-	map<string, Texture*>::iterator it;
-
-	for (it = m_textures.begin(); it != m_textures.end(); it++)
-	{
-		Texture *t = (*it).second;
-		if (!t->hasBeenUsed())
-		{
-			g_debug << "  unused texture: " << (*it).first << endl;
-		}
-	}
-	g_debug << "" << endl;
 }
 
 void TextureManager::bindDepthFBO()

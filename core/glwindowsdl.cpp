@@ -68,16 +68,6 @@ bool GLWindowSDL::pollEvents()
 			InputManager::inst().sendKeyboardEvent(KeyboardSDL::resolveKeyCode(event.key.keysym.sym));
 			break;
 
-//		case SDL_MOUSEMOTION:
-//			printf("Mouse moved by %d,%d to (%d,%d)\n",
-//			       event.motion.xrel, event.motion.yrel,
-//			       event.motion.x, event.motion.y);
-//			break;
-//		case SDL_MOUSEBUTTONDOWN:
-//			printf("Mouse button %d pressed at (%d,%d)\n",
-//			       event.button.button, event.button.x, event.button.y);
-//			break;
-
 		case SDL_QUIT:
 			return false;
 
@@ -91,7 +81,6 @@ bool GLWindowSDL::pollEvents()
 
 void GLWindowSDL::swapBuffers()
 {
-//	SDL_UpdateRect(m_screen,0,0,0,0);
 	SDL_GL_SwapBuffers();
 }
 

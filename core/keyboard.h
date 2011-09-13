@@ -46,10 +46,4 @@ enum Key
 	KeyS
 };
 
-//class Keyboard
-//{
-//public:
-//	virtual static unsigned char resolveKeyCode(unsigned char key);
-//};
-
 } // end of namespace 'recore'

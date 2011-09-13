@@ -1,5 +1,8 @@
 #include "sphere.h"
+#include "core/time.h"
 
+using namespace render;
+using namespace recore;
 using namespace std;
 
 const float SphereScene::ambientLight[] = { 0.4f, 0.4f, 0.4f, 1.0f };
@@ -60,13 +63,13 @@ void SphereScene::draw()
 	// Track camera angle
 //	glMatrixMode(GL_PROJECTION);
 //	glLoadIdentity();
-//	gluPerspective(45.0f, 1.0f, 10.0f, 10000.0f);
+//	gluPerspective(45.0f, 1.0f, 10.0f, 10000.0f)
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	gluLookAt(cameraPos[0], cameraPos[1], cameraPos[2], 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 
-//	glUtil::pushMatrix();
-//	glUtil::rotate(g_system.getTime()*0.1, 1, 1, 1);
+	gl::pushMatrix();
+	gl::rotate(Time::get()*0.1, 1, 1, 1);
 
 	// Clear the window with current clearing color
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -80,7 +83,7 @@ void SphereScene::draw()
 	// Draw objects in the scene
 	DrawModels();
 
-//	glUtil::popMatrix();
+	gl::popMatrix();
 }
 
 // Called to regenerate points on the sphere
@@ -124,8 +127,8 @@ void SphereScene::RegenerateSphere(void)
 		r3 = (GLfloat)(rand() - (RAND_MAX/2));
 
 		// determine normalizing scale factor
-		//scaleFactor = (/*g_pitch.matchFreqInterval(0, 100)*/g_pitch.isKick() ? 1.3f : 1.0f) / sqrt(r1*r1 + r2*r2 + r3*r3);
-		scaleFactor = 1.0f;
+//		scaleFactor = (/*g_pitch.matchFreqInterval(0, 100)*/g_pitch.isKick() ? 1.3f : 1.0f) / sqrt(r1*r1 + r2*r2 + r3*r3);
+		scaleFactor = 1.3f;
 
 		m_sphereVertexArray[(i*3)+0] = r1 * scaleFactor;
 		m_sphereVertexArray[(i*3)+1] = r2 * scaleFactor;
