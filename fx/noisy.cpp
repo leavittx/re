@@ -28,13 +28,6 @@ void NoisyScene::init()
 	SetTab2();
 	SetColormap();
 
-	m_vertexArray = (GLfloat *)malloc(sizeof(GLfloat) * m_numVertices * 3);
-	// Generate a buffer object
-	glGenBuffers(1, &m_bufferID);
-	// Create the data store
-	glBindBuffer(GL_ARRAY_BUFFER, m_bufferID);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * m_numVertices * 3, NULL, GL_STATIC_DRAW);
-
 	InputManager::inst().acceptKeyboardEvents(this);
 }
 
@@ -400,42 +393,4 @@ void NoisyScene::generateNewStar(int i)
 {
 	m_stars[i] = Vector3f(rand() % 400 - 100, rand() % 300 - 100,
 	                    -(rand() % 100 + 50));
-}
-
-void NoisyScene::regenerateTerrain(void)
-{
-	// Delete old vertex array memory
-	if (m_sphereVertexArray)
-		free(m_sphereVertexArray);
-
-	glBindBuffer(GL_ARRAY_BUFFER, m_bufferID);
-
-	// Avoid pipeline flush during glMapBuffer by
-	// marking data store as empty
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * m_numSphereVertices * 3, NULL,
-				 m_animating ? GL_STREAM_DRAW : GL_STATIC_DRAW);
-
-	m_sphereVertexArray = (GLfloat *)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
-	if (!m_sphereVertexArray)
-	{
-		g_debug << "Unable to map buffer object!" << endl;
-		return;
-	}
-
-	for (float i = -m_landscapeSize; i < m_landscapeSize; i += m_step)
-	{
-		glBegin(GL_TRIANGLE_STRIP);
-		for (float j = -m_landscapeSize; j < m_landscapeSize; j += m_step)
-		{
-			if (m_texture)
-				glTexCoord2d((i + 0.8) / 1.6 * m_texCoordK, (j + 0.8) / 1.6 * m_texCoordK);
-
-			float h = noise2d_turb(i * m_turbK, j * m_turbK, m_turbOmega);
-			Color3 col = get_color(h);
-			glColor3d(col.r / 255.0, col.g / 255.0, col.b / 255.0);
-			glVertex3d(j, i, h);
-			glVertex3d(j, (i + m_step), noise2d_turb((i + m_step) * m_turbK, j * m_turbK, m_turbOmega));
-		}
-		glEnd();
-	}
 }
