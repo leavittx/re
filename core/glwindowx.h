@@ -36,6 +36,8 @@ private:
 
 	int m_width, m_height;
 	bool m_fullscreen;
+
+	void goFullscreen();
 };
 
 } // end of namespace 'recore'

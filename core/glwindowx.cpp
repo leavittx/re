@@ -41,6 +41,12 @@ void EarlyInitGLXfnPointers()
 
 bool GLWindowX::create(int width, int height, int bpp, bool fullscreen)
 {
+	// Remember if full screen mode (for window destroy)
+	m_fullscreen = fullscreen;
+	// Remember width & height
+	m_width = width;
+	m_height = height;
+
 #if 0
 	Window RootWindow = 0;
 	XVisualInfo* VisualInfo = None;
@@ -56,12 +62,6 @@ bool GLWindowX::create(int width, int height, int bpp, bool fullscreen)
 		GLX_RED_SIZE, 8, GLX_GREEN_SIZE, 8, GLX_BLUE_SIZE, 8,
 		GLX_ALPHA_SIZE, 8, GLX_DEPTH_SIZE, 16, GLX_STENCIL_SIZE, 8,
 		GLX_DOUBLEBUFFER, True, None };
-
-	// Remember if full screen mode (for window destroy)
-	m_fullscreen = fullscreen;
-	// Remember width & height
-	m_width = width;
-	m_height = height;
 
 	m_display = XOpenDisplay(None);
 
@@ -240,12 +240,6 @@ bool GLWindowX::create(int width, int height, int bpp, bool fullscreen)
 					GLX_GREEN_SIZE,    8,
 					0 };
 
-	// Remember if full screen mode (for window destroy)
-	m_fullscreen = fullscreen;
-	// Remember width & height
-	m_width = width;
-	m_height = height;
-
 	EarlyInitGLXfnPointers();
 
 	// Tell X we are going to use the display
@@ -255,7 +249,7 @@ bool GLWindowX::create(int width, int height, int bpp, bool fullscreen)
 	glXQueryVersion(m_display, &nMajorVer, &nMinorVer);
 //	printf("Supported GLX version - %d.%d\n", nMajorVer, nMinorVer);
 
-	if(nMajorVer == 1 && nMinorVer < 2)
+	if (nMajorVer == 1 && nMinorVer < 2)
 	{
 //		printf("ERROR: GLX 1.2 or greater is necessary\n");
 		XCloseDisplay(m_display);
@@ -268,7 +262,7 @@ bool GLWindowX::create(int width, int height, int bpp, bool fullscreen)
 	// Now create an X window
 	winAttribs.event_mask = ExposureMask | VisibilityChangeMask |
 							KeyPressMask | PointerMotionMask    |
-							StructureNotifyMask ;
+							StructureNotifyMask;
 
 	winAttribs.border_pixel = 0;
 	winAttribs.bit_gravity = StaticGravity;
@@ -284,9 +278,20 @@ bool GLWindowX::create(int width, int height, int bpp, bool fullscreen)
 
 	XMapWindow(m_display, m_window);
 
+	// Retrieve some useful atoms
+	m_deleteMessage = XInternAtom(m_display, "WM_DELETE_WINDOW", False);
+	m_stateMessage = XInternAtom(m_display, "_NET_WM_STATE", False);
+	m_fullscreenMessage = XInternAtom(m_display, "_NET_WM_STATE_FULLSCREEN", False);
+
+	// Make it full screen if needed
+	if (m_fullscreen)
+	{
+		goFullscreen();
+	}
+
 	// Also create a new GL context for rendering
 	GLint attribs[] = {
-	  GLX_CONTEXT_MAJOR_VERSION_ARB, 2,
+	  GLX_CONTEXT_MAJOR_VERSION_ARB, 3,
 	  GLX_CONTEXT_MINOR_VERSION_ARB, 1,
 	  0 };
 	m_context = glXCreateContextAttribsARB(m_display, fbConfigs[0], 0, True, attribs);
@@ -304,6 +309,48 @@ bool GLWindowX::create(int width, int height, int bpp, bool fullscreen)
 //	printf("GL Version = %s\n", s);
 
 	return true;
+}
+
+void GLWindowX::goFullscreen()
+{
+	// Hide cursor
+	Cursor InvisibleCursor = None;
+	char cursorData[32];
+	XColor cursorColor;
+	Pixmap cursorPixmap;
+
+	memset(cursorData, 0, sizeof(cursorData));
+
+	memset(&cursorColor, 0, sizeof(cursorColor));
+
+	cursorPixmap = XCreateBitmapFromData(m_display, DefaultRootWindow(m_display), cursorData, 16, 16);
+
+	if (cursorPixmap != None)
+	{
+		InvisibleCursor = XCreatePixmapCursor(m_display, cursorPixmap, cursorPixmap, &cursorColor, &cursorColor, 0, 0);
+
+		XFreePixmap(m_display, cursorPixmap);
+
+		if (InvisibleCursor != None)
+		{
+			XDefineCursor(m_display, m_window, InvisibleCursor);
+		}
+	}
+
+	//		m_stateMessage = XInternAtom(m_display, "_NET_WM_STATE", False);
+	//		m_fullscreenMessage = XInternAtom(m_display, "_NET_WM_STATE_FULLSCREEN", False);
+
+	XEvent xev;
+	memset(&xev, 0, sizeof(xev));
+
+	xev.xclient.type = ClientMessage;
+	xev.xclient.window = m_window;
+	xev.xclient.message_type = m_stateMessage;
+	xev.xclient.format = 32;
+	xev.xclient.data.l[0] = 1;
+	xev.xclient.data.l[1] = m_fullscreenMessage;
+
+	XSendEvent(m_display, DefaultRootWindow(m_display), False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
 }
 
 void GLWindowX::destroy()
