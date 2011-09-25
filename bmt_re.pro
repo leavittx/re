@@ -19,7 +19,8 @@ SOURCES += \
     render/texture.cpp \
     render/texturemanager.cpp \
     render/fbo.cpp \
-    fx/noisy.cpp
+    fx/noisy.cpp \
+    core/glwindowx.cpp
 
 HEADERS += \
     core/glwindow.h \
@@ -55,7 +56,10 @@ HEADERS += \
     render/texturemanager.h \
     render/fbo.h \
     fx/noisy.h \
-    core/time.h
+    core/time.h \
+    core/glwindowx.h \
+    core/keyboardx.h \
+    core/timerlinux.h
 
 LIBS += \
     -lSDL \
@@ -68,6 +72,10 @@ INCLUDEPATH += \
     /usr/include/ \
     /usr/include/c++/4.6.1/ \
     /usr/lib/gcc/x86_64-pc-linux-gnu/4.5.3/include/g++-v4/
+
+
+
+
 
 
 

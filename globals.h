@@ -1,8 +1,8 @@
 #pragma once
 
-#include <GL/glew.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
+//#include <GL/glew.h>
+//#include <GL/gl.h>
+//#include <GL/glu.h>
 
 #include <string>
 #include <vector>
@@ -12,6 +12,9 @@
 #include <cmath>
 
 typedef unsigned int TimeT;
+
+#define __SDL__ 0
+#define __X11__ 1
 
 #include "util/debug.h"
 #include "util/singleton.h"

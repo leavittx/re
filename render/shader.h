@@ -1,6 +1,8 @@
 #pragma once
 
 #include "../globals.h"
+#include <GL/glew.h>
+#include <GL/gl.h>
 
 namespace render {
 

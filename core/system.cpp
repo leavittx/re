@@ -1,6 +1,13 @@
 #include "system.h"
-#include "glwindowsdl.h"
-#include "timersdl.h"
+#include <GL/glew.h>
+
+#if __SDL__
+	#include "glwindowsdl.h"
+	#include "timersdl.h"
+#elif __X11__
+	#include "glwindowx.h"
+	#include "timerlinux.h"
+#endif
 
 using namespace std;
 using namespace recore;
@@ -15,10 +22,15 @@ System::~System()
 
 void System::init()
 {
+#if __SDL__
 	m_glWindow = new GLWindowSDL();
 	m_timer = new TimerSDL();
+#elif __X11__
+	m_glWindow = new GLWindowX();
+	m_timer = new TimerLinux();
+#endif
 
-	m_endTime = 1000000;
+	m_endTime = 10000000;
 
 	m_frameCount = 0;
 	m_frameTimer = 0;
