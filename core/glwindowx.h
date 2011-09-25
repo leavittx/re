@@ -1,6 +1,5 @@
 #pragma once
 
-//#include <GL/glew.h>
 #include <GL/glxew.h>
 #include <GL/glx.h>
 #include <X11/Xlib.h>

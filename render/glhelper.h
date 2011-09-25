@@ -121,12 +121,15 @@ public:
 		m_aspectratio = (float)w / h;
 
 		glViewport(0, (m_height - h) / 2, w, h);
+
+#ifdef __DEPRECATED_PROFILE__
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 		//gluPerspective(45.0f, aspect, 0.1f, 14000.0f);
 		gluPerspective(m_fov, m_aspectratio, m_zNear, m_zFar);
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
+#endif /* ifdef __DEPRECATED_PROFILE__ */
 	}
 
 	static void resetViewport()
@@ -134,6 +137,7 @@ public:
 		glViewport(0, 0, m_width, m_height);
 	}
 
+#ifdef __DEPRECATED_PROFILE__
 	static void frustum(float size, float zNear, float zFar)
 	{
 		glMatrixMode(GL_PROJECTION);
@@ -198,6 +202,7 @@ public:
 		loadMatrix(m);
 		return m;
 	}
+#endif /* ifdef __DEPRECATED_PROFILE__ */
 
 	static void check()
 	{
@@ -337,6 +342,7 @@ public:
 		return b ? GL_TRUE : GL_FALSE;
 	}
 
+#ifdef __DEPRECATED_PROFILE__
 	static void translate(float x, float y, float z)
 	{
 		glTranslatef(x, y, z);
@@ -382,6 +388,7 @@ public:
 	{
 		glPopMatrix();
 	}
+#endif /* ifdef __DEPRECATED_PROFILE__ */
 };
 
 typedef glHelper gl;

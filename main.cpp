@@ -8,6 +8,7 @@
 #include "fx/test.h"
 #include "fx/noisy.h"
 #include "fx/sphere.h"
+#include "fx/testcoreprofile.h"
 
 using namespace recore;
 using namespace redemo;
@@ -16,11 +17,15 @@ using namespace std;
 
 reutil::Debug reutil::g_debug;
 
-int main(void)
+int main()
 {
 	System::inst().init();
 
 	Demo *demo = new Demo();
+
+	//TODO
+//	glEnableClientState(GL_NORMAL_ARRAY);
+//	glEnableClientState(GL_VERTEX_ARRAY);
 
 	if (demo->initOk())
 	{
@@ -28,12 +33,14 @@ int main(void)
 		TextureManager::inst().loadImages();
 		ShaderManager::inst().init();
 
-		demo->addScene("test", new TestScene());
-		demo->addScene("noisy", new NoisyScene());
+//		demo->addScene("test", new TestScene());
+//		demo->addScene("noisy", new NoisyScene());
 //		demo->addScene("sphere", new SphereScene());
-		demo->addSceneToTimeline("noisy",      0,  100000, 0);
+//		demo->addSceneToTimeline("noisy",      0,  1000000, 0);
 //		demo->addSceneToTimeline("sphere",     0,  100000, 1);
-//		demo->addSceneToTimeline("test",      0, 1000000, 0);
+
+		demo->addScene("core", new TestCoreProfileScene());
+		demo->addSceneToTimeline("core",      0, 1000000, 0);
 
 		TextureManager::inst().uploadImages();
 		ShaderManager::inst().loadShaders();
@@ -50,13 +57,12 @@ int main(void)
 
 			//too often title updating kills gnome-shell
 			static int lastUpdate = System::inst().getTime();
-			if (System::inst().getTime() - lastUpdate > 20)
+			if (System::inst().getTime() - lastUpdate > 200)
 			{
-				lastUpdate = System::inst().getTime();
-
 				stringstream ss;
 				ss << "time = " << System::inst().getTime() << " fps = " << System::inst().getFPS();
 				System::inst().setWindowTitle(ss.str().c_str());
+				lastUpdate = System::inst().getTime();
 			}
 
 			demorunning = System::inst().pollEvents() &&

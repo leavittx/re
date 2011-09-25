@@ -63,14 +63,13 @@ void System::updateFPS()
 	m_frameCount++;
 	m_frameTimer += dt;
 
-	//update per second
+	// Update per second
 	if (m_frameTimer > 1000)
 	{
 		m_FPS = 1000.0f * (m_frameCount / (float)m_frameTimer);
 		m_frameCount = 0;
 		m_frameTimer = 0;
 	}
-
 }
 
 float System::getFPS()
@@ -87,12 +86,17 @@ bool System::initOpenGL(Config &cfg)
 		return false;
 	}
 	// Initialize glew
+	glewExperimental = GL_TRUE; // opengl 3.3 won't work without this
 	GLenum err = glewInit();
 	if (err != GLEW_OK)
 	{
 		g_debug << "ERROR! Cannot initialize GLEW!" << endl;
+		g_debug << "	" << glewGetErrorString(err) << endl;
+		return false;
 	}
+	// Initialize timer
 	m_timer->init();
+	// All ok!
 	return true;
 }
 

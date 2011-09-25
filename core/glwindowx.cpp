@@ -3,25 +3,18 @@
 #include "inputmanager.h"
 #include "render/glhelper.h"
 
-#include <cstring>
-
-#include <GL/gl.h>
-#include <GL/glx.h>
-
-#include <X11/X.h>
-
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <X11/Xos.h>
-#include <X11/Xatom.h>
-#include <X11/keysym.h>
+//#include <cstring>
 
 using namespace recore;
 
-typedef GLXContext (* PFNGLXCREATECONTEXTATTRIBSARBPROCTEMP)(Display* dpy, GLXFBConfig config, GLXContext share_context, Bool direct, const int *attrib_list);
-
 GLWindowX::GLWindowX()
 {
+	m_display = 0;
+	m_window = 0;
+	m_context = 0;
+	m_deleteMessage = 0;
+	m_stateMessage = 0;
+	m_fullscreenMessage = 0;
 }
 
 GLWindowX::~GLWindowX()
@@ -30,7 +23,6 @@ GLWindowX::~GLWindowX()
 
 void EarlyInitGLXfnPointers()
 {
-
 	glGenVertexArraysAPPLE = (void(*)(GLsizei, const GLuint*))glXGetProcAddressARB((GLubyte*)"glGenVertexArrays");
 	glBindVertexArrayAPPLE = (void(*)(const GLuint))glXGetProcAddressARB((GLubyte*)"glBindVertexArray");
 	glDeleteVertexArraysAPPLE = (void(*)(GLsizei, const GLuint*))glXGetProcAddressARB((GLubyte*)"glGenVertexArrays");
@@ -273,7 +265,7 @@ bool GLWindowX::create(int width, int height, int bpp, bool fullscreen)
 
 	m_window = XCreateWindow(m_display, DefaultRootWindow(m_display), 20, 20,
 				 m_width, m_height, 0,
-							 visualInfo->depth, InputOutput,
+				 visualInfo->depth, InputOutput,
 				 visualInfo->visual, winmask, &winAttribs);
 
 	XMapWindow(m_display, m_window);
@@ -292,21 +284,11 @@ bool GLWindowX::create(int width, int height, int bpp, bool fullscreen)
 	// Also create a new GL context for rendering
 	GLint attribs[] = {
 	  GLX_CONTEXT_MAJOR_VERSION_ARB, 3,
-	  GLX_CONTEXT_MINOR_VERSION_ARB, 1,
+	  GLX_CONTEXT_MINOR_VERSION_ARB, 3,
 	  0 };
+
 	m_context = glXCreateContextAttribsARB(m_display, fbConfigs[0], 0, True, attribs);
 	glXMakeCurrent(m_display, m_window, m_context);
-
-//	GLenum err = glewInit();
-//	if (GLEW_OK != err)
-//	{
-//		/* Problem: glewInit failed, something is seriously wrong. */
-//		fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
-//		return false;
-//	}
-
-//	const GLubyte *s = glGetString(GL_VERSION);
-//	printf("GL Version = %s\n", s);
 
 	return true;
 }
@@ -423,11 +405,9 @@ bool GLWindowX::pollEvents()
 		case ConfigureNotify:
 			m_width = event.xconfigure.width;
 			m_height = event.xconfigure.height;
-
 			render::gl::resize(getWidth(), getHeight(), render::gl::ASPECTRATIO_16_10);
 
 //			glViewport(0, 0, width, height);
-
 			//do reshape here (not needed)
 			break;
 
