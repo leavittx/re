@@ -1,3 +1,5 @@
+#ifdef __DEPRECATED_PROFILE__
+
 #include "test.h"
 #include "core/system.h"
 #include "core/time.h"
@@ -42,3 +44,5 @@ void TestScene::draw()
 		glVertex2f(0, size*scale);
 	glEnd();
 }
+
+#endif /* ifdef __DEPRECATED_PROFILE__ */

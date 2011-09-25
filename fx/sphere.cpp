@@ -1,3 +1,5 @@
+#ifdef __DEPRECATED_PROFILE__
+
 #include "sphere.h"
 #include "core/time.h"
 
@@ -207,3 +209,5 @@ void SphereScene::DrawModels(void)
 		}
 	}
 }
+
+#endif /* ifdef __DEPRECATED_PROFILE__ */

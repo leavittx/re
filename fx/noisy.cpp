@@ -1,3 +1,5 @@
+#ifdef __DEPRECATED_PROFILE__
+
 #include "noisy.h"
 #include "core/time.h"
 #include "render/texturemanager.h"
@@ -18,7 +20,7 @@ void NoisyScene::init()
 	m_turbK = 3;//1;
 	m_texCoordK = 1.0f;
 
-	m_nStars = 2000;
+	m_nStars = 20000;
 	m_starsSpeed = 1.0f;
 	m_stars.resize(m_nStars);
 	for (int i = 0; i < m_nStars; i++)
@@ -44,42 +46,48 @@ void NoisyScene::draw()
 	gl::frustum(2.0f, 1.0f, 150.0f);
 
 //	gl::clearColor(Color4((GLclampf)62 / 255, (GLclampf)92 / 255, (GLclampf)24 / 255, 1.0f));
+//	gl::clearColor(Color4(0.0f, 0.4f, 1.0f, 1.0f));
+	gl::clearColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
+//	static bool flag = 1;
+//	if (flag) {
 	gl::clear(gl::ALL);
+//	flag = false;
+//	}
 
 	// Stars
-	gl::pointSize(1.0f);
-	gl::color(Color3(1.0f, 1.0f, 1.0f));
-    glPushMatrix();
-    glBegin(GL_POINTS);
-	for (int i = 0; i < (int)m_stars.size(); i++)
-    {
-		glVertex3f(m_stars[i].x, m_stars[i].y, m_stars[i].z);
-        m_stars[i].z += m_starsSpeed;
-        if (m_stars[i].z >= 10)
-			generateNewStar(i);
-    }
-    glEnd();
-    glPopMatrix();
+	gl::pointSize(5.0f);
+//	gl::color(Color3(1.0f, 0.0f, 1.0f));
+//	gl::pushMatrix();
+//	glBegin(GL_POINTS);
+//	for (int i = 0; i < (int)m_stars.size(); i++)
+//	{
+//		glVertex3f(m_stars[i].x, m_stars[i].y, m_stars[i].z);
+//		m_stars[i].z += m_starsSpeed;
+//		if (m_stars[i].z >= 10)
+//			generateNewStar(i);
+//	}
+//	glEnd();
+//	gl::popMatrix();
 
 	// 1-dimensional noise
 //	gl::pushMatrix();
 //	gl::translate(0.0f, 0.0f, -6.0f);
 //	gl::rotate(100.0f, 1.0f, 0.0f, 0.0f);
-//	gl::rotate(50.0f * Time::get()*0.001, 0.0f, 0.0f, 1.0f);
+//	gl::rotate(50.0f * Time::gets(), 0.0f, 0.0f, 1.0f);
 //	gl::scale(3.0f, 3.0f, 3.0f);
-//	draw_1d_noise(Time::get()*0.001 * 10);
+//	draw_1d_noise(Time::gets() * 10);
 //	gl::popMatrix();
 
 	// 2-dimensional noise
 	gl::pushMatrix();
 	gl::translate(0.0f, 2.0f, -6.0f);
 	gl::rotate(130.0f, 1.0f, 0.0f, 0.0f);
-	gl::rotate(35.0f * Time::get()*0.001, 0.0f, 0.0f, 1.0f);
+	gl::rotate(35.0f * Time::gets()*1.0f, 0.0f, 0.0f, 1.0f);
 	gl::scale(2.9f, 2.9f, 2.9f);
 
 //	draw_axes();
 //	draw_smth();
-	draw_2d_noise(Time::get()*0.001);
+	draw_2d_noise(Time::gets());
 //  draw_my_image(&image, 0, 0);
 	gl::popMatrix();
 }
@@ -96,18 +104,22 @@ void NoisyScene::handleKeyboardEvent(Key key)
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		break;
 
+	case KeyCapsLock:
+		glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
+		break;
+
 	case KeySpace:
 		m_texture = !m_texture;
 		break;
 
 	case KeyLShift:
-		if (m_step < 0.2)
+//		if (m_step < 0.2)
 			m_step += 0.01;
 		break;
 
 	case KeyRShift:
-		if (m_step > 0.02)
-			m_step -= 0.01;
+		if (m_step > 0.005)
+			m_step -= 0.005;
 		break;
 
 	case KeyUp:
@@ -259,14 +271,6 @@ void NoisyScene::draw_smth()
 
 void NoisyScene::SetColormap()
 {
-//	m_colormap[0].n = 0.3;
-//	m_colormap[0].col = Color3( 19, 117, 207);
-//	m_colormap[1].n = 0.4;
-//	m_colormap[1].col = Color3(  9, 201,  22);
-//	m_colormap[2].n = 0.5;
-//	m_colormap[2].col = Color3(133, 106,  42);
-//	m_colormap[3].n = 0.6;
-//	m_colormap[3].col = Color3(181, 101, 211);
 	m_colormap[0].n = 0.3;
 	m_colormap[0].col = Color3( 19, 117, 207);
 	m_colormap[1].n = 0.4;
@@ -275,6 +279,14 @@ void NoisyScene::SetColormap()
 	m_colormap[2].col = Color3(133, 106,  42);
 	m_colormap[3].n = 0.6;
 	m_colormap[3].col = Color3(181, 101, 211);
+//	m_colormap[0].n = 0.3;
+//	m_colormap[0].col = Color3(0.98*255, 0.625*255, 0.12*255);
+//	m_colormap[1].n = 0.4;
+//	m_colormap[1].col = Color3(0.98*255, 0.04*255, 0.7*255);
+//	m_colormap[2].n = 0.5;
+//	m_colormap[2].col = Color3(0.6*255, 0.4*255, 0.7*255);
+//	m_colormap[3].n = 0.6;
+//	m_colormap[3].col = Color3(181, 101, 211);
 }
 
 remath::Color3 NoisyScene::get_color(float h)
@@ -391,6 +403,9 @@ float NoisyScene::bezier(float x)
 
 void NoisyScene::generateNewStar(int i)
 {
-	m_stars[i] = Vector3f(rand() % 400 - 100, rand() % 300 - 100,
-	                    -(rand() % 100 + 50));
+	m_stars[i] = Vector3f(rand() % 400 - 100,
+						  rand() % 300 - 100,
+						-(rand() % 100 + 50));
 }
+
+#endif /* ifdef __DEPRECATED_PROFILE__ */
