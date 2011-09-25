@@ -20,7 +20,7 @@ public:
 	}
 
 	// Time in seconds
-	static TimeT gets()
+	static float gets()
 	{
 		return System::inst().getTime() * 0.001f;
 	}
