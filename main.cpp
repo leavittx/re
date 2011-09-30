@@ -9,6 +9,7 @@
 #include "fx/noisy.h"
 #include "fx/sphere.h"
 #include "fx/testcoreprofile.h"
+#include "fx/terrain.h"
 
 using namespace recore;
 using namespace redemo;
@@ -39,8 +40,11 @@ int main()
 //		demo->addSceneToTimeline("noisy",      0,  1000000, 0);
 //		demo->addSceneToTimeline("sphere",     0,  100000, 1);
 
-		demo->addScene("core", new TestCoreProfileScene());
-		demo->addSceneToTimeline("core",      0, 1000000, 0);
+//		demo->addScene("core", new TestCoreProfileScene());
+//		demo->addSceneToTimeline("core", 0, 1000000, 0);
+
+		demo->addScene("terrain", new TerrainScene());
+		demo->addSceneToTimeline("terrain", 0, 1000000, 0);
 
 		TextureManager::inst().uploadImages();
 		ShaderManager::inst().loadShaders();

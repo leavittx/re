@@ -81,7 +81,7 @@ void FBOManager::init()
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 		glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, m_depthTex, 0);
-		if(glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT) == GL_FRAMEBUFFER_COMPLETE_EXT)
+		if (glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT) == GL_FRAMEBUFFER_COMPLETE_EXT)
 		{
 			break;
 		}
@@ -124,8 +124,7 @@ void FBOManager::init()
 
 	GLenum status = glCheckFramebufferStatusEXT( GL_FRAMEBUFFER_EXT );
 
-	switch (status)
-	{
+	switch (status) {
 	case GL_FRAMEBUFFER_COMPLETE_EXT:
 		// All ok
 		break;

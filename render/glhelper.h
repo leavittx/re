@@ -3,7 +3,13 @@
 #include "../globals.h"
 #include <GL/glew.h>
 #include <GL/gl.h>
-#include <GL/glu.h>
+//#include <GL/glu.h>
+
+#include "frustum.h"
+#include "batch/batch.h"
+#include "batch/trianglebatch.h"
+
+//#include "GLTools/GLFrustum.h"
 
 namespace render {
 
@@ -69,16 +75,41 @@ private:
 	static const GLint blendMode_toGL[lastBlendMode + 1];
 	static const GLint blendFactor_toGL[lastBlendFactor + 1];
 
-	static float m_zNear, m_zFar, m_fov;
+//	static float m_zNear, m_zFar, m_fov;
 	static int m_width, m_height;
 	static float m_aspectratio;
 
 public:
+	static GLFrustum m_viewFrustum;
+
+public:
+	//		GLUtesselator
+
+	// Get the OpenGL version number
+	void gltGetOpenGLVersion(GLint &nMajor, GLint &nMinor)
+	{
+		glGetIntegerv(GL_MAJOR_VERSION, &nMajor);
+		glGetIntegerv(GL_MINOR_VERSION, &nMinor);
+	}
+
+	// This function determines if the named OpenGL Extension is supported
+	// Returns 1 or 0
+	int gltIsExtSupported(const char *extension)
+	{
+		GLint nNumExtensions;
+		glGetIntegerv(GL_NUM_EXTENSIONS, &nNumExtensions);
+
+		for (GLint i = 0; i < nNumExtensions; i++)
+			if (strcmp(extension, (const char *)glGetStringi(GL_EXTENSIONS, i)) == 0)
+				return 1;
+		return 0;
+	}
+
 	static void init(int w, int h, AspectRatio aspect)
 	{
-		m_fov = 45.0f;
-		m_zNear = 0.1f;
-		m_zFar = 14000.0f;
+//		m_fov = 45.0f;
+//		m_zNear = 0.1f;
+//		m_zFar = 14000.0f;
 
 		resize(w, h, aspect);
 
@@ -104,8 +135,7 @@ public:
 		m_width = w;
 		m_height = h;
 
-		switch (aspect)
-		{
+		switch (aspect) {
 		case ASPECTRATIO_4_3:
 			break;
 		case ASPECTRATIO_5_4:
@@ -120,7 +150,9 @@ public:
 
 		m_aspectratio = (float)w / h;
 
-		glViewport(0, (m_height - h) / 2, w, h);
+		setViewport(0, (m_height - h) / 2, w, h);
+
+		m_viewFrustum.SetPerspective(35.0f, float(w)/float(h), 1.0f, 1000.0f);
 
 #ifdef __DEPRECATED_PROFILE__
 		glMatrixMode(GL_PROJECTION);
@@ -134,7 +166,7 @@ public:
 
 	static void resetViewport()
 	{
-		glViewport(0, 0, m_width, m_height);
+		setViewport(0, 0, m_width, m_height);
 	}
 
 #ifdef __DEPRECATED_PROFILE__
@@ -204,6 +236,8 @@ public:
 	}
 #endif /* ifdef __DEPRECATED_PROFILE__ */
 
+#ifdef __DEPRECATED_PROFILE__
+	// We assume glu is deprecated
 	static void check()
 	{
 		GLint r = glGetError();
@@ -213,36 +247,31 @@ public:
 
 		}
 	}
+#endif /* ifdef __DEPRECATED_PROFILE__ */
 
+	// Check for general GL errors that may affect rendering
 	static void debug(const std::string& text)
 	{
 		GLenum error = glGetError();
-		switch (error)
-		{
+		switch (error) {
 			case GL_NO_ERROR:
 	//			reutil::g_debug << text << ": OK!" << std::endl;
 				break;
-
 			case GL_INVALID_ENUM:
 				reutil::g_debug << "OpenGL error! " << text << " : GL_INVALID_ENUM" << std::endl;
 				break;
-
 			case GL_INVALID_VALUE:
 				reutil::g_debug << "OpenGL error! " << text << " : GL_INVALID_VALUE" << std::endl;
 				break;
-
 			case GL_INVALID_OPERATION:
 				reutil::g_debug << "OpenGL error! " << text << " : GL_INVALID_OPERATION" << std::endl;
 				break;
-
 			case GL_STACK_OVERFLOW:
 				reutil::g_debug << "OpenGL error! " << text << " : GL_STACK_OVERFLOW" << std::endl;
 				break;
-
 			case GL_STACK_UNDERFLOW:
 				reutil::g_debug << "OpenGL error! " << text << " : GL_STACK_UNDERFLOW" << std::endl;
 				break;
-
 			case GL_OUT_OF_MEMORY:
 				reutil::g_debug << "OpenGL error! " << text << " : GL_OUT_OF_MEMORY" << std::endl;
 				break;
@@ -267,7 +296,8 @@ public:
 			if (!cullFront) glPolygonMode(GL_FRONT, cullMode_toGL[front]);
 			if (!cullBack)  glPolygonMode(GL_BACK,  cullMode_toGL[back]);
 		}
-		glHelper::check();
+
+		debug("glHelper::setCullMode");
 	}
 
 	static float pointSize(float new_pointSize)
@@ -314,17 +344,19 @@ public:
 //		glBlendEquation( blendMode_toGL[RGBOperation] );
 	}
 
-	//deprecated
+	// deprecated
 	static void setViewport(int x, int y, int width, int height)
 	{
 		glViewport(x, y, width, height);
-		glHelper::check();
+
+		debug("glHelper::setViewport");
 	}
 
 	static void viewport(remath::Recti view)
 	{
 		glViewport(view.x1(), view.y1(), view.width(), view.height());
-		glHelper::check();
+
+		debug("glHelper::viewport");
 	}
 
 	static void clear(Buffer b)
@@ -334,7 +366,8 @@ public:
 		if (b & STENCIL) mask |= GL_STENCIL_BUFFER_BIT;
 		if (b & DEPTH)   mask |= GL_DEPTH_BUFFER_BIT;
 		glClear(mask);
-		glHelper::check();
+
+		debug("glHelper::clear");
 	}
 
 	static bool glBool(bool b)
