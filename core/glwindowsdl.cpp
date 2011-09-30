@@ -56,12 +56,11 @@ bool GLWindowSDL::pollEvents()
 	//TODO: if or while
 	if (SDL_PollEvent(&event))
 	{
-		switch (event.type)
-		{
+		switch (event.type) {
 		case SDL_VIDEORESIZE:
 			// Previous bpp value is stored in m_screen->format->BitsPerPixel, but default is ok
 			m_screen = SDL_SetVideoMode(event.resize.w, event.resize.h, 0, m_screen->flags);
-			render::gl::resize(getWidth(), getHeight(), render::gl::ASPECTRATIO_4_3);
+			render::gl::resize(getWidth(), getHeight(), render::gl::ASPECTRATIO_16_10);
 			break;
 
 		case SDL_KEYDOWN:

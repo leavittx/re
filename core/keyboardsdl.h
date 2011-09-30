@@ -10,8 +10,7 @@ class KeyboardSDL
 public:
 	static Key resolveKeyCode(SDLKey key)
 	{
-		switch (key)
-		{
+		switch (key) {
 		case SDLK_BACKSPACE:	return KeyBackspace;
 		case SDLK_TAB:			return KeyTab;
 		case SDLK_RETURN:		return KeyEnter;

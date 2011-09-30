@@ -10,9 +10,7 @@ class KeyboardX
 public:
 	static Key resolveKeyCode(unsigned int key)
 	{
-
-		switch (key)
-		{
+		switch (key) {
 		case XK_Tab:                    return KeyTab;
 		case XK_Return:                 return KeyEnter;
 		case XK_space:					return KeySpace;

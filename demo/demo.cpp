@@ -259,8 +259,7 @@ void Demo::update()
 void Demo::handleKeyboardEvent(Key key)
 {
 	// TODO: handle keyboard events only if developer mode enabled
-	switch (key)
-	{
+	switch (key) {
 	case KeySpace:
 		// Pause/resume
 		m_running = !m_running;

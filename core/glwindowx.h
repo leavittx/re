@@ -35,6 +35,7 @@ private:
 
 	int m_width, m_height;
 	bool m_fullscreen;
+	int m_bpp;
 
 	void goFullscreen();
 };

@@ -130,8 +130,7 @@ int System::getTime()
 
 void System::handleKeyboardEvent(Key key)
 {
-	switch (key)
-	{
+	switch (key) {
 	case KeyEsc:
 		escape = true;
 		break;

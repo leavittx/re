@@ -33,6 +33,8 @@ void EarlyInitGLXfnPointers()
 
 bool GLWindowX::create(int width, int height, int bpp, bool fullscreen)
 {
+	// Avoid compiler warning
+	m_bpp = bpp;
 	// Remember if full screen mode (for window destroy)
 	m_fullscreen = fullscreen;
 	// Remember width & height
@@ -385,8 +387,7 @@ bool GLWindowX::pollEvents()
 	{
 		XNextEvent(m_display, &event);
 
-		switch (event.type)
-		{
+		switch (event.type) {
 		case KeyPress:
 			InputManager::inst().sendKeyboardEvent(KeyboardX::resolveKeyCode(XLookupKeysym(&event.xkey, 0)));
 			break;

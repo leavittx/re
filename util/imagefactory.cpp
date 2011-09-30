@@ -61,7 +61,7 @@ Image* ImageFactory::loadJPG(std::string& filename)
 	ilBindImage(imageID);
 
 	// Load image from a file
-	if(!ilLoadImage((char *)filename.c_str()))
+	if (!ilLoadImage((char *)filename.c_str()))
 	{
 		g_debug << "loading image " << filename << " failed!" << std::endl;
 		return 0;
@@ -97,7 +97,7 @@ Image* ImageFactory::loadPNG(std::string& filename)
 	ilBindImage(imageID);
 
 	// Load image from a file
-	if(!ilLoadImage((char *)filename.c_str()))
+	if (!ilLoadImage((char *)filename.c_str()))
 	{
 		g_debug << "loading image " << filename << " failed!" << std::endl;
 		return 0;
