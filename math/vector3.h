@@ -42,31 +42,31 @@ public:
 		this->z = v.z;
 	}
 
-	Vector3 crossProduct(Vector3<T> &vect)
+	Vector3 crossProduct(const Vector3<T> &vect) const
 	{
-		float tx = y*vect.z-z*vect.y;
-		float ty = x*vect.z-z*vect.x;
-		float tz = x*vect.y-y*vect.x;
+		T tx = y*vect.z-z*vect.y;
+		T ty = x*vect.z-z*vect.x;
+		T tz = x*vect.y-y*vect.x;
 		return Vector3(tx, -ty, tz);
 	}
-	float dotProduct(Vector3<T> &vect)
+	T dotProduct(const Vector3<T> &vect) const
 	{
 		return x*vect.x + y*vect.y + z*vect.z;
 	}
 
-	Vector3<T> minim(Vector3<T> &vect)
+	Vector3<T> minim(const Vector3<T> &vect) const
 	{
 		return Vector3<T>((vect.x < x ? vect.x : x),
 						  (vect.y < y ? vect.y : y),
 						  (vect.z < z ? vect.z : z));
 	}
-	Vector3<T> maxim(Vector3<T> &vect)
+	Vector3<T> maxim(const Vector3<T> &vect) const
 	{
 		return Vector3<T>((vect.x > x ? vect.x : x),
 						  (vect.y > y ? vect.y : y),
 						  (vect.z > z ? vect.z : z));
 	}
-	Vector3<T> clamp(Vector3<T> &min, Vector3<T> &max)
+	Vector3<T> clamp(const Vector3<T> &min, const Vector3<T> &max) const
 	{
 		Vector3<T> t = this->minim(min);
 		return t.maxim(max);
@@ -153,6 +153,14 @@ public:
 		return Vector3<T>(x, y, z);
 	}
 
+	Vector3<T> get_normalized() const
+	{
+		float l = length();
+		if (l < 0.00001f && l > -0.00001f)
+			return Vector3<T>(0, 0, 0);
+		return Vector3<T>(x / l, y / l, z / l);
+	}
+
 //	void normalise()
 //	{
 //		float norm = sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
@@ -165,13 +173,13 @@ public:
 //		}
 //	}
 
-	float squaredLength()
+	T squaredLength() const
 	{
-		return (float)(x*x + y*y + z*z);
+		return (x*x + y*y + z*z);
 	}
-	float length()
+	T length() const
 	{
-		return (float)sqrt(x*x + y*y + z*z);
+		return sqrtf(x*x + y*y + z*z);
 	}
 
 	friend class Matrix;
