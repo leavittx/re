@@ -261,7 +261,3 @@ protected:
 	M3DVector4f nearPlane, farPlane, leftPlane, rightPlane;
 	M3DVector4f topPlane, bottomPlane;
 };
-
-
-
-#endif
