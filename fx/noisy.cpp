@@ -94,8 +94,7 @@ void NoisyScene::draw()
 
 void NoisyScene::handleKeyboardEvent(Key key)
 {
-	switch (key)
-	{
+	switch (key) {
 	case KeyTab:
 		m_wireframe = !m_wireframe;
 		if (m_wireframe)
