@@ -22,11 +22,9 @@ SOURCES += \
     fx/noisy.cpp \
     core/glwindowx.cpp \
     fx/testcoreprofile.cpp \
-    render/GLTools/math3d.cpp \
-    render/GLTools/GLTriangleBatch.cpp \
-    render/GLTools/GLTools.cpp \
-    render/GLTools/GLShaderManager.cpp \
-    render/GLTools/GLBatch.cpp
+    fx/terrain.cpp \
+    render/batch/trianglebatch.cpp \
+    render/batch/batch.cpp
 
 HEADERS += \
     core/glwindow.h \
@@ -66,31 +64,56 @@ HEADERS += \
     core/glwindowx.h \
     core/keyboardx.h \
     core/timerlinux.h \
-    fx/testcoreprofile.h \
-    render/GLTools/StopWatch.h \
-    render/GLTools/math3d.h \
-    render/GLTools/GLTriangleBatch.h \
-    render/GLTools/GLTools.h \
-    render/GLTools/GLShaderManager.h \
-    render/GLTools/GLMatrixStack.h \
-    render/GLTools/GLGeometryTransform.h \
-    render/GLTools/GLFrustum.h \
-    render/GLTools/GLFrame.h \
-    render/GLTools/GLBatchBase.h \
-    render/GLTools/GLBatch.h
+	fx/testcoreprofile.h \
+    fx/terrain.h \
+    render/stockshaders.h \
+    render/batch/batch.h \
+    render/batch/batchbase.h \
+    render/batch/trianglebatch.h \
+    render/frustum.h
+
+#    render/GLTools/math3d.cpp \
+#    render/GLTools/GLTriangleBatch.cpp \
+#    render/GLTools/GLTools.cpp \
+#    render/GLTools/GLShaderManager.cpp \
+#    render/GLTools/GLBatch.cpp \
+
+#    render/GLTools/StopWatch.h \
+#    render/GLTools/math3d.h \
+#    render/GLTools/GLTriangleBatch.h \
+#    render/GLTools/GLTools.h \
+#    render/GLTools/GLShaderManager.h \
+#    render/GLTools/GLMatrixStack.h \
+#    render/GLTools/GLGeometryTransform.h \
+#    render/GLTools/GLFrustum.h \
+#    render/GLTools/GLFrame.h \
+#    render/GLTools/GLBatchBase.h \
+#    render/GLTools/GLBatch.h \
 
 LIBS += \
     -lSDL \
-    -lGL \
-    -lGLU \
+	-lGL \
     -lGLEW \
     -lIL -lILU -lILUT
+
+#	-lGLU \
 
 INCLUDEPATH += \
     /usr/include/ \
     /usr/include/c++/4.6.1/ \
     /usr/lib/gcc/x86_64-pc-linux-gnu/4.5.3/include/g++-v4/ \
     render/GLTools
+
+
+
+
+
+
+
+
+
+
+
 
 
 
