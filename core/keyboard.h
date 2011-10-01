@@ -43,7 +43,10 @@ enum Key
 	KeyEnd,
 	KeyInsert,
 	KeyDelete,
-	KeyS
+	KeyW,
+	KeyA,
+	KeyS,
+	KeyD
 };
 
 } // end of namespace 'recore'

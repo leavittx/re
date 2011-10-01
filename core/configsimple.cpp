@@ -17,13 +17,13 @@ bool ConfigSimple::run()
 
 int ConfigSimple::getScreenWidth()
 {
-	return 1024;
+	return 1680;
 //	return 1366;
 }
 
 int ConfigSimple::getScreenHeight()
 {
-	return 768;
+	return 990;
 }
 
 int ConfigSimple::getScreenFrequency()

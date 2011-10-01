@@ -12,12 +12,12 @@ void TerrainScene::init()
 	m_wireframe = false;
 	m_texture = false;
 
-	m_landscapeSize = 1.5f;
-	m_step = 0.01f;
-//	m_turbOmega = 6;
-//	m_turbK = 3;
-	m_turbOmega = 2;
-	m_turbK = 1;
+	m_landscapeSize = 4.0f;
+	m_step = 0.02f;
+	m_turbOmega = 6;
+	m_turbK = 3;
+//	m_turbOmega = 2;
+//	m_turbK = 1;
 	m_texCoordK = 1.0f;
 
 	SetTab2();
@@ -50,15 +50,17 @@ void TerrainScene::draw()
 	m_cameraFrame.GetCameraMatrix(mCamera);
 	m_modelViewMatrix.PushMatrix(mCamera);
 
-	Matrix4f mScale, mTranslate, mRotate, mModelview, mModelViewProjection;
-	mScale = Matrix4f::Scaling(2.9f, 2.9f, 2.9f);
-	mTranslate = Matrix4f::Translation(0.0f, 2.0f, -6.0f);
-	mRotate = Matrix4f::RotationWithAxis(Vector3f(0.0f, 0.0f, 1.0f), 35.0f * Time::gets()*0.01f /*remath::deg2rad(30*sin(t::gets() * 10.0f))*/);
-	mRotate = mRotate + Matrix4f::RotationWithAxis(Vector3f(1.0f, 0.0f, 0.0f), deg2rad(-60.0f));
-	mModelview = mScale * mRotate * mTranslate;
-	mModelViewProjection = Matrix4f(gl::m_viewFrustum.GetProjectionMatrix()) * mModelview;
+//	Matrix4f mScale, mTranslate, mRotate, mModelview, mModelViewProjection;
+//	mScale = Matrix4f::Scaling(2.9f, 2.9f, 2.9f);
+//	mTranslate = Matrix4f::Translation(0.0f, 2.0f, -6.0f);
+//	mRotate = Matrix4f::RotationWithAxis(Vector3f(0.0f, 0.0f, 1.0f), 35.0f * Time::gets()*0.01f /*remath::deg2rad(30*sin(t::gets() * 10.0f))*/);
+//	mRotate = mRotate + Matrix4f::RotationWithAxis(Vector3f(1.0f, 0.0f, 0.0f), deg2rad(-60.0f));
+//	mModelview = mScale * mRotate * mTranslate;
+//	mModelViewProjection = Matrix4f(gl::m_viewFrustum.GetProjectionMatrix()) * mModelview;
 
-	ShaderManager::inst().UseStockShader(GLT_SHADER_SHADED, StockShaderUniforms(Matrix4f(m_transformPipeline.GetModelViewProjectionMatrix()).ptr()/*mModelViewProjection.ptr()*/));
+	ShaderManager::inst().UseStockShader(
+				GLT_SHADER_SHADED,
+				StockShaderUniforms(Matrix4f(m_transformPipeline.GetModelViewProjectionMatrix()).ptr()/*mModelViewProjection.ptr()*/));
 	m_terrainBatch.Draw();
 
 	// Restore the previous modleview matrix (the identity matrix)
@@ -72,8 +74,8 @@ void TerrainScene::draw()
 
 void TerrainScene::UploadTerrainBatch()
 {
-	int nVerts = (2*m_landscapeSize/m_step) +
-			(2*m_landscapeSize/m_step) * (2*m_landscapeSize/m_step) * 2 + 1200;
+	int nVerts = //(2*m_landscapeSize/m_step) +
+			(2*m_landscapeSize/m_step) * (2*m_landscapeSize/m_step) * 2 * 2;
 
 	float *vVerts = new float[nVerts * 3];
 	float *vCols = new float[nVerts * 4];
@@ -92,13 +94,13 @@ void TerrainScene::UploadTerrainBatch()
 
 			// Save the color
 			vCols[idxC + 0] = col.r;
-			vCols[idxC + 1] = col.g / 255.0f;
+			vCols[idxC + 1] = col.g;
 			vCols[idxC + 2] = col.b;
 			vCols[idxC + 3] = 1.0f;
 
 			vCols[idxC + 4] = col.r;
-			vCols[idxC + 5] = col.g / 255.0f;
-			vCols[idxC + 6] = col.b / 255.0f;
+			vCols[idxC + 5] = col.g;
+			vCols[idxC + 6] = col.b;
 			vCols[idxC + 7] = 1.0f;
 
 			// Save the vertex
@@ -170,15 +172,31 @@ void TerrainScene::handleKeyboardEvent(Key key)
 //		if (m_turbOmega < 7)
 //			m_turbOmega++;
 //		UploadTerrainBatch();
-//		m_cameraFrame.RotateWorld(-angular, 0.0f, 1.0f, 0.0f);
 		m_cameraFrame.MoveRight(-linear);
 		break;
 	case KeyLeft:
 //		if (m_turbOmega > -1)
 //			m_turbOmega--;
 //		UploadTerrainBatch();
-//		m_cameraFrame.RotateWorld(angular, 0.0f, 1.0f, 0.0f);
 		m_cameraFrame.MoveRight(linear);
+		break;
+	case KeyPageUp:
+		m_cameraFrame.MoveUp(linear);
+		break;
+	case KeyPageDown:
+		m_cameraFrame.MoveUp(-linear);
+		break;
+	case KeyW:
+		m_cameraFrame.RotateWorld(angular, 0.0f, 1.0f, 0.0f);
+		break;
+	case KeyS:
+		m_cameraFrame.RotateWorld(-angular, 0.0f, 1.0f, 0.0f);
+		break;
+	case KeyA:
+		m_cameraFrame.RotateWorld(angular, 0.0f, 0.0f, 1.0f);
+		break;
+	case KeyD:
+		m_cameraFrame.RotateWorld(-angular, 0.0f, 0.0f, 1.0f);
 		break;
 	case KeyLCtrl:
 		if (m_landscapeSize > 0)

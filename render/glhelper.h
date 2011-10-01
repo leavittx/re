@@ -87,21 +87,21 @@ public:
 
 		resize(w, h, aspect);
 
-		glShadeModel(GL_SMOOTH);
-		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-		glClearDepth(1.0f);
+//		glShadeModel(GL_SMOOTH);
+//		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+//		glClearDepth(1.0f);
 
-		glEnable(GL_DEPTH_TEST);
+//		glEnable(GL_DEPTH_TEST);
 
-		glDepthFunc(GL_LEQUAL);
-		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-		glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-		glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+//		glDepthFunc(GL_LEQUAL);
+//		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+//		glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+//		glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
-		glDisable(GL_NORMALIZE);
-		glDisable(GL_TEXTURE_GEN_S);
-		glDisable(GL_TEXTURE_GEN_T);
-		glEnable(GL_TEXTURE_2D);
+//		glDisable(GL_NORMALIZE);
+//		glDisable(GL_TEXTURE_GEN_S);
+//		glDisable(GL_TEXTURE_GEN_T);
+//		glEnable(GL_TEXTURE_2D);
 	}
 
 	static void resize(int w, int h, AspectRatio aspect)
@@ -122,11 +122,11 @@ public:
 			break;
 		}
 
-		m_aspectratio = (float)w / h;
+		m_aspectratio = float(w) / float(h);
 
 		setViewport(0, (m_height - h) / 2, w, h);
 
-		m_viewFrustum.SetPerspective(90.0f, float(w)/float(h), 0.0f, 1000.0f);
+		m_viewFrustum.SetPerspective(35.0f, m_aspectratio, 1.0f, 1000.0f);
 
 #ifdef __DEPRECATED_PROFILE__
 		glMatrixMode(GL_PROJECTION);

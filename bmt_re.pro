@@ -24,7 +24,8 @@ SOURCES += \
     fx/testcoreprofile.cpp \
     fx/terrain.cpp \
     render/batch/trianglebatch.cpp \
-    render/batch/batch.cpp
+    render/batch/batch.cpp \
+    render/GLTools/math3d.cpp
 
 HEADERS += \
     core/glwindow.h \
@@ -103,6 +104,7 @@ INCLUDEPATH += \
     /usr/include/c++/4.6.1/ \
     /usr/lib/gcc/x86_64-pc-linux-gnu/4.5.3/include/g++-v4/ \
     render/GLTools
+
 
 
 

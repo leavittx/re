@@ -49,8 +49,14 @@ public:
 		case XK_Delete:                 return KeyDelete;
 		case XK_Escape:                 return KeyEsc;
 //		case 0xFE03:                    return 0; // ALT GR
+		case XK_w:
+		case XK_W:						return KeyW;
+		case XK_a:
+		case XK_A:						return KeyA;
 		case XK_s:
 		case XK_S:                      return KeyS;
+		case XK_d:
+		case XK_D:						return KeyD;
 		default:						return KeyUnknown;
 		}
 	}
