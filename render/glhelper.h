@@ -5,19 +5,19 @@
 #include <GL/gl.h>
 //#include <GL/glu.h>
 
+#include "frame.h"
 #include "frustum.h"
+#include "matrixstack.h"
+#include "geometrytransform.h"
 #include "batch/batch.h"
 #include "batch/trianglebatch.h"
-
-//#include "GLTools/GLFrustum.h"
 
 namespace render {
 
 class glHelper
 {
 public:
-	enum CullMode
-	{
+	enum CullMode {
 		POINT,
 		LINE,
 		FILL,
@@ -25,9 +25,7 @@ public:
 		firstCullMode = POINT,
 		lastCullMode  = NONE
 	};
-
-	enum BlendMode
-	{
+	enum BlendMode {
 		ADD,
 		SUB,
 		SUBR,
@@ -36,9 +34,7 @@ public:
 		firstBlendMode = ADD,
 		lastBlendMode  = MAX
 	};
-
-	enum BlendFactor
-	{
+	enum BlendFactor {
 		ZERO,
 		ONE,
 		DST_COLOR,
@@ -54,16 +50,14 @@ public:
 		lastBlendFactor  = SRC_ALPHA_SATURATE
 	};
 
-	enum Buffer
-	{
+	enum Buffer {
 		COLOR = 1,
 		DEPTH = 2,
 		STENCIL = 4,
 		ALL = COLOR | DEPTH | STENCIL
 	};
 
-	enum AspectRatio
-	{
+	enum AspectRatio {
 		ASPECTRATIO_4_3 = 0,
 		ASPECTRATIO_5_4,
 		ASPECTRATIO_16_10,
@@ -84,26 +78,6 @@ public:
 
 public:
 	//		GLUtesselator
-
-	// Get the OpenGL version number
-	void gltGetOpenGLVersion(GLint &nMajor, GLint &nMinor)
-	{
-		glGetIntegerv(GL_MAJOR_VERSION, &nMajor);
-		glGetIntegerv(GL_MINOR_VERSION, &nMinor);
-	}
-
-	// This function determines if the named OpenGL Extension is supported
-	// Returns 1 or 0
-	int gltIsExtSupported(const char *extension)
-	{
-		GLint nNumExtensions;
-		glGetIntegerv(GL_NUM_EXTENSIONS, &nNumExtensions);
-
-		for (GLint i = 0; i < nNumExtensions; i++)
-			if (strcmp(extension, (const char *)glGetStringi(GL_EXTENSIONS, i)) == 0)
-				return 1;
-		return 0;
-	}
 
 	static void init(int w, int h, AspectRatio aspect)
 	{
@@ -152,7 +126,7 @@ public:
 
 		setViewport(0, (m_height - h) / 2, w, h);
 
-		m_viewFrustum.SetPerspective(35.0f, float(w)/float(h), 1.0f, 1000.0f);
+		m_viewFrustum.SetPerspective(90.0f, float(w)/float(h), 0.0f, 1000.0f);
 
 #ifdef __DEPRECATED_PROFILE__
 		glMatrixMode(GL_PROJECTION);
@@ -277,6 +251,27 @@ public:
 				break;
 		}
 	}
+
+	// Get the OpenGL version number
+	void gltGetOpenGLVersion(GLint &nMajor, GLint &nMinor)
+	{
+		glGetIntegerv(GL_MAJOR_VERSION, &nMajor);
+		glGetIntegerv(GL_MINOR_VERSION, &nMinor);
+	}
+
+	// This function determines if the named OpenGL Extension is supported
+	// Returns 1 or 0
+	int gltIsExtSupported(const char *extension)
+	{
+		GLint nNumExtensions;
+		glGetIntegerv(GL_NUM_EXTENSIONS, &nNumExtensions);
+
+		for (GLint i = 0; i < nNumExtensions; i++)
+			if (strcmp(extension, (const char *)glGetStringi(GL_EXTENSIONS, i)) == 0)
+				return 1;
+		return 0;
+	}
+
 
 	static void setCullMode(CullMode front, CullMode back)
 	{

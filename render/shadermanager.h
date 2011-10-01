@@ -39,9 +39,9 @@ struct StockShaderUniforms
 	StockShaderUniforms(float* _mvMatrix, float* _pMatrix, float* _vLightPos, float* _vColor, int _textureUnit0) :
 		mvMatrix(_mvMatrix), pMatrix(_pMatrix), vLightPos(_vLightPos), vColor(_vColor), textureUnit0(_textureUnit0) {}
 	// Just the modelview projection matrix. Color is an attribute (SHADED shader :))
-//	StockShaderUniforms(float* _mvpMatrix) : mvpMatrix(_mvpMatrix) {}
+	StockShaderUniforms(float* _mvpMatrix) : mvpMatrix(_mvpMatrix) {}
 	// Just the Color (IDENTITY shader)
-	StockShaderUniforms(float* _vColor) : vColor(_vColor) {}
+//	StockShaderUniforms(float* _vColor) : vColor(_vColor) {}
 
 //	M3DMatrix44f* mvpMatrix;
 //	M3DMatrix44f* mvMatrix;

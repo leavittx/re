@@ -280,7 +280,7 @@ GLint ShaderManager::UseStockShader(GLT_STOCK_SHADER nShaderID, const StockShade
 
 	case GLT_SHADER_SHADED:		// Just the modelview projection matrix. Color is an attribute
 		iTransform = glGetUniformLocation(m_stockShaders[nShaderID], "mvpMatrix");
-		glUniformMatrix4fv(iTransform, 1, GL_FALSE, uniforms.pMatrix);
+		glUniformMatrix4fv(iTransform, 1, GL_FALSE, uniforms.mvpMatrix);
 		break;
 
 	case GLT_SHADER_IDENTITY:	// Just the Color

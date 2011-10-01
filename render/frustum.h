@@ -1,13 +1,11 @@
 #pragma once
 
-// Encapsulates a frustum... works in conjunction
-// with GLFrame
-
 #include "../math/math.h"
-//#include <GLFrame.h>
+#include "frame.h"
 
 namespace render {
 
+// Encapsulates a frustum... works in conjunction with GLFrame
 class GLFrustum
 {
 public:
