@@ -12,19 +12,23 @@ void TerrainScene::init()
 	m_wireframe = false;
 	m_texture = false;
 
-	m_landscapeSize = 5.0f;
-	m_step = 0.04f;
+	m_landscapeSize = 1.5f;
+	m_step = 0.01f;
 //	m_turbOmega = 6;
 //	m_turbK = 3;
 	m_turbOmega = 2;
 	m_turbK = 1;
 	m_texCoordK = 1.0f;
 
-	SetTab1();
 	SetTab2();
 	SetColormap();
 
 	UploadTerrainBatch();
+
+	InputManager::inst().acceptKeyboardEvents(this);
+
+	m_projectionMatrix.LoadMatrix(Matrix4f(gl::m_viewFrustum.GetProjectionMatrix()).ptr());
+	m_transformPipeline.SetMatrixStacks(m_modelViewMatrix, m_projectionMatrix);
 }
 
 void TerrainScene::release()
@@ -39,66 +43,157 @@ void TerrainScene::draw()
 {
 	gl::clear(gl::ALL);
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	// Save the current modelview matrix (the identity matrix)
+	m_modelViewMatrix.PushMatrix();
+
+	M3DMatrix44f mCamera;
+	m_cameraFrame.GetCameraMatrix(mCamera);
+	m_modelViewMatrix.PushMatrix(mCamera);
 
 	Matrix4f mScale, mTranslate, mRotate, mModelview, mModelViewProjection;
 	mScale = Matrix4f::Scaling(2.9f, 2.9f, 2.9f);
 	mTranslate = Matrix4f::Translation(0.0f, 2.0f, -6.0f);
-	mRotate = Matrix4f::RotationWithAxis(Vector3f(0.0f, 0.0f, 1.0f), 35.0f * Time::gets()*0.1f /*remath::deg2rad(30*sin(t::gets() * 10.0f))*/);
+	mRotate = Matrix4f::RotationWithAxis(Vector3f(0.0f, 0.0f, 1.0f), 35.0f * Time::gets()*0.01f /*remath::deg2rad(30*sin(t::gets() * 10.0f))*/);
 	mRotate = mRotate + Matrix4f::RotationWithAxis(Vector3f(1.0f, 0.0f, 0.0f), deg2rad(-60.0f));
 	mModelview = mScale * mRotate * mTranslate;
 	mModelViewProjection = Matrix4f(gl::m_viewFrustum.GetProjectionMatrix()) * mModelview;
 
-	float sine = fabs(sin(t::gets()));
-	GLfloat vRed[] = { sine*1.0f, 1-sine*1.0f, 1-sine*0.5f, 1.0f };
-	ShaderManager::inst().UseStockShader(GLT_SHADER_FLAT, StockShaderUniforms(mModelViewProjection.ptr(), vRed));
-	m_triangleBatch.Draw();
+	ShaderManager::inst().UseStockShader(GLT_SHADER_SHADED, StockShaderUniforms(Matrix4f(m_transformPipeline.GetModelViewProjectionMatrix()).ptr()/*mModelViewProjection.ptr()*/));
+	m_terrainBatch.Draw();
+
+	// Restore the previous modleview matrix (the identity matrix)
+	m_modelViewMatrix.PopMatrix();
+	m_modelViewMatrix.PopMatrix();
+
+//	float sine = fabs(sin(t::gets()));
+//	GLfloat vRed[] = { sine*1.0f, 1-sine*1.0f, 1-sine*0.5f, 1.0f };
+//	ShaderManager::inst().UseStockShader(GLT_SHADER_FLAT, StockShaderUniforms(mModelViewProjection.ptr(), vRed));
 }
 
 void TerrainScene::UploadTerrainBatch()
 {
-	int nVerts = (2 * m_landscapeSize / m_step)*(2 * m_landscapeSize / m_step)*2 + 1212;
+	int nVerts = (2*m_landscapeSize/m_step) +
+			(2*m_landscapeSize/m_step) * (2*m_landscapeSize/m_step) * 2 + 1200;
 
-//	float *vVerts = (float *)malloc(sizeof(float) * nVerts * 3);
 	float *vVerts = new float[nVerts * 3];
+	float *vCols = new float[nVerts * 4];
 
-	int idx = 0;
+	int idxV = 0;
+	int idxC = 0;
 	for (float i = -m_landscapeSize; i < m_landscapeSize; i += m_step)
 	{
-		for (float j = -m_landscapeSize; j < m_landscapeSize; j += m_step, idx += 6)
+		for (float j = -m_landscapeSize; j < m_landscapeSize; j += m_step, idxV += 6, idxC += 8)
 		{
 //			if (m_texture)
 //				glTexCoord2d((i + 0.8) / 1.6 * m_texCoordK, (j + 0.8) / 1.6 * m_texCoordK);
 
 			float h = noise2d_turb(i * m_turbK, j * m_turbK, m_turbOmega);
 			Color3 col = get_color(h);
-//			glColor3d(col.r / 255.0, col.g / 255.0, col.b / 255.0);
 
-			vVerts[idx + 0] = j;
-			vVerts[idx + 1] = i;
-			vVerts[idx + 2] = h;
+			// Save the color
+			vCols[idxC + 0] = col.r;
+			vCols[idxC + 1] = col.g / 255.0f;
+			vCols[idxC + 2] = col.b;
+			vCols[idxC + 3] = 1.0f;
 
-			vVerts[idx + 3] = j;
-			vVerts[idx + 4] = (i + m_step);
-			vVerts[idx + 5] = noise2d_turb((i + m_step) * m_turbK, j * m_turbK, m_turbOmega);
+			vCols[idxC + 4] = col.r;
+			vCols[idxC + 5] = col.g / 255.0f;
+			vCols[idxC + 6] = col.b / 255.0f;
+			vCols[idxC + 7] = 1.0f;
 
-//			if (idx + 5 >= nVerts * 3)
-//			{
-//				exit(0);
-//			}
+			// Save the vertex
+			vVerts[idxV + 0] = j;
+			vVerts[idxV + 1] = i;
+			vVerts[idxV + 2] = h;
 
-//			glVertex3d(j, i, h);
-//			glVertex3d(j, (i + m_step), noise2d_turb((i + m_step) * m_turbK, j * m_turbK, m_turbOmega));
+			vVerts[idxV + 3] = j;
+			vVerts[idxV + 4] = (i + m_step);
+			vVerts[idxV + 5] = noise2d_turb((i + m_step) * m_turbK, j * m_turbK, m_turbOmega);
+
+			if (idxV + 5 >= nVerts * 3)
+			{
+				exit(0);
+			}
 		}
 	}
 
-	m_triangleBatch.Begin(GL_TRIANGLE_STRIP, nVerts);
-	m_triangleBatch.CopyVertexData3f(vVerts);
-	m_triangleBatch.End();
+	m_terrainBatch.Begin(GL_TRIANGLE_STRIP, idxV / 3);
+	m_terrainBatch.CopyVertexData3f(vVerts);
+	m_terrainBatch.CopyColorData4f(vCols);
+	m_terrainBatch.End();
 
-//	free(vVerts);
 	delete [] vVerts;
+	delete [] vCols;
 }
+
+
+void TerrainScene::handleKeyboardEvent(Key key)
+{
+	float linear = 0.1f;
+	float angular = float(deg2rad(5.0f));
+
+	switch (key) {
+	case KeyTab:
+		m_wireframe = !m_wireframe;
+		if (m_wireframe)
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		else
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		break;
+	case KeyCapsLock:
+		glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
+		break;
+	case KeySpace:
+		m_texture = !m_texture;
+		break;
+	case KeyLShift:
+		if (m_step < 0.2)
+			m_step += 0.01;
+		UploadTerrainBatch();
+		break;
+	case KeyRShift:
+		if (m_step > 0.005)
+			m_step -= 0.005;
+		UploadTerrainBatch();
+		break;
+	case KeyUp:
+//		m_turbK++;
+//		UploadTerrainBatch();
+		m_cameraFrame.MoveForward(linear);
+		break;
+	case KeyDown:
+//		m_turbK--;
+//		UploadTerrainBatch();
+		m_cameraFrame.MoveForward(-linear);
+		break;
+	case KeyRight:
+//		if (m_turbOmega < 7)
+//			m_turbOmega++;
+//		UploadTerrainBatch();
+//		m_cameraFrame.RotateWorld(-angular, 0.0f, 1.0f, 0.0f);
+		m_cameraFrame.MoveRight(-linear);
+		break;
+	case KeyLeft:
+//		if (m_turbOmega > -1)
+//			m_turbOmega--;
+//		UploadTerrainBatch();
+//		m_cameraFrame.RotateWorld(angular, 0.0f, 1.0f, 0.0f);
+		m_cameraFrame.MoveRight(linear);
+		break;
+	case KeyLCtrl:
+		if (m_landscapeSize > 0)
+			m_landscapeSize -= 0.1;
+		UploadTerrainBatch();
+		break;
+	case KeyRCtrl:
+		m_landscapeSize += 0.1;
+		UploadTerrainBatch();
+		break;
+	default:
+		return;
+	}
+}
+
 
 void TerrainScene::SetColormap()
 {
@@ -120,19 +215,11 @@ remath::Color3 TerrainScene::get_color(float h)
 	float fx = h - m_colormap[i - 1].n;
 
 	Color3 color;
-	color.r = (unsigned char)255 * ((m_colormap[i - 1].col.r * fx + m_colormap[i].col.r * (1 - fx)) / (m_colormap[i - 1].col.r + m_colormap[i].col.r));
-	color.g = (unsigned char)255 * ((m_colormap[i - 1].col.g * fx + m_colormap[i].col.g * (1 - fx)) / (m_colormap[i - 1].col.g + m_colormap[i].col.g));
-	color.b = (unsigned char)255 * ((m_colormap[i - 1].col.b * fx + m_colormap[i].col.b * (1 - fx)) / (m_colormap[i - 1].col.b + m_colormap[i].col.b));
+	color.r = ((m_colormap[i - 1].col.r * fx + m_colormap[i].col.r * (1 - fx)) / (m_colormap[i - 1].col.r + m_colormap[i].col.r));
+	color.g = ((m_colormap[i - 1].col.g * fx + m_colormap[i].col.g * (1 - fx)) / (m_colormap[i - 1].col.g + m_colormap[i].col.g));
+	color.b = ((m_colormap[i - 1].col.b * fx + m_colormap[i].col.b * (1 - fx)) / (m_colormap[i - 1].col.b + m_colormap[i].col.b));
 
 	return color;
-}
-
-void TerrainScene::SetTab1()
-{
-	int i;
-	srand((unsigned int)time(NULL));
-	for (i = 0; i < SIZE; i ++)
-		Tab1[i] = (float)rand() / RAND_MAX;
 }
 
 void TerrainScene::SetTab2()
@@ -148,29 +235,6 @@ float TerrainScene::fmod1(float t, float x)
 	if (t < 0)
 		return 1 + fmod(t, x);
 	return fmod(t, x);
-}
-
-float TerrainScene::noise(float t)
-{
-	int ix = (int)floor(t) & MASK;
-	float a, b, c, fx = fmod1(t, 1);
-
-	a = Tab1[ix];
-	b = Tab1[(ix + 1) & MASK];
-	c = a * (1 - fx) + b * fx;
-	return c;
-}
-
-float TerrainScene::noise1d(float t)
-{
-	int ix = (int)floor(t) & MASK;
-	float a, b, c, fx = fmod1(t, 1);
-
-	a = Tab1[ix];
-	b = Tab1[(ix + 1) & MASK];
-	fx = fx * fx * (3 - 2 * fx);
-	c = a * (1 - fx) + b * fx;
-	return c;
 }
 
 float TerrainScene::noise2d(float t1, float t2)
@@ -189,18 +253,6 @@ float TerrainScene::noise2d(float t1, float t2)
 	return A * (1 - fy) + B * fy;
 }
 
-float TerrainScene::noise1d_turb(float t, int omega)
-{
-	int i;
-	float turb, e;
-	for (i = 0, turb = 0; i < omega; i ++)
-	{
-		e = pow((float)2, i);
-		turb += noise1d(t * e) / e;
-	}
-	return turb;
-}
-
 float TerrainScene::noise2d_turb(float t1, float t2, int omega)
 {
 	int i;
@@ -211,14 +263,4 @@ float TerrainScene::noise2d_turb(float t1, float t2, int omega)
 		turb += noise2d(t1 * e, t2 * e) / e;
 	}
 	return turb;
-}
-
-float TerrainScene::bezier(float x)
-{
-	int ix = (int)floor(x) & MASK;
-	float fx = fmod1(x, 1);
-	return Tab1[ix - 1] * (- fx * fx * fx + 3 * fx * fx - 3 * fx + 1) +
-		   Tab1[ix] * (3 * fx * fx * fx - 6 * fx * fx + 4) +
-		   Tab1[ix + 1] * (-3 * fx * fx * fx + 3 * fx * fx + 3 * fx + 1)+
-		   Tab1[ix + 2] * fx * fx * fx;
 }

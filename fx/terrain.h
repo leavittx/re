@@ -6,7 +6,7 @@
 #define SIZE (1 << BITSIZE)
 #define MASK (SIZE - 1)
 
-class TerrainScene : public redemo::Scene
+class TerrainScene : public redemo::Scene, recore::KeyboardEventsListener
 {
 public:
 	TerrainScene() {}
@@ -17,8 +17,15 @@ public:
 	void draw();
 	void release();
 
+	virtual void handleKeyboardEvent(recore::Key key);
+
 private:
-	render::GLBatch m_triangleBatch;
+	render::GLBatch m_terrainBatch;
+
+	render::GLFrame m_cameraFrame;
+	render::GLMatrixStack m_modelViewMatrix;
+	render::GLMatrixStack m_projectionMatrix;
+	render::GLGeometryTransform m_transformPipeline;
 
 	bool m_wireframe;
 	bool m_texture;
@@ -41,17 +48,11 @@ private:
 
 	void UploadTerrainBatch();
 
-	float Tab1[SIZE];
 	float Tab2[SIZE][SIZE];
 	int Perm[SIZE];
 
-	void SetTab1();
 	void SetTab2();
 	float fmod1(float t, float x);
-	float noise(float t);
-	float noise1d(float t);
 	float noise2d(float t1, float t2);
-	float noise1d_turb(float t, int omega);
 	float noise2d_turb(float t1, float t2, int omega);
-	float bezier(float x);
 };
