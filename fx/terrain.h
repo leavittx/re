@@ -28,6 +28,7 @@ private:
 	render::GLGeometryTransform m_transformPipeline;
 
 	bool m_wireframe;
+	bool m_points;
 	bool m_texture;
 
 	float m_landscapeSize;
@@ -55,4 +56,7 @@ private:
 	float fmod1(float t, float x);
 	float noise2d(float t1, float t2);
 	float noise2d_turb(float t1, float t2, int omega);
+
+	render::GLBatch m_cubeBatch;
+	void MakeCube(render::GLBatch& cubeBatch, GLfloat fRadius);
 };
