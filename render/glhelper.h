@@ -61,7 +61,8 @@ public:
 		ASPECTRATIO_4_3 = 0,
 		ASPECTRATIO_5_4,
 		ASPECTRATIO_16_10,
-		ASPECTRATIO_16_9
+		ASPECTRATIO_16_9,
+		ASPECTRATIO_1_1
 	};
 
 private:
@@ -87,21 +88,21 @@ public:
 
 		resize(w, h, aspect);
 
-//		glShadeModel(GL_SMOOTH);
-//		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-//		glClearDepth(1.0f);
+		glShadeModel(GL_SMOOTH);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClearDepth(1.0f);
 
-//		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_DEPTH_TEST);
 
-//		glDepthFunc(GL_LEQUAL);
-//		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-//		glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-//		glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+		glDepthFunc(GL_LEQUAL);
+		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+		glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+		glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
-//		glDisable(GL_NORMALIZE);
-//		glDisable(GL_TEXTURE_GEN_S);
-//		glDisable(GL_TEXTURE_GEN_T);
-//		glEnable(GL_TEXTURE_2D);
+		glDisable(GL_NORMALIZE);
+		glDisable(GL_TEXTURE_GEN_S);
+		glDisable(GL_TEXTURE_GEN_T);
+		glEnable(GL_TEXTURE_2D);
 	}
 
 	static void resize(int w, int h, AspectRatio aspect)
@@ -111,8 +112,10 @@ public:
 
 		switch (aspect) {
 		case ASPECTRATIO_4_3:
+			w = int(h * 4.0 / 3);
 			break;
 		case ASPECTRATIO_5_4:
+			w = int(h * 5.0 / 4);
 			break;
 		case ASPECTRATIO_16_10:
 			h = int(w * 0.625f);
@@ -120,13 +123,16 @@ public:
 		case ASPECTRATIO_16_9:
 			h = int(w * 0.5625f);
 			break;
+		case ASPECTRATIO_1_1:
+			w = h;
+			break;
 		}
 
 		m_aspectratio = float(w) / float(h);
 
 		setViewport(0, (m_height - h) / 2, w, h);
 
-		m_viewFrustum.SetPerspective(35.0f, m_aspectratio, 1.0f, 1000.0f);
+		m_viewFrustum.SetPerspective(45.0f, m_aspectratio, 1.0f, 1000.0f);
 
 #ifdef __DEPRECATED_PROFILE__
 		glMatrixMode(GL_PROJECTION);
