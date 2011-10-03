@@ -49,7 +49,12 @@ public:
 		case SDLK_END:			return KeyEnd;
 		case SDLK_INSERT:		return KeyInsert;
 		case SDLK_DELETE:		return KeyDelete;
+		case SDLK_w:			return KeyW;
+		case SDLK_a:			return KeyA;
 		case SDLK_s:			return KeyS;
+		case SDLK_d:			return KeyD;
+		case SDLK_q:			return KeyQ;
+		case SDLK_e:			return KeyE;
 		default:				return KeyUnknown;
 		}
 	}

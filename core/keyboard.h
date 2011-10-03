@@ -46,7 +46,9 @@ enum Key
 	KeyW,
 	KeyA,
 	KeyS,
-	KeyD
+	KeyD,
+	KeyQ,
+	KeyE
 };
 
 } // end of namespace 'recore'

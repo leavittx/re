@@ -57,6 +57,10 @@ public:
 		case XK_S:                      return KeyS;
 		case XK_d:
 		case XK_D:						return KeyD;
+		case XK_q:
+		case XK_Q:                      return KeyQ;
+		case XK_e:
+		case XK_E:						return KeyE;
 		default:						return KeyUnknown;
 		}
 	}
