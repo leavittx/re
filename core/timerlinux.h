@@ -16,12 +16,13 @@ public:
 private:
 	virtual TimeT osGetTimeMsec()
 	{
-		struct timespec ts;
-		clock_gettime(CLOCK_MONOTONIC, &ts);
+		//TODO: wtf???
+//		struct timespec ts;
+//		clock_gettime(CLOCK_MONOTONIC, &ts);
 
-		TimeT msec = (TimeT)(ts.tv_nsec / 1000000.0);
+//		TimeT msec = (TimeT)(ts.tv_nsec / 1000000.0);
 
-		reutil::g_debug << "time: " << ts.tv_nsec << " (in milliseconds: " << msec << ")" << std::endl;
+//		reutil::g_debug << "time: " << ts.tv_nsec << " (in milliseconds: " << msec << ")" << std::endl;
 
 //		return msec;
 		return clock() / 1000.0;
