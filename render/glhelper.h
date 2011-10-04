@@ -1,9 +1,13 @@
 #pragma once
 
 #include "../globals.h"
+
 #include <GL/glew.h>
 #include <GL/gl.h>
-//#include <GL/glu.h>
+
+#ifdef __DEPRECATED_PROFILE__
+	#include <GL/glu.h>
+#endif
 
 #include "frame.h"
 #include "frustum.h"
@@ -18,7 +22,7 @@ class glHelper
 {
 public:
 	enum CullMode {
-		POINT,
+		POINT = 0,
 		LINE,
 		FILL,
 		NONE, // CULL
@@ -26,7 +30,7 @@ public:
 		lastCullMode  = NONE
 	};
 	enum BlendMode {
-		ADD,
+		ADD = 0,
 		SUB,
 		SUBR,
 		MIN,
@@ -35,7 +39,7 @@ public:
 		lastBlendMode  = MAX
 	};
 	enum BlendFactor {
-		ZERO,
+		ZERO = 0,
 		ONE,
 		DST_COLOR,
 		SRC_COLOR,
@@ -49,14 +53,12 @@ public:
 		firstBlendFactor = ZERO,
 		lastBlendFactor  = SRC_ALPHA_SATURATE
 	};
-
 	enum Buffer {
 		COLOR = 1,
 		DEPTH = 2,
 		STENCIL = 4,
 		ALL = COLOR | DEPTH | STENCIL
 	};
-
 	enum AspectRatio {
 		ASPECTRATIO_4_3 = 0,
 		ASPECTRATIO_5_4,
@@ -70,7 +72,10 @@ private:
 	static const GLint blendMode_toGL[lastBlendMode + 1];
 	static const GLint blendFactor_toGL[lastBlendFactor + 1];
 
-//	static float m_zNear, m_zFar, m_fov;
+#ifdef __DEPRECATED_PROFILE__
+	static float m_zNear, m_zFar, m_fov;
+#endif
+
 	static int m_width, m_height;
 	static float m_aspectratio;
 
@@ -82,9 +87,11 @@ public:
 
 	static void init(int w, int h, AspectRatio aspect)
 	{
-//		m_fov = 45.0f;
-//		m_zNear = 0.1f;
-//		m_zFar = 14000.0f;
+#ifdef __DEPRECATED_PROFILE__
+		m_fov = 45.0f;
+		m_zNear = 0.1f;
+		m_zFar = 14000.0f;
+#endif
 
 		resize(w, h, aspect);
 
@@ -111,28 +118,19 @@ public:
 		m_height = h;
 
 		switch (aspect) {
-		case ASPECTRATIO_4_3:
-			w = int(h * 4.0 / 3);
-			break;
-		case ASPECTRATIO_5_4:
-			w = int(h * 5.0 / 4);
-			break;
-		case ASPECTRATIO_16_10:
-			h = int(w * 0.625f);
-			break;
-		case ASPECTRATIO_16_9:
-			h = int(w * 0.5625f);
-			break;
-		case ASPECTRATIO_1_1:
-			w = h;
-			break;
+		case ASPECTRATIO_4_3:		w = int(h * 4.0f / 3);	break;
+		case ASPECTRATIO_5_4:		w = int(h * 5.0f / 4);	break;
+		case ASPECTRATIO_16_10:		h = int(w * 0.625f);	break;
+		case ASPECTRATIO_16_9:		h = int(w * 0.5625f);	break;
+		case ASPECTRATIO_1_1:		w = h;					break;
 		}
 
 		m_aspectratio = float(w) / float(h);
 
 		setViewport(0, (m_height - h) / 2, w, h);
 
-		m_viewFrustum.SetPerspective(45.0f, m_aspectratio, 1.0f, 1000.0f);
+		// Small fNear -> cool artifacts (0.00....01)
+		m_viewFrustum.SetPerspective(90.0f, m_aspectratio, 0.001f, 100.0f);
 
 #ifdef __DEPRECATED_PROFILE__
 		glMatrixMode(GL_PROJECTION);
@@ -313,6 +311,7 @@ public:
 		return c;
 	}
 
+#ifdef __DEPRECATED_PROFILE__
 	static remath::Color3 color(const remath::Color3& c)
 	{
 		glColor3fv(&c.r);
@@ -324,6 +323,7 @@ public:
 		glColor4fv(&c.r);
 		return c;
 	}
+#endif /* ifdef __DEPRECATED_PROFILE__ */
 
 	static float clearDepth(float depth)
 	{
