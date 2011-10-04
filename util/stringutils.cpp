@@ -76,7 +76,7 @@ void StringUtils::iterateDirectory(string path, vector<string>& filenames, bool 
 
 		free(namelist);
 	}
-#endif // #ifdef linux
+#endif /* ifdef linux */
 }
 
 // Removes all instances of a character
