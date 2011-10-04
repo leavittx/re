@@ -38,9 +38,6 @@ bool GLWindowSDL::create(int width, int height, int bpp, bool fullscreen)
 		SDL_WarpMouse(x, y);
 	}
 
-	// Set up some of opengl stuff
-	render::gl::init(getWidth(), getHeight(), render::gl::ASPECTRATIO_4_3);
-
 	return true;
 }
 

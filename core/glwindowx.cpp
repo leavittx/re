@@ -406,7 +406,7 @@ bool GLWindowX::pollEvents()
 		case ConfigureNotify:
 			m_width = event.xconfigure.width;
 			m_height = event.xconfigure.height;
-			render::gl::resize(getWidth(), getHeight(), render::gl::ASPECTRATIO_1_1);
+			render::gl::resize(getWidth(), getHeight(), render::gl::ASPECTRATIO_16_10);
 
 //			glViewport(0, 0, width, height);
 			//do reshape here (not needed)

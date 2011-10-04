@@ -94,6 +94,8 @@ bool System::initOpenGL(Config &cfg)
 		g_debug << "	" << glewGetErrorString(err) << endl;
 		return false;
 	}
+	// Set up some opengl stuff
+	render::gl::init(m_glWindow->getWidth(), m_glWindow->getHeight(), render::gl::ASPECTRATIO_16_10);
 	// Initialize timer
 	m_timer->init();
 	// All ok!
