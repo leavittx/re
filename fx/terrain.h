@@ -58,5 +58,8 @@ private:
 	float noise2d_turb(float t1, float t2, int omega);
 
 	render::GLBatch m_cubeBatch;
+
+	void MakeTorus(render::GLTriangleBatch& torusBatch, GLfloat majorRadius, GLfloat minorRadius, GLint numMajor, GLint numMinor);
+	void MakeSphere(render::GLTriangleBatch& sphereBatch, GLfloat fRadius, GLint iSlices, GLint iStacks);
 	void MakeCube(render::GLBatch& cubeBatch, GLfloat fRadius);
 };

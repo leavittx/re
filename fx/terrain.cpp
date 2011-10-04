@@ -9,6 +9,10 @@ using namespace remath;
 using namespace reutil;
 using namespace std;
 
+GLTriangleBatch		torusBatch;
+GLBatch				floorBatch;
+GLTriangleBatch     sphereBatch;
+
 void TerrainScene::init()
 {
 	m_wireframe = false;
@@ -27,10 +31,27 @@ void TerrainScene::init()
 	UploadTerrainBatch();
 	MakeCube(m_cubeBatch, 0.3f);
 
-	InputManager::inst().acceptKeyboardEvents(this);
+	// This makes a torus
+	MakeTorus(torusBatch, 0.4f, 0.15f, 30, 30);
+
+	// This make a sphere
+	MakeSphere(sphereBatch, 0.1f, 26, 13);
+
+
+	floorBatch.Begin(GL_LINES, 324);
+	for(GLfloat x = -20.0; x <= 20.0f; x+= 0.5) {
+		floorBatch.Vertex3f(x, -0.55f, 20.0f);
+		floorBatch.Vertex3f(x, -0.55f, -20.0f);
+
+		floorBatch.Vertex3f(20.0f, -0.55f, x);
+		floorBatch.Vertex3f(-20.0f, -0.55f, x);
+	}
+	floorBatch.End();
 
 	m_projectionMatrix.LoadMatrix(Matrix4f(gl::m_viewFrustum.GetProjectionMatrix()).ptr());
 	m_transformPipeline.SetMatrixStacks(m_modelViewMatrix, m_projectionMatrix);
+
+	InputManager::inst().acceptKeyboardEvents(this);
 
 	float size = m_landscapeSize;
 	float step = m_step;
@@ -39,10 +60,10 @@ void TerrainScene::init()
 	int count_my = (2 * size / step) * (2 * size / step);
 
 	for (float j = -size; j < size; j += step)
-	for (float i = -size; i < size; i += step, count++)
-	{
-//		g_debug << i << endl;
-	}
+		for (float i = -size; i < size; i += step, count++)
+		{
+			//		g_debug << i << endl;
+		}
 
 	g_debug << "count: " << count << endl;
 	g_debug << "my count: " << count_my << endl;
@@ -60,6 +81,7 @@ void TerrainScene::draw()
 {
 	gl::clear(gl::ALL);
 
+#if 1
 	// Save the current modelview matrix (the identity matrix)
 	m_modelViewMatrix.PushMatrix();
 
@@ -75,11 +97,11 @@ void TerrainScene::draw()
 	mModelview = mScale * mRotate * mTranslate;
 	mModelViewProjection = Matrix4f(gl::m_viewFrustum.GetProjectionMatrix()) * mModelview;
 
-	ShaderManager::inst().UseStockShader(
-				GLT_SHADER_SHADED,
-				StockShaderUniforms(Matrix4f(m_transformPipeline.GetModelViewProjectionMatrix()).ptr()));
 
-	glEnable(GL_DEPTH_TEST);
+	m_modelViewMatrix.Translate(0.0f, 0.0f, -2.5f);
+
+	ShaderManager::inst().UseStockShader(GLT_SHADER_SHADED,
+										 StockShaderUniforms(Matrix4f(m_transformPipeline.GetModelViewProjectionMatrix()).ptr()));
 
 	glEnable(GL_STENCIL_TEST);
 	glStencilFunc(GL_NEVER, 0, 0);
@@ -96,43 +118,93 @@ void TerrainScene::draw()
 	glDisable(GL_STENCIL_TEST);
 
 
-//	float sine = fabs(sin(t::gets()));
-//	GLfloat vRed[] = { sine*1.0f, 1-sine*1.0f, 1-sine*0.5f, 1.0f };
-	GLfloat vRed[] = { 0.0f, 0.7f, 0.0f, 0.0f };
-	ShaderManager::inst().UseStockShader(
-				GLT_SHADER_FLAT,
-				StockShaderUniforms(Matrix4f(m_transformPipeline.GetModelViewProjectionMatrix()).ptr(), vRed));
+	//	float sine = fabs(sin(t::gets()));
+	//	GLfloat vRed[] = { sine*1.0f, 1-sine*1.0f, 1-sine*0.5f, 1.0f };
+	GLfloat vRed[] = { 0.0f, 1.0f, 0.0f, 1.0f };
 
-//	ShaderManager::inst().UseStockShader(
-//				GLT_SHADER_FLAT,
-//				StockShaderUniforms(Matrix4f(m_transformPipeline.GetModelViewProjectionMatrix()).ptr(), vRed));
-//	ShaderManager::inst().UseStockShader(GLT_SHADER_FLAT, StockShaderUniforms(mModelViewProjection.ptr(), vRed));
+	ShaderManager::inst().UseStockShader(GLT_SHADER_FLAT,
+										 StockShaderUniforms(Matrix4f(m_transformPipeline.GetModelViewProjectionMatrix()).ptr(), vRed));
 
-//	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-//	glEnable(GL_STENCIL_TEST);
-//	glStencilFunc(GL_NEVER, 0, 0);
-//	glStencilOp(GL_INCR, GL_INCR, GL_INCR);
-//	glFrontFace(GL_CW);
-//	m_cubeBatch.Draw();
-//	glFrontFace(GL_CCW);
-//	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-//	glDisable(GL_STENCIL_TEST);
+	//	ShaderManager::inst().UseStockShader(GLT_SHADER_DEFAULT_LIGHT,
+	//				StockShaderUniforms(Matrix4f(m_transformPipeline.GetModelViewMatrix()).ptr(),
+	//									Matrix4f(m_transformPipeline.GetProjectionMatrix()).ptr(), vRed));
 
-//	glEnable(GL_BLEND);
-//	glEnable(GL_LINE_SMOOTH);
-//	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	//	ShaderManager::inst().UseStockShader(GLT_SHADER_FLAT,
+	//				StockShaderUniforms(Matrix4f(m_transformPipeline.GetModelViewProjectionMatrix()).ptr(), vRed));
+	//	ShaderManager::inst().UseStockShader(GLT_SHADER_FLAT,
+	//				StockShaderUniforms(mModelViewProjection.ptr(), vRed));
+
+	//	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	//	glEnable(GL_STENCIL_TEST);
+	//	glStencilFunc(GL_NEVER, 0, 0);
+	//	glStencilOp(GL_INCR, GL_INCR, GL_INCR);
+	//	glFrontFace(GL_CW);
+	//	m_cubeBatch.Draw();
+	//	glFrontFace(GL_CCW);
+	//	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+	//	glDisable(GL_STENCIL_TEST);
+
+	//	glEnable(GL_BLEND);
+	//	glEnable(GL_LINE_SMOOTH);
+	//	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	m_cubeBatch.Draw();
 
 	// Restore the previous modleview matrix (the identity matrix)
 	m_modelViewMatrix.PopMatrix();
 	m_modelViewMatrix.PopMatrix();
+#else
+
+	// Color values
+	static GLfloat vFloorColor[] = { 0.0f, 1.0f, 0.0f, 1.0f};
+	static GLfloat vTorusColor[] = { 1.0f, 0.0f, 0.0f, 1.0f };
+	static GLfloat vSphereColor[] = { 0.0f, 0.0f, 1.0f, 1.0f };
+
+	// Time Based animation
+	float yRot = t::gets() * 60.0f;
+
+	// Save the current modelview matrix (the identity matrix)
+	m_modelViewMatrix.PushMatrix();
+
+//	M3DMatrix44f mCamera;
+	m_cameraFrame.GetCameraMatrix(mCamera);
+	m_modelViewMatrix.PushMatrix(mCamera);
+
+	// Draw the ground
+	ShaderManager::inst().UseStockShader(GLT_SHADER_FLAT,
+										 StockShaderUniforms(Matrix4f(m_transformPipeline.GetModelViewProjectionMatrix()).ptr(), vFloorColor));
+	floorBatch.Draw();
+
+	// Draw the spinning Torus
+	m_modelViewMatrix.Translate(0.0f, 0.0f, -2.5f);
+
+	// Save the Translation
+	m_modelViewMatrix.PushMatrix();
+
+	// Apply a rotation and draw the torus
+	m_modelViewMatrix.Rotate(yRot, 0.0f, 1.0f, 0.0f);
+	ShaderManager::inst().UseStockShader(GLT_SHADER_FLAT,
+										 StockShaderUniforms(Matrix4f(m_transformPipeline.GetModelViewProjectionMatrix()).ptr(), vTorusColor));
+	torusBatch.Draw();
+	m_modelViewMatrix.PopMatrix(); // "Erase" the Rotation from before
+
+	// Apply another rotation, followed by a translation, then draw the sphere
+	m_modelViewMatrix.Rotate(yRot * -2.0f, 0.0f, 1.0f, 0.0f);
+	m_modelViewMatrix.Translate(0.8f, 0.0f, 0.0f);
+	ShaderManager::inst().UseStockShader(GLT_SHADER_FLAT,
+										 StockShaderUniforms(Matrix4f(m_transformPipeline.GetModelViewProjectionMatrix()).ptr(), vSphereColor));
+	sphereBatch.Draw();
+
+	// Restore the previous modleview matrix (the identity matrix)
+	m_modelViewMatrix.PopMatrix();
+	m_modelViewMatrix.PopMatrix();
+#endif
 }
 
 void TerrainScene::UploadTerrainBatch()
 {
 	int nVerts = //(2*m_landscapeSize/m_step) +
-			(2*m_landscapeSize/m_step) * (2*m_landscapeSize/m_step) * 6 * 2;
+				 (2*m_landscapeSize/m_step) * (2*m_landscapeSize/m_step) * 6 * 2;
 
 	float *vVerts = new float[nVerts * 3];
 	float *vCols = new float[nVerts * 4];
@@ -143,14 +215,14 @@ void TerrainScene::UploadTerrainBatch()
 	{
 		for (float j = -m_landscapeSize; j < m_landscapeSize; j += m_step, idxV += 18, idxC += 24)
 		{
-//			if (m_texture)
-//				glTexCoord2d((i +  0.8) / 1.6 * m_texCoordK, (j +  0.8) / 1.6 * m_texCoordK);
+			//			if (m_texture)
+			//				glTexCoord2d((i +  0.8) / 1.6 * m_texCoordK, (j +  0.8) / 1.6 * m_texCoordK);
 
 			float h = noise2d_turb(i * m_turbK, j * m_turbK, m_turbOmega);
 			Color3 col = get_color(h);
 
-//			col = Color3((i +  m_landscapeSize) / (2 * m_landscapeSize),
-//						 (j +  m_landscapeSize) / (2 * m_landscapeSize), 0.0f);
+			//			col = Color3((i +  m_landscapeSize) / (2 * m_landscapeSize),
+			//						 (j +  m_landscapeSize) / (2 * m_landscapeSize), 0.0f);
 
 			////////////////////////////////////////////////////////////////////
 			//		First triangle
@@ -219,17 +291,17 @@ void TerrainScene::UploadTerrainBatch()
 			vVerts[idxV + 17] = noise2d_turb((i +  m_step) * m_turbK, j * m_turbK, m_turbOmega);
 
 
-//			if (idxV +  5 >= nVerts * 3)
-//			{
-//				exit(0);
-//			}
+			//			if (idxV +  5 >= nVerts * 3)
+			//			{
+			//				exit(0);
+			//			}
 		}
 	}
 
 	g_debug << "i really needed " << idxV / 6 << " verticles, you counted " << nVerts / 2 << endl;
 
 	// Triangle strip goes to hell!
-//	m_terrainBatch.Begin(GL_TRIANGLE_STRIP, idxV / 3);
+	//	m_terrainBatch.Begin(GL_TRIANGLE_STRIP, idxV / 3);
 	m_terrainBatch.Begin(GL_TRIANGLES, idxV / 3);
 	m_terrainBatch.CopyVertexData3f(vVerts);
 	m_terrainBatch.CopyColorData4f(vCols);
@@ -280,19 +352,19 @@ void TerrainScene::handleKeyboardEvent(Key key)
 		break;
 	}
 	case KeyUp:			m_cameraFrame.MoveForward(linear); break;
-//		m_turbK++;
-//		UploadTerrainBatch();
+		//		m_turbK++;
+		//		UploadTerrainBatch();
 	case KeyDown:		m_cameraFrame.MoveForward(-linear); break;
-//		m_turbK--;
-//		UploadTerrainBatch();
+		//		m_turbK--;
+		//		UploadTerrainBatch();
 	case KeyRight:		m_cameraFrame.MoveRight(-linear); break;
-//		if (m_turbOmega < 7)
-//			m_turbOmega++;
-//		UploadTerrainBatch();
+		//		if (m_turbOmega < 7)
+		//			m_turbOmega++;
+		//		UploadTerrainBatch();
 	case KeyLeft:		m_cameraFrame.MoveRight(linear); break;
-//		if (m_turbOmega > -1)
-//			m_turbOmega--;
-//		UploadTerrainBatch();
+		//		if (m_turbOmega > -1)
+		//			m_turbOmega--;
+		//		UploadTerrainBatch();
 	case KeyPageUp:		m_cameraFrame.MoveUp(linear); break;
 	case KeyPageDown:	m_cameraFrame.MoveUp(-linear); break;
 	case KeyW:			m_cameraFrame.RotateWorld( angular, 0.0f, 1.0f, 0.0f); break;
@@ -332,7 +404,7 @@ void TerrainScene::SetColormap()
 
 remath::Color3 TerrainScene::get_color(float h)
 {
-//	return Color3(1 * h, 1 * h, 1 * h);
+	//	return Color3(1 * h, 1 * h, 1 * h);
 
 	int i;
 	for (i = 0; m_colormap[i].n < h && i <= 3; i++);
@@ -390,6 +462,211 @@ float TerrainScene::noise2d_turb(float t1, float t2, int omega)
 	return turb;
 }
 
+// Draw a torus (doughnut)  at z = fZVal... torus is in xy plane
+void TerrainScene::MakeTorus(GLTriangleBatch& torusBatch, GLfloat majorRadius, GLfloat minorRadius, GLint numMajor, GLint numMinor)
+{
+	double majorStep = 2.0f*M3D_PI / numMajor;
+	double minorStep = 2.0f*M3D_PI / numMinor;
+	int i, j;
+
+	torusBatch.BeginMesh(numMajor * (numMinor+1) * 6);
+	for (i=0; i<numMajor; ++i)
+	{
+		double a0 = i * majorStep;
+		double a1 = a0 + majorStep;
+		GLfloat x0 = (GLfloat) cos(a0);
+		GLfloat y0 = (GLfloat) sin(a0);
+		GLfloat x1 = (GLfloat) cos(a1);
+		GLfloat y1 = (GLfloat) sin(a1);
+
+		M3DVector3f vVertex[4];
+		M3DVector3f vNormal[4];
+		M3DVector2f vTexture[4];
+
+		for (j=0; j<=numMinor; ++j)
+		{
+			double b = j * minorStep;
+			GLfloat c = (GLfloat) cos(b);
+			GLfloat r = minorRadius * c + majorRadius;
+			GLfloat z = minorRadius * (GLfloat) sin(b);
+
+			// First point
+			vTexture[0][0] = (float)(i)/(float)(numMajor);
+			vTexture[0][1] = (float)(j)/(float)(numMinor);
+			vNormal[0][0] = x0*c;
+			vNormal[0][1] = y0*c;
+			vNormal[0][2] = z/minorRadius;
+			m3dNormalizeVector3(vNormal[0]);
+			vVertex[0][0] = x0 * r;
+			vVertex[0][1] = y0 * r;
+			vVertex[0][2] = z;
+
+			// Second point
+			vTexture[1][0] = (float)(i+1)/(float)(numMajor);
+			vTexture[1][1] = (float)(j)/(float)(numMinor);
+			vNormal[1][0] = x1*c;
+			vNormal[1][1] = y1*c;
+			vNormal[1][2] = z/minorRadius;
+			m3dNormalizeVector3(vNormal[1]);
+			vVertex[1][0] = x1*r;
+			vVertex[1][1] = y1*r;
+			vVertex[1][2] = z;
+
+			// Next one over
+			b = (j+1) * minorStep;
+			c = (GLfloat) cos(b);
+			r = minorRadius * c + majorRadius;
+			z = minorRadius * (GLfloat) sin(b);
+
+			// Third (based on first)
+			vTexture[2][0] = (float)(i)/(float)(numMajor);
+			vTexture[2][1] = (float)(j+1)/(float)(numMinor);
+			vNormal[2][0] = x0*c;
+			vNormal[2][1] = y0*c;
+			vNormal[2][2] = z/minorRadius;
+			m3dNormalizeVector3(vNormal[2]);
+			vVertex[2][0] = x0 * r;
+			vVertex[2][1] = y0 * r;
+			vVertex[2][2] = z;
+
+			// Fourth (based on second)
+			vTexture[3][0] = (float)(i+1)/(float)(numMajor);
+			vTexture[3][1] = (float)(j+1)/(float)(numMinor);
+			vNormal[3][0] = x1*c;
+			vNormal[3][1] = y1*c;
+			vNormal[3][2] = z/minorRadius;
+			m3dNormalizeVector3(vNormal[3]);
+			vVertex[3][0] = x1*r;
+			vVertex[3][1] = y1*r;
+			vVertex[3][2] = z;
+
+			torusBatch.AddTriangle(vVertex, vNormal, vTexture);
+
+			// Rearrange for next triangle
+			memcpy(vVertex[0], vVertex[1], sizeof(M3DVector3f));
+			memcpy(vNormal[0], vNormal[1], sizeof(M3DVector3f));
+			memcpy(vTexture[0], vTexture[1], sizeof(M3DVector2f));
+
+			memcpy(vVertex[1], vVertex[3], sizeof(M3DVector3f));
+			memcpy(vNormal[1], vNormal[3], sizeof(M3DVector3f));
+			memcpy(vTexture[1], vTexture[3], sizeof(M3DVector2f));
+
+			torusBatch.AddTriangle(vVertex, vNormal, vTexture);
+		}
+	}
+	torusBatch.End();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+// Make a sphere
+void TerrainScene::MakeSphere(GLTriangleBatch& sphereBatch, GLfloat fRadius, GLint iSlices, GLint iStacks)
+{
+	GLfloat drho = (GLfloat)(3.141592653589) / (GLfloat) iStacks;
+	GLfloat dtheta = 2.0f * (GLfloat)(3.141592653589) / (GLfloat) iSlices;
+	GLfloat ds = 1.0f / (GLfloat) iSlices;
+	GLfloat dt = 1.0f / (GLfloat) iStacks;
+	GLfloat t = 1.0f;
+	GLfloat s = 0.0f;
+	GLint i, j;     // Looping variables
+
+	sphereBatch.BeginMesh(iSlices * iStacks * 6);
+	for (i = 0; i < iStacks; i++)
+	{
+		GLfloat rho = (GLfloat)i * drho;
+		GLfloat srho = (GLfloat)(sin(rho));
+		GLfloat crho = (GLfloat)(cos(rho));
+		GLfloat srhodrho = (GLfloat)(sin(rho + drho));
+		GLfloat crhodrho = (GLfloat)(cos(rho + drho));
+
+		// Many sources of OpenGL sphere drawing code uses a triangle fan
+		// for the caps of the sphere. This however introduces texturing
+		// artifacts at the poles on some OpenGL implementations
+		s = 0.0f;
+		M3DVector3f vVertex[4];
+		M3DVector3f vNormal[4];
+		M3DVector2f vTexture[4];
+
+		for ( j = 0; j < iSlices; j++)
+		{
+			GLfloat theta = (j == iSlices) ? 0.0f : j * dtheta;
+			GLfloat stheta = (GLfloat)(-sin(theta));
+			GLfloat ctheta = (GLfloat)(cos(theta));
+
+			GLfloat x = stheta * srho;
+			GLfloat y = ctheta * srho;
+			GLfloat z = crho;
+
+			vTexture[0][0] = s;
+			vTexture[0][1] = t;
+			vNormal[0][0] = x;
+			vNormal[0][1] = y;
+			vNormal[0][2] = z;
+			vVertex[0][0] = x * fRadius;
+			vVertex[0][1] = y * fRadius;
+			vVertex[0][2] = z * fRadius;
+
+			x = stheta * srhodrho;
+			y = ctheta * srhodrho;
+			z = crhodrho;
+
+			vTexture[1][0] = s;
+			vTexture[1][1] = t - dt;
+			vNormal[1][0] = x;
+			vNormal[1][1] = y;
+			vNormal[1][2] = z;
+			vVertex[1][0] = x * fRadius;
+			vVertex[1][1] = y * fRadius;
+			vVertex[1][2] = z * fRadius;
+
+
+			theta = ((j+1) == iSlices) ? 0.0f : (j+1) * dtheta;
+			stheta = (GLfloat)(-sin(theta));
+			ctheta = (GLfloat)(cos(theta));
+
+			x = stheta * srho;
+			y = ctheta * srho;
+			z = crho;
+
+			s += ds;
+			vTexture[2][0] = s;
+			vTexture[2][1] = t;
+			vNormal[2][0] = x;
+			vNormal[2][1] = y;
+			vNormal[2][2] = z;
+			vVertex[2][0] = x * fRadius;
+			vVertex[2][1] = y * fRadius;
+			vVertex[2][2] = z * fRadius;
+
+			x = stheta * srhodrho;
+			y = ctheta * srhodrho;
+			z = crhodrho;
+
+			vTexture[3][0] = s;
+			vTexture[3][1] = t - dt;
+			vNormal[3][0] = x;
+			vNormal[3][1] = y;
+			vNormal[3][2] = z;
+			vVertex[3][0] = x * fRadius;
+			vVertex[3][1] = y * fRadius;
+			vVertex[3][2] = z * fRadius;
+
+			sphereBatch.AddTriangle(vVertex, vNormal, vTexture);
+
+			// Rearrange for next triangle
+			memcpy(vVertex[0], vVertex[1], sizeof(M3DVector3f));
+			memcpy(vNormal[0], vNormal[1], sizeof(M3DVector3f));
+			memcpy(vTexture[0], vTexture[1], sizeof(M3DVector2f));
+
+			memcpy(vVertex[1], vVertex[3], sizeof(M3DVector3f));
+			memcpy(vNormal[1], vNormal[3], sizeof(M3DVector3f));
+			memcpy(vTexture[1], vTexture[3], sizeof(M3DVector2f));
+
+			sphereBatch.AddTriangle(vVertex, vNormal, vTexture);
+		}
+		t -= dt;
+	}
+	sphereBatch.End();
+}
 
 // Make a cube, centered at the origin, and with a specified "radius"
 void TerrainScene::MakeCube(GLBatch& cubeBatch, GLfloat fRadius)
