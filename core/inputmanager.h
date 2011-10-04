@@ -1,6 +1,8 @@
 #pragma once
 
-#include "../globals.h"
+#include "core/keyboard.h"
+#include "util/singleton.h"
+#include <vector>
 
 namespace recore {
 
