@@ -5,6 +5,7 @@
 #include "vector4.h"
 #include "matrix4.h"
 #include "rect.h"
+#include "aabbox3d.h"
 
 /**
  A class that contains mathematics-related static helper methods and constants.
@@ -33,6 +34,41 @@ inline float rad2deg(float x)
 
 //#define m3dDegToHr(x)	((x) * 15.0))
 //#define m3dRadToHr(x)	m3dDegToHr(m3dRadToDeg(x))
+
+//! returns minimum of two values. Own implementation to get rid of the STL (VS6 problems)
+template<class T>
+inline const T& min_(const T& a, const T& b)
+{
+	return a < b ? a : b;
+}
+
+//! returns minimum of three values. Own implementation to get rid of the STL (VS6 problems)
+template<class T>
+inline const T& min_(const T& a, const T& b, const T& c)
+{
+	return a < b ? min_(a, c) : min_(b, c);
+}
+
+//! returns maximum of two values. Own implementation to get rid of the STL (VS6 problems)
+template<class T>
+inline const T& max_(const T& a, const T& b)
+{
+	return a < b ? b : a;
+}
+
+//! returns maximum of three values. Own implementation to get rid of the STL (VS6 problems)
+template<class T>
+inline const T& max_(const T& a, const T& b, const T& c)
+{
+	return a < b ? max_(b, c) : max_(a, c);
+}
+
+//! returns abs of two values. Own implementation to get rid of STL (VS6 problems)
+template<class T>
+inline T abs_(const T& a)
+{
+	return a < (T)0 ? -a : a;
+}
 
 class Math
 {
