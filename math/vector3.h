@@ -2,6 +2,7 @@
 
 #include "vector2.h"
 #include <cmath>
+#include <iostream>
 
 namespace remath {
 
