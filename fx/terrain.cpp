@@ -19,7 +19,7 @@ void TerrainScene::init()
 	m_points = false;
 	m_texture = false;
 
-	m_landscapeSize = 0.8f;
+	m_landscapeSize = 1.5f;
 	m_step = 0.01f;
 	m_turbOmega = 1;
 	m_turbK = 1;
@@ -421,6 +421,8 @@ remath::Color3 TerrainScene::get_color(float h)
 
 void TerrainScene::SetTab2()
 {
+	srand(time(NULL));
+
 	int i, j;
 	for (i = 0; i < SIZE; i++)
 		for (j = 0; j < SIZE; j++)
