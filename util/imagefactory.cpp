@@ -51,7 +51,7 @@ Image* ImageFactory::createEmpty(int width, int height)
 	return image;
 }
 
-Image* ImageFactory::loadJPG(std::string& filename)
+Image* ImageFactory::loadJPG(const std::string& filename)
 {
 	unsigned int imageID;
 	unsigned char *ptr = NULL, *dest = NULL;
@@ -88,7 +88,7 @@ Image* ImageFactory::loadJPG(std::string& filename)
 	return image;
 }
 
-Image* ImageFactory::loadPNG(std::string& filename)
+Image* ImageFactory::loadPNG(const std::string& filename)
 {
 	unsigned int imageID;
 
@@ -121,6 +121,43 @@ Image* ImageFactory::loadPNG(std::string& filename)
 		{
 			*dest |= (*source++ << bytes);
 		}
+	}
+
+	ilDeleteImages(1, &imageID);
+
+	return image;
+}
+
+Image* ImageFactory::loadBMP(const std::string& filename)
+{
+	unsigned int imageID;
+	unsigned char *ptr = NULL, *dest = NULL;
+
+	ilInit();
+	ilGenImages(1, &imageID);
+	ilBindImage(imageID);
+
+	// Load image from a file
+	if (!ilLoadImage((char *)filename.c_str()))
+	{
+		g_debug << "loading image " << filename << " failed!" << std::endl;
+		return 0;
+	}
+
+	Image *image = new Image();
+	image->m_width = ilGetInteger(IL_IMAGE_WIDTH);
+	image->m_height = ilGetInteger(IL_IMAGE_HEIGHT);
+	image->m_data = new unsigned int[image->m_width*image->m_height];
+
+	ilConvertImage(IL_RGB, IL_UNSIGNED_BYTE);
+	ptr = ilGetData();
+	dest = (unsigned char *)image->m_data;
+
+	for (int i = 0; i < image->m_width*image->m_height; i++, dest++)
+	{
+		for (int bytes = 0; bytes <= 16; bytes += 8)
+			*dest |= (*ptr++ << bytes);
+		*dest |= 0xFF; //no alpha channel
 	}
 
 	ilDeleteImages(1, &imageID);
