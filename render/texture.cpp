@@ -47,7 +47,8 @@ bool Texture::hasBeenUsed()
 void Texture::bind(int texunit)
 {
 	glActiveTexture(texunit);
-	glEnable(GL_TEXTURE_2D);
+	//! Deprecated
+//	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, m_ID);
 	m_hasBeenBound = true;
 }
@@ -74,7 +75,8 @@ void Texture::upload(Image &sourceImage, TextureParameters &params)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
 		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S, wrap);
 		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T, wrap);
-		glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, sourceImage.getData());
+//		glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, sourceImage.getData());
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, sourceImage.getData());
 	}
 	else
 	{
@@ -84,7 +86,8 @@ void Texture::upload(Image &sourceImage, TextureParameters &params)
 		glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
-		gluBuild2DMipmaps(GL_TEXTURE_2D, 4, width, height, GL_RGBA, GL_UNSIGNED_BYTE, sourceImage.getData());
+		//! DEPRECATED
+//		gluBuild2DMipmaps(GL_TEXTURE_2D, 4, width, height, GL_RGBA, GL_UNSIGNED_BYTE, sourceImage.getData());
 	}
 	m_params = params;
 }

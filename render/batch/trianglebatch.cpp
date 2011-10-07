@@ -205,7 +205,7 @@ void GLTriangleBatch::End(void)
 }
 
 //////////////////////////////////////////////////////////////////////////
-// Draw - make sure you call glEnableClientState for these arrays
+// Draw
 void GLTriangleBatch::Draw(void)
 {
 	glBindVertexArray(vertexArrayBufferObject);

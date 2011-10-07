@@ -15,6 +15,7 @@
 #include "geometrytransform.h"
 #include "batch/batch.h"
 #include "batch/trianglebatch.h"
+#include "objects.h"
 
 namespace render {
 
@@ -95,21 +96,32 @@ public:
 
 		resize(w, h, aspect);
 
-		glShadeModel(GL_SMOOTH);
+//		glClearColor(1.0f, 1.0f, 1.0f, 1.0f );
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f );
+		glEnable(GL_DEPTH_TEST);
+		glLineWidth(2.5f);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+
+#ifdef __DEPRECATED_PROFILE__
+//		glShadeModel(GL_SMOOTH);
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClearDepth(1.0f);
 
 		glEnable(GL_DEPTH_TEST);
 
 		glDepthFunc(GL_LEQUAL);
-		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+		//! DEPRECATED
+//		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 		glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
 		glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
-		glDisable(GL_NORMALIZE);
-		glDisable(GL_TEXTURE_GEN_S);
-		glDisable(GL_TEXTURE_GEN_T);
-		glEnable(GL_TEXTURE_2D);
+		//! DEPRECATED
+//		glDisable(GL_NORMALIZE);
+//		glDisable(GL_TEXTURE_GEN_S);
+//		glDisable(GL_TEXTURE_GEN_T);
+//		glEnable(GL_TEXTURE_2D);
+#endif
 	}
 
 	static void resize(int w, int h, AspectRatio aspect)

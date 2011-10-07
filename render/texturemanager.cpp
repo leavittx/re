@@ -170,6 +170,14 @@ void TextureManager::loadImages()
 				addImage(filename, image);
 			}
 		}
+		else if (suffix == "bmp")
+		{
+			Image *image = ImageFactory::loadBMP(path);
+			if (image != 0)
+			{
+				addImage(filename, image);
+			}
+		}
 		else
 		{
 			g_debug << "non-image file " << filename << " found in graphics directory!" << endl;
@@ -188,7 +196,8 @@ void TextureManager::uploadImages()
 	TextureParameters *tempparams = new TextureParameters();
 	addTextureParameters(std::string("no texture"), tempparams);
 
-	glEnable(GL_TEXTURE_2D);
+	//! DEPRECATED
+//	glEnable(GL_TEXTURE_2D);
 	//loop through all images and upload the ones that need to be uploaded
 	for (it = m_images.begin(); it != m_images.end(); it++)
 	{
