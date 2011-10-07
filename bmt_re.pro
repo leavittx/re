@@ -74,7 +74,8 @@ HEADERS += \
     render/batch/trianglebatch.h \
     render/frustum.h \
     fx/heightmap.h \
-    math/aabbox3d.h
+    math/aabbox3d.h \
+    render/objects.h
 
 #    render/GLTools/math3d.cpp \
 #    render/GLTools/GLTriangleBatch.cpp \
@@ -107,6 +108,7 @@ INCLUDEPATH += \
     /usr/include/c++/4.6.1/ \
     /usr/lib/gcc/x86_64-pc-linux-gnu/4.5.3/include/g++-v4/ \
     render/GLTools
+
 
 
 
