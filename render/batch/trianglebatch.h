@@ -6,6 +6,9 @@
 #include <math3d.h>
 #include "batchbase.h"
 
+#include "math/vector2.h"
+#include "math/vector3.h"
+
 #define VERTEX_DATA     0
 #define NORMAL_DATA     1
 #define TEXTURE_DATA    2
@@ -21,6 +24,7 @@ public:
 
 	// Use these three functions to add triangles
 	void BeginMesh(GLuint nMaxVerts);
+	void AddTriangle(remath::Vector3f verts[3], remath::Vector3f vNorms[3], remath::Vector2f vTexCoords[3]);
 	void AddTriangle(M3DVector3f verts[3], M3DVector3f vNorms[3], M3DVector2f vTexCoords[3]);
 	void End(void);
 
@@ -28,9 +32,9 @@ public:
 	inline GLuint GetIndexCount(void) { return nNumIndexes; }
 	inline GLuint GetVertexCount(void) { return nNumVerts; }
 
-
-	// Draw - make sure you call glEnableClientState for these arrays
 	virtual void Draw(void);
+
+	M3DVector3f* getVerts() { return pVerts; }
 
 protected:
 	GLushort  *pIndexes;        // Array of indexes
@@ -44,6 +48,8 @@ protected:
 
 	GLuint bufferObjects[4];
 	GLuint vertexArrayBufferObject;
+
+//	friend class Terrain;
 };
 
 } // end of namespace 'render'

@@ -75,6 +75,20 @@ void GLTriangleBatch::BeginMesh(GLuint nMaxVerts)
 	pTexCoords = new M3DVector2f[nMaxIndexes];
 }
 
+void GLTriangleBatch::AddTriangle(remath::Vector3f verts[3], remath::Vector3f vNorms[3], remath::Vector2f vTexCoords[3])
+{
+	M3DVector3f _verts[3], _vNorms[3];
+	M3DVector2f _vTexCoords[3];
+
+	for (int i = 0; i < 3; i++) {
+		memcpy(_verts[i], &verts[i].x, sizeof(float) * 3);
+		memcpy(_vNorms[0], &vNorms[0].x, sizeof(float) * 3);
+		memcpy(_vTexCoords[0], &vTexCoords[0].x, sizeof(float) * 2);
+	}
+
+	AddTriangle(_verts, _vNorms, _vTexCoords);
+}
+
 /////////////////////////////////////////////////////////////////
 // Add a triangle to the mesh. This searches the current list for identical
 // (well, almost identical - these are floats you know...) verts. If one is found, it
