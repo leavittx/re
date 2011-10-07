@@ -31,14 +31,14 @@ int main()
 		TextureManager::inst().loadImages();
 		ShaderManager::inst().init();
 
-//		demo->addScene("core", new TestCoreProfileScene());
-//		demo->addSceneToTimeline("core", 0, 1000000, 0);
+		demo->addScene("core", new TestCoreProfileScene());
+		demo->addSceneToTimeline("core", 0, 1000000, 0);
 
 //		demo->addScene("terrain", new TerrainScene());
 //		demo->addSceneToTimeline("terrain", 0, 1000000, 0);
 
-		demo->addScene("heightmap", new HeightMapScene());
-		demo->addSceneToTimeline("heightmap", 0, 1000000, 0);
+//		demo->addScene("heightmap", new HeightMapScene());
+//		demo->addSceneToTimeline("heightmap", 0, 1000000, 0);
 
 		TextureManager::inst().uploadImages();
 		ShaderManager::inst().loadShaders();
