@@ -37,6 +37,7 @@ private:
 	bool m_fullscreen;
 	int m_bpp;
 
+	void EarlyInitGLXfnPointers();
 	void goFullscreen();
 };
 
