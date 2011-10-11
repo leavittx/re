@@ -1,6 +1,7 @@
 #include "testcoreprofile.h"
 #include "core/time.h"
 #include "render/texturemanager.h"
+#include "util/tga.h"
 
 using namespace redemo;
 using namespace recore;
@@ -16,6 +17,8 @@ static GLMatrixStack m_projectionMatrix;
 static GLGeometryTransform m_transformPipeline;
 
 static bool m_wireframe, m_points;
+
+static unsigned int textureID;
 
 // Lighting data
 GLfloat lightAmbient[] = { 0.2f, 0.2f, 0.2f, 1.0f };
@@ -40,6 +43,11 @@ void TestCoreProfileScene::init()
 	m_transformPipeline.SetMatrixStacks(m_modelViewMatrix, m_projectionMatrix);
 
 	InputManager::inst().acceptKeyboardEvents(this);
+
+	// Test texturing
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	reutil::LoadTGATexture("data/graphics/wall.tga", GL_LINEAR, GL_LINEAR, GL_CLAMP_TO_EDGE);
 }
 
 void TestCoreProfileScene::release()
@@ -94,9 +102,20 @@ void TestCoreProfileScene::draw()
 
 
 
-//	TextureManager::inst().bindTexture("terrain-heightmap.bmp");
-//	TextureManager::inst().bindTexture("color_tile.png");
+//	TextureManager::inst().bindTexture("terrain-heightmap.png");
+//	TextureManager::inst().bindTexture("terrain-texture.jpg");
 
+//	TextureManager::inst().bindTexture("color_tile.png");
+//	TextureManager::inst().bindTexture("rblur000.png");
+//	TextureManager::inst().bindTexture("tex1.png");
+//	TextureManager::inst().bindTexture("bmtlogo.png");
+
+//	TextureManager::inst().bindTexture("env.tga");
+
+	glEnable(GL_CULL_FACE);
+//	gl::setCullMode(gl::FILL, gl::FILL);
+
+//	glBindTexture(GL_TEXTURE_2D, textureID);
 
 	ShaderManager::inst().UseStockShader(GLT_SHADER_TEXTURE_REPLACE,
 		StockShaderUniforms(Matrix4f(m_transformPipeline.GetModelViewProjectionMatrix()).ptr(), 0));
@@ -105,10 +124,6 @@ void TestCoreProfileScene::draw()
 //		StockShaderUniforms(Matrix4f(m_transformPipeline.GetModelViewMatrix()).ptr(),
 //							Matrix4f(m_transformPipeline.GetProjectionMatrix()).ptr(),
 //							vLightPos, vWhite, 0));
-
-
-//	TextureManager::inst().bindTexture("color_tile.png");
-
 
 	cubeBatch.Draw();
 
