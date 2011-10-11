@@ -15,8 +15,6 @@
 #include "trianglebatch.h"
 #include "../shadermanager.h"
 
-#ifdef __GLTOOLS_MY__
-
 using namespace render;
 
 ///////////////////////////////////////////////////////////
@@ -215,5 +213,3 @@ void GLTriangleBatch::Draw(void)
 	// Unbind to anybody
 	glBindVertexArray(0);
 }
-
-#endif // __GLTOOLS_MY__

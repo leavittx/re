@@ -1,8 +1,6 @@
 #include "batch.h"
 #include "../shadermanager.h"
 
-#ifdef __GLTOOLS_MY__
-
 using namespace render;
 
 GLBatch::GLBatch(void):
@@ -418,5 +416,3 @@ void GLBatch::Draw(void)
 
 	glBindVertexArray(0);
 }
-
-#endif // __GLTOOLS_MY__

@@ -3,7 +3,7 @@
 #define GLEW_STATIC
 #include <GL/glew.h>
 
-#include <math3d.h>
+#include "math/math3d.h"
 #include "batchbase.h"
 
 #include "math/vector2.h"

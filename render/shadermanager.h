@@ -2,13 +2,11 @@
 
 #include "../globals.h"
 #include "shader.h"
-#include <math3d.h>
+#include "math/math3d.h"
 
 namespace render {
 
 class Shader;
-
-#ifdef __GLTOOLS_MY__
 
 enum GLT_STOCK_SHADER { GLT_SHADER_IDENTITY = 0, GLT_SHADER_FLAT, GLT_SHADER_SHADED, GLT_SHADER_DEFAULT_LIGHT, GLT_SHADER_POINT_LIGHT_DIFF,
 						GLT_SHADER_TEXTURE_REPLACE, GLT_SHADER_TEXTURE_MODULATE, GLT_SHADER_TEXTURE_POINT_LIGHT_DIFF, GLT_SHADER_TEXTURE_RECT_REPLACE,
@@ -17,8 +15,6 @@ enum GLT_STOCK_SHADER { GLT_SHADER_IDENTITY = 0, GLT_SHADER_FLAT, GLT_SHADER_SHA
 enum GLT_SHADER_ATTRIBUTE { GLT_ATTRIBUTE_VERTEX = 0, GLT_ATTRIBUTE_COLOR, GLT_ATTRIBUTE_NORMAL,
 							GLT_ATTRIBUTE_TEXTURE0, GLT_ATTRIBUTE_TEXTURE1, GLT_ATTRIBUTE_TEXTURE2, GLT_ATTRIBUTE_TEXTURE3,
 							GLT_ATTRIBUTE_LAST};
-
-#endif // __GLTOOLS_MY__
 
 struct StockShaderUniforms
 {
@@ -49,11 +45,6 @@ struct StockShaderUniforms
 	// Just the Color (IDENTITY shader)
 	//	StockShaderUniforms(float* _vColor) : vColor(_vColor) {}
 
-	//	M3DMatrix44f* mvpMatrix;
-	//	M3DMatrix44f* mvMatrix;
-	//	M3DMatrix44f* pMatrix;
-	//	M3DVector3f* vLightPos;
-	//	M3DVector4f* vColor;
 	float* mvpMatrix;
 	float* mvMatrix;
 	float* pMatrix;

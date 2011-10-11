@@ -3,7 +3,7 @@
 #define GLEW_STATIC
 #include <GL/glew.h>
 
-#include <math3d.h>
+#include "math/math3d.h"
 #include "batchbase.h"
 
 namespace render {
@@ -64,7 +64,6 @@ protected:
 	GLuint nNumTextureUnits;		// Number of texture coordinate sets
 
 	bool bBatchDone;				// Batch has been built
-
 
 	M3DVector3f *pVerts;
 	M3DVector3f *pNormals;

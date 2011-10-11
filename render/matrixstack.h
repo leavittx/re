@@ -2,7 +2,7 @@
 
 // Matrix stack functionality
 
-#include <math3d.h>
+#include "math/math3d.h"
 #include "frame.h"
 
 namespace render {
