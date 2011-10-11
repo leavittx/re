@@ -19,9 +19,9 @@ void TerrainScene::init()
 	m_points = false;
 	m_texture = false;
 
-	m_landscapeSize = 1.5f;
-	m_step = 0.01f;
-	m_turbOmega = 1;
+	m_landscapeSize = 10.0f;
+	m_step = 0.05f;
+	m_turbOmega = 3;
 	m_turbK = 1;
 	m_texCoordK = 1.0f;
 
@@ -29,6 +29,7 @@ void TerrainScene::init()
 	SetColormap();
 
 	UploadTerrainBatch();
+
 	MakeCube(m_cubeBatch, 0.3f);
 
 	// This makes a torus
@@ -36,7 +37,6 @@ void TerrainScene::init()
 
 	// This make a sphere
 	MakeSphere(sphereBatch, 0.1f, 26, 13);
-
 
 	floorBatch.Begin(GL_LINES, 324);
 	for(GLfloat x = -20.0; x <= 20.0f; x+= 0.5) {
@@ -52,21 +52,6 @@ void TerrainScene::init()
 	m_transformPipeline.SetMatrixStacks(m_modelViewMatrix, m_projectionMatrix);
 
 	InputManager::inst().acceptKeyboardEvents(this);
-
-	float size = m_landscapeSize;
-	float step = m_step;
-	int count = 0;
-
-	int count_my = (2 * size / step) * (2 * size / step);
-
-	for (float j = -size; j < size; j += step)
-		for (float i = -size; i < size; i += step, count++)
-		{
-			//		g_debug << i << endl;
-		}
-
-	g_debug << "count: " << count << endl;
-	g_debug << "my count: " << count_my << endl;
 }
 
 void TerrainScene::release()
@@ -89,66 +74,85 @@ void TerrainScene::draw()
 	m_cameraFrame.GetCameraMatrix(mCamera);
 	m_modelViewMatrix.PushMatrix(mCamera);
 
-	Matrix4f mScale, mTranslate, mRotate, mModelview, mModelViewProjection;
-	mScale = Matrix4f::Scaling(2.9f, 2.9f, 2.9f);
-	mTranslate = Matrix4f::Translation(0.0f, 2.0f, -6.0f);
-	mRotate = Matrix4f::RotationWithAxis(Vector3f(0.0f, 0.0f, 1.0f), 35.0f * Time::gets()*0.01f /*remath::deg2rad(30*sin(t::gets() * 10.0f))*/);
-	mRotate = mRotate +  Matrix4f::RotationWithAxis(Vector3f(1.0f, 0.0f, 0.0f), deg2rad(-60.0f));
-	mModelview = mScale * mRotate * mTranslate;
-	mModelViewProjection = Matrix4f(gl::m_viewFrustum.GetProjectionMatrix()) * mModelview;
+//	Matrix4f mScale, mTranslate, mRotate, mModelview, mModelViewProjection;
+//	mScale = Matrix4f::Scaling(2.9f, 2.9f, 2.9f);
+//	mTranslate = Matrix4f::Translation(0.0f, 2.0f, -6.0f);
+//	mRotate = Matrix4f::RotationWithAxis(Vector3f(0.0f, 0.0f, 1.0f), 35.0f * Time::gets()*0.01f /*remath::deg2rad(30*sin(t::gets() * 10.0f))*/);
+//	mRotate = mRotate +  Matrix4f::RotationWithAxis(Vector3f(1.0f, 0.0f, 0.0f), deg2rad(-60.0f));
+//	mModelview = mScale * mRotate * mTranslate;
+//	mModelViewProjection = Matrix4f(gl::m_viewFrustum.GetProjectionMatrix()) * mModelview;
 
 
-	m_modelViewMatrix.Translate(0.0f, 0.0f, -2.5f);
+	m_modelViewMatrix.Rotate(70.0f, 1.0f, 0.0f, 0.0f);
+	m_modelViewMatrix.Translate(0.0f, -15.0f, -5.0f);
 
-	ShaderManager::inst().UseStockShader(GLT_SHADER_SHADED,
-										 StockShaderUniforms(Matrix4f(m_transformPipeline.GetModelViewProjectionMatrix()).ptr()));
 
-	glEnable(GL_STENCIL_TEST);
-	glStencilFunc(GL_NEVER, 0, 0);
-	glStencilOp(GL_INCR, GL_INCR, GL_INCR);
-	glFrontFace(GL_CW);
+	m_modelViewMatrix.PushMatrix();
 
-	glLineWidth(1.2f);
-	glPointSize(8.0f);
+		m_modelViewMatrix.Translate(0.0f, 2.0f, -2.5f);
+		m_modelViewMatrix.Rotate(180.0f, 1.0f, 0.0f, 0.0f);
 
-	m_terrainBatch.Draw();
+		ShaderManager::inst().UseStockShader(GLT_SHADER_SHADED,
+			StockShaderUniforms(Matrix4f(m_transformPipeline.GetModelViewProjectionMatrix()).ptr()));
 
-	glFrontFace(GL_CCW);
-	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-	glDisable(GL_STENCIL_TEST);
+		glEnable(GL_CULL_FACE);
+
+		glEnable(GL_STENCIL_TEST);
+		glStencilFunc(GL_NEVER, 0, 0);
+		glStencilOp(GL_INCR, GL_INCR, GL_INCR);
+		glFrontFace(GL_CW);
+
+		glLineWidth(1.2f);
+		glPointSize(1.0f);
+
+		m_terrainBatch.Draw();
+
+		glFrontFace(GL_CCW);
+		glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+		glDisable(GL_STENCIL_TEST);
+
+	m_modelViewMatrix.PopMatrix();
 
 
 	//	float sine = fabs(sin(t::gets()));
 	//	GLfloat vRed[] = { sine*1.0f, 1-sine*1.0f, 1-sine*0.5f, 1.0f };
-	GLfloat vRed[] = { 0.0f, 1.0f, 0.0f, 1.0f };
+	static GLfloat vRed[] = { 0.0f, 1.0f, 0.0f, 1.0f };
+	static GLfloat vFloorColor[] = { 0.0f, 1.0f, 0.0f, 1.0f};
 
 	ShaderManager::inst().UseStockShader(GLT_SHADER_FLAT,
-										 StockShaderUniforms(Matrix4f(m_transformPipeline.GetModelViewProjectionMatrix()).ptr(), vRed));
+		StockShaderUniforms(Matrix4f(m_transformPipeline.GetModelViewProjectionMatrix()).ptr(), vRed));
 
-	//	ShaderManager::inst().UseStockShader(GLT_SHADER_DEFAULT_LIGHT,
-	//				StockShaderUniforms(Matrix4f(m_transformPipeline.GetModelViewMatrix()).ptr(),
-	//									Matrix4f(m_transformPipeline.GetProjectionMatrix()).ptr(), vRed));
+//	ShaderManager::inst().UseStockShader(GLT_SHADER_DEFAULT_LIGHT,
+//		StockShaderUniforms(Matrix4f(m_transformPipeline.GetModelViewMatrix()).ptr(),
+//							Matrix4f(m_transformPipeline.GetProjectionMatrix()).ptr(), vRed));
 
-	//	ShaderManager::inst().UseStockShader(GLT_SHADER_FLAT,
-	//				StockShaderUniforms(Matrix4f(m_transformPipeline.GetModelViewProjectionMatrix()).ptr(), vRed));
-	//	ShaderManager::inst().UseStockShader(GLT_SHADER_FLAT,
-	//				StockShaderUniforms(mModelViewProjection.ptr(), vRed));
+//	ShaderManager::inst().UseStockShader(GLT_SHADER_FLAT,
+//		StockShaderUniforms(Matrix4f(m_transformPipeline.GetModelViewProjectionMatrix()).ptr(), vRed));
+//	ShaderManager::inst().UseStockShader(GLT_SHADER_FLAT,
+//		StockShaderUniforms(mModelViewProjection.ptr(), vRed));
 
-	//	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	//	glEnable(GL_STENCIL_TEST);
-	//	glStencilFunc(GL_NEVER, 0, 0);
-	//	glStencilOp(GL_INCR, GL_INCR, GL_INCR);
-	//	glFrontFace(GL_CW);
-	//	m_cubeBatch.Draw();
-	//	glFrontFace(GL_CCW);
-	//	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-	//	glDisable(GL_STENCIL_TEST);
+//	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+//	glEnable(GL_STENCIL_TEST);
+//	glStencilFunc(GL_NEVER, 0, 0);
+//	glStencilOp(GL_INCR, GL_INCR, GL_INCR);
+//	glFrontFace(GL_CW);
+//	m_cubeBatch.Draw();
+//	glFrontFace(GL_CCW);
+//	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+//	glDisable(GL_STENCIL_TEST);
 
-	//	glEnable(GL_BLEND);
-	//	glEnable(GL_LINE_SMOOTH);
-	//	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+//	glEnable(GL_BLEND);
+//	glEnable(GL_LINE_SMOOTH);
+//	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-	m_cubeBatch.Draw();
+//	m_cubeBatch.Draw();
+
+
+	// Draw the ground
+	ShaderManager::inst().UseStockShader(GLT_SHADER_FLAT,
+		StockShaderUniforms(Matrix4f(m_transformPipeline.GetModelViewProjectionMatrix()).ptr(), vFloorColor));
+
+//	floorBatch.Draw();
 
 	// Restore the previous modleview matrix (the identity matrix)
 	m_modelViewMatrix.PopMatrix();
@@ -203,8 +207,7 @@ void TerrainScene::draw()
 
 void TerrainScene::UploadTerrainBatch()
 {
-	int nVerts = //(2*m_landscapeSize/m_step) +
-				 (2*m_landscapeSize/m_step) * (2*m_landscapeSize/m_step) * 6 * 2;
+	int nVerts = (2*m_landscapeSize/m_step) * (2*m_landscapeSize/m_step) * 6 * 2;
 
 	float *vVerts = new float[nVerts * 3];
 	float *vCols = new float[nVerts * 4];
@@ -215,93 +218,99 @@ void TerrainScene::UploadTerrainBatch()
 	{
 		for (float j = -m_landscapeSize; j < m_landscapeSize; j += m_step, idxV += 18, idxC += 24)
 		{
-			//			if (m_texture)
-			//				glTexCoord2d((i +  0.8) / 1.6 * m_texCoordK, (j +  0.8) / 1.6 * m_texCoordK);
+//			float h = noise2d_turb(i * m_turbK, j * m_turbK, m_turbOmega);
+//			Color3 col = get_color(h);
 
-			float h = noise2d_turb(i * m_turbK, j * m_turbK, m_turbOmega);
-			Color3 col = get_color(h);
+//			col = Color3((i +  m_landscapeSize) / (2 * m_landscapeSize),
+//						 (j +  m_landscapeSize) / (2 * m_landscapeSize), 0.0f);
 
-			//			col = Color3((i +  m_landscapeSize) / (2 * m_landscapeSize),
-			//						 (j +  m_landscapeSize) / (2 * m_landscapeSize), 0.0f);
+			float h1, h2, h3;
+			Color3 col1, col2, col3;
 
 			////////////////////////////////////////////////////////////////////
 			//		First triangle
 			////////////////////////////////////////////////////////////////////
 
+			h1 = noise2d_turb(i * m_turbK, j * m_turbK, m_turbOmega);
+			h2 = noise2d_turb((i +  m_step) * m_turbK, j * m_turbK, m_turbOmega);
+			h3 = noise2d_turb(i * m_turbK, (j +  m_step) * m_turbK, m_turbOmega);
+
+			col1 = get_color(h1);
+			col2 = get_color(h2);
+			col3 = get_color(h3);
+
 			// Save the color of 1st vertex
-			vCols[idxC +  0] = col.r;
-			vCols[idxC +  1] = col.g;
-			vCols[idxC +  2] = col.b;
+			vCols[idxC +  0] = col1.r;
+			vCols[idxC +  1] = col1.g;
+			vCols[idxC +  2] = col1.b;
 			vCols[idxC +  3] = 1.0f;
 			// Save the color of 2nd vertex
-			vCols[idxC +  4] = col.r;
-			vCols[idxC +  5] = col.g;
-			vCols[idxC +  6] = col.b;
+			vCols[idxC +  4] = col2.r;
+			vCols[idxC +  5] = col2.g;
+			vCols[idxC +  6] = col2.b;
 			vCols[idxC +  7] = 1.0f;
 			// Save the color of 3rd vertex
-			vCols[idxC +  8] = col.r;
-			vCols[idxC +  9] = col.g;
-			vCols[idxC + 10] = col.b;
+			vCols[idxC +  8] = col3.r;
+			vCols[idxC +  9] = col3.g;
+			vCols[idxC + 10] = col3.b;
 			vCols[idxC + 11] = 1.0f;
 
 			// Save the first vertex
 			vVerts[idxV +  0] = j;
-			vVerts[idxV +  1] = i;
-			vVerts[idxV +  2] = h;
+			vVerts[idxV +  1] = h1;
+			vVerts[idxV +  2] = i;
 			// Save the second vertex
 			vVerts[idxV +  3] = j;
-			vVerts[idxV +  4] = i +  m_step;
-			vVerts[idxV +  5] = noise2d_turb((i +  m_step) * m_turbK, j * m_turbK, m_turbOmega);
-
+			vVerts[idxV +  4] = h2;
+			vVerts[idxV +  5] = i +  m_step;
+			// Save the third vertex
 			vVerts[idxV +  6] = j +  m_step;
-			vVerts[idxV +  7] = i;
-			vVerts[idxV +  8] = noise2d_turb(i * m_turbK, (j +  m_step) * m_turbK, m_turbOmega);
+			vVerts[idxV +  7] = h3;
+			vVerts[idxV +  8] = i;
 
 			////////////////////////////////////////////////////////////////////
 			//		Second triangle
 			////////////////////////////////////////////////////////////////////
 
+			h1 = noise2d_turb(i * m_turbK, (j +  m_step) * m_turbK, m_turbOmega);
+			h2 = noise2d_turb((i +  m_step) * m_turbK, j * m_turbK, m_turbOmega);
+			h3 = noise2d_turb((i +  m_step) * m_turbK, (j +  m_step) * m_turbK, m_turbOmega);
+
+			col1 = get_color(h1);
+			col2 = get_color(h2);
+			col3 = get_color(h3);
+
 			// Save the color of 1st vertex
-			vCols[idxC + 12] = col.r;
-			vCols[idxC + 13] = col.g;
-			vCols[idxC + 14] = col.b;
+			vCols[idxC + 12] = col1.r;
+			vCols[idxC + 13] = col1.g;
+			vCols[idxC + 14] = col1.b;
 			vCols[idxC + 15] = 1.0f;
 			// Save the color of 2nd vertex
-			vCols[idxC + 16] = col.r;
-			vCols[idxC + 17] = col.g;
-			vCols[idxC + 18] = col.b;
+			vCols[idxC + 16] = col2.r;
+			vCols[idxC + 17] = col2.g;
+			vCols[idxC + 18] = col2.b;
 			vCols[idxC + 19] = 1.0f;
 			// Save the color of 3rd vertex
-			vCols[idxC + 20] = col.r;
-			vCols[idxC + 21] = col.g;
-			vCols[idxC + 22] = col.b;
+			vCols[idxC + 20] = col3.r;
+			vCols[idxC + 21] = col3.g;
+			vCols[idxC + 22] = col3.b;
 			vCols[idxC + 23] = 1.0f;
 
 			// Save the first vertex
 			vVerts[idxV +  9] = j +  m_step;
-			vVerts[idxV + 10] = i;
-			vVerts[idxV + 11] = noise2d_turb(i * m_turbK, (j +  m_step) * m_turbK, m_turbOmega);
+			vVerts[idxV + 10] = h1;
+			vVerts[idxV + 11] = i;
 			// Save the second vertex
-			vVerts[idxV + 12] = j +  m_step;
-			vVerts[idxV + 13] = i +  m_step;
-			vVerts[idxV + 14] = noise2d_turb((i +  m_step) * m_turbK, (j +  m_step) * m_turbK, m_turbOmega);
-
-			vVerts[idxV + 15] = j;
-			vVerts[idxV + 16] = i +  m_step;
-			vVerts[idxV + 17] = noise2d_turb((i +  m_step) * m_turbK, j * m_turbK, m_turbOmega);
-
-
-			//			if (idxV +  5 >= nVerts * 3)
-			//			{
-			//				exit(0);
-			//			}
+			vVerts[idxV + 12] = j;
+			vVerts[idxV + 13] = h2;
+			vVerts[idxV + 14] = i + m_step;
+			// Save the third vertex
+			vVerts[idxV + 15] = j +  m_step;
+			vVerts[idxV + 16] = h3;
+			vVerts[idxV + 17] = i +  m_step;
 		}
 	}
 
-	g_debug << "i really needed " << idxV / 6 << " verticles, you counted " << nVerts / 2 << endl;
-
-	// Triangle strip goes to hell!
-	//	m_terrainBatch.Begin(GL_TRIANGLE_STRIP, idxV / 3);
 	m_terrainBatch.Begin(GL_TRIANGLES, idxV / 3);
 	m_terrainBatch.CopyVertexData3f(vVerts);
 	m_terrainBatch.CopyColorData4f(vCols);
@@ -314,7 +323,7 @@ void TerrainScene::UploadTerrainBatch()
 
 void TerrainScene::handleKeyboardEvent(Key key)
 {
-	float linear = 0.1f;
+	float linear = 0.5f;
 	float angular = deg2rad(5.0f);
 
 	switch (key) {
@@ -352,19 +361,11 @@ void TerrainScene::handleKeyboardEvent(Key key)
 		break;
 	}
 	case KeyUp:			m_cameraFrame.MoveForward(linear); break;
-		//		m_turbK++;
-		//		UploadTerrainBatch();
 	case KeyDown:		m_cameraFrame.MoveForward(-linear); break;
-		//		m_turbK--;
-		//		UploadTerrainBatch();
 	case KeyRight:		m_cameraFrame.MoveRight(-linear); break;
-		//		if (m_turbOmega < 7)
-		//			m_turbOmega++;
-		//		UploadTerrainBatch();
+
 	case KeyLeft:		m_cameraFrame.MoveRight(linear); break;
-		//		if (m_turbOmega > -1)
-		//			m_turbOmega--;
-		//		UploadTerrainBatch();
+
 	case KeyPageUp:		m_cameraFrame.MoveUp(linear); break;
 	case KeyPageDown:	m_cameraFrame.MoveUp(-linear); break;
 	case KeyW:			m_cameraFrame.RotateWorld( angular, 0.0f, 1.0f, 0.0f); break;
@@ -376,13 +377,39 @@ void TerrainScene::handleKeyboardEvent(Key key)
 	case KeyLCtrl:
 	{
 		if (m_landscapeSize > 0)
-			m_landscapeSize -= 0.1;
+			m_landscapeSize -= 0.5;
 		UploadTerrainBatch();
 		break;
 	}
 	case KeyRCtrl:
 	{
-		m_landscapeSize += 0.1;
+		m_landscapeSize += 0.5;
+		UploadTerrainBatch();
+		break;
+	}
+	case Key1:
+	{
+		m_turbK++;
+		UploadTerrainBatch();
+		break;
+	}
+	case Key2:
+	{
+		m_turbK--;
+		UploadTerrainBatch();
+		break;
+	}
+	case Key3:
+	{
+		if (m_turbOmega < 7)
+			m_turbOmega++;
+		UploadTerrainBatch();
+		break;
+	}
+	case Key4:
+	{
+		if (m_turbOmega > -1)
+			m_turbOmega--;
 		UploadTerrainBatch();
 		break;
 	}
@@ -404,7 +431,7 @@ void TerrainScene::SetColormap()
 
 remath::Color3 TerrainScene::get_color(float h)
 {
-	//	return Color3(1 * h, 1 * h, 1 * h);
+	return Color3(1 * h, 1 * h, 1 * h);
 
 	int i;
 	for (i = 0; m_colormap[i].n < h && i <= 3; i++);
@@ -423,9 +450,8 @@ void TerrainScene::SetTab2()
 {
 	srand(time(NULL));
 
-	int i, j;
-	for (i = 0; i < SIZE; i++)
-		for (j = 0; j < SIZE; j++)
+	for (int i = 0; i < SIZE; i++)
+		for (int j = 0; j < SIZE; j++)
 			Tab2[i][j] = (float)rand() / RAND_MAX;
 }
 
@@ -456,6 +482,7 @@ float TerrainScene::noise2d_turb(float t1, float t2, int omega)
 {
 	int i;
 	float turb, e;
+
 	for (i = 0, turb = 0; i < omega; i++)
 	{
 		e = pow((float)2, i);
