@@ -55,6 +55,10 @@ public:
 		case SDLK_d:			return KeyD;
 		case SDLK_q:			return KeyQ;
 		case SDLK_e:			return KeyE;
+		case SDLK_1:			return Key1;
+		case SDLK_2:			return Key2;
+		case SDLK_3:			return Key3;
+		case SDLK_4:			return Key4;
 		default:				return KeyUnknown;
 		}
 	}
