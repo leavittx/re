@@ -9,3 +9,5 @@ float render::glHelper::m_aspectratio;
 
 render::GLFrustum render::glHelper::m_viewFrustum;
 //GLFrustum render::glHelper::m_viewFrustum;
+
+const GLint render::glHelper::cullMode_toGL[] = { GL_POINT, GL_LINE, GL_FILL, GL_NONE };

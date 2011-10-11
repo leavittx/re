@@ -142,7 +142,7 @@ public:
 		setViewport(0, (m_height - h) / 2, w, h);
 
 		// Small fNear -> cool artifacts (0.00....01)
-		m_viewFrustum.SetPerspective(90.0f, m_aspectratio, 0.001f, 100.0f);
+		m_viewFrustum.SetPerspective(90.0f, m_aspectratio, 0.001f, 1000.0f);
 
 #ifdef __DEPRECATED_PROFILE__
 		glMatrixMode(GL_PROJECTION);
@@ -244,27 +244,27 @@ public:
 	{
 		GLenum error = glGetError();
 		switch (error) {
-			case GL_NO_ERROR:
-	//			reutil::g_debug << text << ": OK!" << std::endl;
-				break;
-			case GL_INVALID_ENUM:
-				reutil::g_debug << "OpenGL error! " << text << " : GL_INVALID_ENUM" << std::endl;
-				break;
-			case GL_INVALID_VALUE:
-				reutil::g_debug << "OpenGL error! " << text << " : GL_INVALID_VALUE" << std::endl;
-				break;
-			case GL_INVALID_OPERATION:
-				reutil::g_debug << "OpenGL error! " << text << " : GL_INVALID_OPERATION" << std::endl;
-				break;
-			case GL_STACK_OVERFLOW:
-				reutil::g_debug << "OpenGL error! " << text << " : GL_STACK_OVERFLOW" << std::endl;
-				break;
-			case GL_STACK_UNDERFLOW:
-				reutil::g_debug << "OpenGL error! " << text << " : GL_STACK_UNDERFLOW" << std::endl;
-				break;
-			case GL_OUT_OF_MEMORY:
-				reutil::g_debug << "OpenGL error! " << text << " : GL_OUT_OF_MEMORY" << std::endl;
-				break;
+		case GL_NO_ERROR:
+			//			reutil::g_debug << text << ": OK!" << std::endl;
+			break;
+		case GL_INVALID_ENUM:
+			reutil::g_debug << "OpenGL error! " << text << " : GL_INVALID_ENUM" << std::endl;
+			break;
+		case GL_INVALID_VALUE:
+			reutil::g_debug << "OpenGL error! " << text << " : GL_INVALID_VALUE" << std::endl;
+			break;
+		case GL_INVALID_OPERATION:
+			reutil::g_debug << "OpenGL error! " << text << " : GL_INVALID_OPERATION" << std::endl;
+			break;
+		case GL_STACK_OVERFLOW:
+			reutil::g_debug << "OpenGL error! " << text << " : GL_STACK_OVERFLOW" << std::endl;
+			break;
+		case GL_STACK_UNDERFLOW:
+			reutil::g_debug << "OpenGL error! " << text << " : GL_STACK_UNDERFLOW" << std::endl;
+			break;
+		case GL_OUT_OF_MEMORY:
+			reutil::g_debug << "OpenGL error! " << text << " : GL_OUT_OF_MEMORY" << std::endl;
+			break;
 		}
 	}
 
