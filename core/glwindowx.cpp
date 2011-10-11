@@ -52,6 +52,8 @@ bool GLWindowX::create(int width, int height, int bpp, bool fullscreen)
 					GLX_RED_SIZE,      8,
 					GLX_BLUE_SIZE,     8,
 					GLX_GREEN_SIZE,    8,
+					GLX_SAMPLE_BUFFERS_ARB, 1,
+					GLX_SAMPLES_ARB,   4,
 					0 };
 
 	EarlyInitGLXfnPointers();
