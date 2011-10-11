@@ -4,7 +4,6 @@
 
 using namespace redemo;
 using namespace recore;
-using namespace remath;
 using namespace std;
 
 /***********************************************
@@ -242,7 +241,7 @@ void Demo::update()
 			TimelineEntry *e = *it;
 			if (time >= e->m_startTime && time < e->m_endTime)
 			{
-				float t = Math::calcPosInt(time, e->m_startTime, e->m_endTime);
+				float t = remath::calcPosInt(time, e->m_startTime, e->m_endTime);
 
 				e->m_scene->setPosition(t);
 				e->m_frametimer->update(time);

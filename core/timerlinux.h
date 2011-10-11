@@ -16,7 +16,7 @@ public:
 private:
 	virtual TimeT osGetTimeMsec()
 	{
-		//TODO: wtf???
+		//TODO
 //		struct timespec ts;
 //		clock_gettime(CLOCK_MONOTONIC, &ts);
 
