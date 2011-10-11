@@ -5,6 +5,7 @@
 #include "vector4.h"
 #include "matrix4.h"
 #include "rect.h"
+#include "aabbox3d.h"
 
 /**
  A class that contains mathematics-related static helper methods and constants.
