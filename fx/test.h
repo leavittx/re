@@ -1,3 +1,5 @@
+#ifdef __DEPRECATED_PROFILE__
+
 #pragma once
 
 #include "../globals.h"
@@ -13,3 +15,5 @@ public:
 	void draw();
 	void release();
 };
+
+#endif /* ifdef __DEPRECATED_PROFILE__ */

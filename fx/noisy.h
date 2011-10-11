@@ -1,5 +1,7 @@
 #pragma once
 
+#ifdef __DEPRECATED_PROFILE__
+
 #include "../globals.h"
 
 #define BITSIZE 8
@@ -65,3 +67,5 @@ private:
 
 	void generateNewStar(int i);
 };
+
+#endif /* ifdef __DEPRECATED_PROFILE__ */
