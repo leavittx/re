@@ -7,8 +7,6 @@
 
 #include "util/debug.h"
 
-//#include "render/GLTools/math3d.h"
-
 /**
  Column major matrix class
  */
@@ -90,18 +88,6 @@ public:
 		memcpy(m, t, 16 * sizeof(T));
 		return *this;
 	}
-	//	friend Matrix4& operator*(const M3DMatrix44f& lhs, Matrix4& M) {
-	//		float t[4][4] = {{0}};
-
-	//		for(int i = 0; i < 4; i++)
-	//			for(int j = 0; j < 4; j++)
-	//			{
-	//				for(int k = 0; k < 4; k++)
-	//					t[i][j] += lhs[i * 4 + k] * M.m[k][j];
-	//			}
-	//		memcpy(M.m, t, 16 * sizeof(T));
-	//		return M;
-	//	}
 	Matrix4& operator=(const Matrix4& rhs) {
 		if(this != &rhs)
 			memcpy(m, rhs.m, 16 * sizeof(T));
@@ -203,21 +189,13 @@ public:
 		float xMin = yMin * fAspect;
 		float xMax = -xMin;
 
-//		m[0]
 		m[0][0] = (2.0f * zMin) / (xMax - xMin);
-//		m[5]
 		m[1][1] = (2.0f * zMin) / (yMax - yMin);
-//		m[8]
 		m[2][0] = (xMax + xMin) / (xMax - xMin);
-//		m[9]
 		m[2][1] = (yMax + yMin) / (yMax - yMin);
-//		m[10]
 		m[2][2] = -((zMax + zMin) / (zMax - zMin));
-//		m[11]
 		m[2][3] = -1.0f;
-//		m[14]
 		m[3][2] = -((2.0f * (zMax*zMin))/(zMax - zMin));
-//		m[15]
 		m[3][3] = 0.0f;
 	}
 
@@ -297,10 +275,6 @@ public:
 		M.Invert();
 		return M;
 	}
-//	T& operator[](int i) {
-//		return (T &)((T *)m[0] + i);
-//		return (T &)(m[i][j]);
-//	}
 	T& operator()(int i, int j) {
 		return m[i][j];
 	}
@@ -308,9 +282,6 @@ public:
 
 	void print()
 	{
-//		for (int i = 0; i < 16; i++)
-//			reutil::g_debug << *(float *)m[i] << std::endl;
-
 		for (int i = 0; i < 4; i++)
 			for (int j = 0; j < 4; j++)
 				reutil::g_debug << m[j][i] << std::endl;
