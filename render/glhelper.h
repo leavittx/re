@@ -77,7 +77,7 @@ private:
 	static float m_zNear, m_zFar, m_fov;
 #endif
 
-	static int m_width, m_height;
+	static float m_width, m_height;
 	static float m_aspectratio;
 
 public:
@@ -85,6 +85,11 @@ public:
 
 public:
 	//		GLUtesselator
+
+	static float* getResolution()
+	{
+		return &m_width;
+	}
 
 	static void init(int w, int h, AspectRatio aspect)
 	{
@@ -142,7 +147,8 @@ public:
 		setViewport(0, (m_height - h) / 2, w, h);
 
 		// Small fNear -> cool artifacts (0.00....01)
-		m_viewFrustum.SetPerspective(90.0f, m_aspectratio, 0.001f, 1000.0f);
+//		m_viewFrustum.SetPerspective(90.0f, m_aspectratio, 0.001f, 1000.0f);
+		m_viewFrustum.SetOrthographic(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f);
 
 #ifdef __DEPRECATED_PROFILE__
 		glMatrixMode(GL_PROJECTION);
@@ -156,7 +162,7 @@ public:
 
 	static void resetViewport()
 	{
-		setViewport(0, 0, m_width, m_height);
+		setViewport(0, 0, int(m_width), int(m_height));
 	}
 
 #ifdef __DEPRECATED_PROFILE__
@@ -239,31 +245,31 @@ public:
 	}
 #endif /* ifdef __DEPRECATED_PROFILE__ */
 
-	// Check for general GL errors that may affect rendering
+	// Check for general OPENGL ERRORs that may affect rendering
 	static void debug(const std::string& text)
 	{
 		GLenum error = glGetError();
 		switch (error) {
 		case GL_NO_ERROR:
-			//			reutil::g_debug << text << ": OK!" << std::endl;
+//			reutil::g_debug << text << ": OK!" << std::endl;
 			break;
 		case GL_INVALID_ENUM:
-			reutil::g_debug << "OpenGL error! " << text << " : GL_INVALID_ENUM" << std::endl;
+			reutil::g_debug << "OPENGL ERROR:  " << text << " : GL_INVALID_ENUM" << std::endl;
 			break;
 		case GL_INVALID_VALUE:
-			reutil::g_debug << "OpenGL error! " << text << " : GL_INVALID_VALUE" << std::endl;
+			reutil::g_debug << "OPENGL ERROR:  " << text << " : GL_INVALID_VALUE" << std::endl;
 			break;
 		case GL_INVALID_OPERATION:
-			reutil::g_debug << "OpenGL error! " << text << " : GL_INVALID_OPERATION" << std::endl;
+			reutil::g_debug << "OPENGL ERROR:  " << text << " : GL_INVALID_OPERATION" << std::endl;
 			break;
 		case GL_STACK_OVERFLOW:
-			reutil::g_debug << "OpenGL error! " << text << " : GL_STACK_OVERFLOW" << std::endl;
+			reutil::g_debug << "OPENGL ERROR:  " << text << " : GL_STACK_OVERFLOW" << std::endl;
 			break;
 		case GL_STACK_UNDERFLOW:
-			reutil::g_debug << "OpenGL error! " << text << " : GL_STACK_UNDERFLOW" << std::endl;
+			reutil::g_debug << "OPENGL ERROR:  " << text << " : GL_STACK_UNDERFLOW" << std::endl;
 			break;
 		case GL_OUT_OF_MEMORY:
-			reutil::g_debug << "OpenGL error! " << text << " : GL_OUT_OF_MEMORY" << std::endl;
+			reutil::g_debug << "OPENGL ERROR:  " << text << " : GL_OUT_OF_MEMORY" << std::endl;
 			break;
 		}
 	}
@@ -362,7 +368,7 @@ public:
 	{
 		glViewport(x, y, width, height);
 
-		debug("glHelper::setViewport");
+//		debug("glHelper::setViewport");
 	}
 
 	static void viewport(remath::Recti view)
