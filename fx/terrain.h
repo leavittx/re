@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../globals.h"
+#include "render/glhelper.h"
 
 #define BITSIZE 8
 #define SIZE (1 << BITSIZE)

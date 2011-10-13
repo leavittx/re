@@ -1,6 +1,7 @@
 #include "testcoreprofile.h"
 #include "core/time.h"
 #include "render/texturemanager.h"
+#include "render/shadermanager.h"
 #include "util/tga.h"
 
 using namespace redemo;

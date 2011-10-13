@@ -1,6 +1,7 @@
 #include "terrain.h"
 #include "core/system.h"
 #include "core/time.h"
+#include "render/shadermanager.h"
 
 using namespace redemo;
 using namespace recore;
@@ -448,7 +449,7 @@ remath::Color3 TerrainScene::get_color(float h)
 
 void TerrainScene::SetTab2()
 {
-	srand(time(NULL));
+	srand(time(0));
 
 	for (int i = 0; i < SIZE; i++)
 		for (int j = 0; j < SIZE; j++)

@@ -1,4 +1,5 @@
 #include "shadermanager.h"
+#include "render/glhelper.h"
 #include "util/stringutils.h"
 
 #include "stockshaders.h"
@@ -55,9 +56,9 @@ void ShaderManager::loadShaders()
 
 	if (vertexFilenames.size() != fragmentFilenames.size())
 	{
-		g_debug << "Error! Vertex and fragment shader counts do not match!" << endl;
-		g_debug << "    " << vertexFilenames.size() << " vertex and "
-						<< fragmentFilenames.size() << " fragment shaders" << endl;
+		g_debug << "ERROR: vertex and fragment shader counts do not match" << endl;
+		g_debug << "    " << vertexFilenames.size()   << " vertex and "
+						  << fragmentFilenames.size() << " fragment shaders" << endl;
 
 		for (int i = 0; i < (int)vertexFilenames.size(); i++)
 		{
@@ -221,6 +222,8 @@ GLint ShaderManager::UseStockShader(GLT_STOCK_SHADER nShaderID, const StockShade
 
 		iTextureUnit = glGetUniformLocation(m_stockShaders[nShaderID], "textureUnit0");
 		glUniform1i(iTextureUnit, uniforms.textureUnit0);
+
+		gl::debug("TestCoreProfileScene: TextureManager::inst().bindTexture();");
 		break;
 
 	case GLT_SHADER_TEXTURE_MODULATE: // Multiply the texture by the geometry color

@@ -1,4 +1,5 @@
 #include "shader.h"
+#include "render/glhelper.h"
 
 using namespace render;
 using namespace std;

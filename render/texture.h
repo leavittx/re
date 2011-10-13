@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../globals.h"
+#include "render/glhelper.h"
 #include "util/imagefactory.h"
 
 namespace render {

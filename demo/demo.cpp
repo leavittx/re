@@ -1,5 +1,6 @@
 #include "demo.h"
 #include "core/system.h"
+#include "math/math.h"
 #include <algorithm>
 
 using namespace redemo;
@@ -17,7 +18,7 @@ TimelineEntry::TimelineEntry()
 	m_scene = 0;
 	m_priority = 0;
 	m_name = "";
-	m_frametimer = NULL;
+	m_frametimer = 0;
 }
 
 TimelineEntry::~TimelineEntry()
@@ -27,10 +28,10 @@ TimelineEntry::~TimelineEntry()
 
 void TimelineEntry::destroy()
 {
-	if (m_frametimer != NULL)
+	if (m_frametimer != 0)
 	{
 		delete m_frametimer;
-		m_frametimer = NULL;
+		m_frametimer = 0;
 	}
 }
 
@@ -132,7 +133,7 @@ Scene* Demo::getScene(const string& name)
 	}
 	else
 	{
-		g_debug << "ERROR! Trying to fetch scene " << name << " but it does not exist\n";
+		g_debug << "ERROR: trying to fetch scene " << name << " but it does not exist" << endl;
 		return 0;
 	}
 }
@@ -160,7 +161,7 @@ void Demo::addSceneToTimeline(const string& name, TimeT startTime, TimeT endTime
 	else
 	{
 		//no such scene exists
-		g_debug << "ERROR! no scene with name \"" << name << "\" exists!" << endl;
+		g_debug << "ERROR: no scene with name \"" << name << "\" exists!" << endl;
 	}
 }
 

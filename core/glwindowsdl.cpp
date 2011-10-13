@@ -23,7 +23,7 @@ bool GLWindowSDL::create(int width, int height, int bpp, bool fullscreen)
 
 	// Set up video mode of main window
 	m_screen = SDL_SetVideoMode(width, height, bpp, sdlFlags);
-	if (m_screen == NULL)
+	if (m_screen == 0)
 	{
 		return false;
 	}
@@ -82,5 +82,5 @@ void GLWindowSDL::swapBuffers()
 
 void GLWindowSDL::setTitle(const char* title)
 {
-	SDL_WM_SetCaption(title, NULL);
+	SDL_WM_SetCaption(title, 0);
 }

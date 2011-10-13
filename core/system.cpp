@@ -1,5 +1,5 @@
 #include "system.h"
-#include <GL/glew.h>
+#include "render/glhelper.h"
 
 #if __SDL__
 	#include "glwindowsdl.h"
@@ -7,6 +7,8 @@
 #elif __X11__
 	#include "glwindowx.h"
 	#include "timerlinux.h"
+#else
+	#error "System frontend not defined!"
 #endif
 
 using namespace std;
@@ -82,7 +84,7 @@ bool System::initOpenGL(Config &cfg)
 	// Create main window with opengl rendering support
 	if (!m_glWindow->create(cfg.getScreenWidth(), cfg.getScreenHeight(), 32, cfg.getFullscreen()))
 	{
-		g_debug << "ERROR! Could not create window!" << endl;
+		g_debug << "ERROR: could not create window" << endl;
 		return false;
 	}
 	// Initialize glew
@@ -90,7 +92,7 @@ bool System::initOpenGL(Config &cfg)
 	GLenum err = glewInit();
 	if (err != GLEW_OK)
 	{
-		g_debug << "ERROR! Cannot initialize GLEW!" << endl;
+		g_debug << "ERROR: cannot initialize GLEW" << endl;
 		g_debug << "	" << glewGetErrorString(err) << endl;
 		return false;
 	}

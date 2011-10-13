@@ -59,7 +59,7 @@ bool GLWindowX::create(int width, int height, int bpp, bool fullscreen)
 	EarlyInitGLXfnPointers();
 
 	// Tell X we are going to use the display
-	m_display = XOpenDisplay(NULL);
+	m_display = XOpenDisplay(0);
 
 	// Get Version info
 	glXQueryVersion(m_display, &nMajorVer, &nMinorVer);
@@ -104,7 +104,7 @@ bool GLWindowX::create(int width, int height, int bpp, bool fullscreen)
 		goFullscreen();
 
 	// Context creation
-	if (glXCreateContextAttribsARB != NULL)
+	if (glXCreateContextAttribsARB != 0)
 	{
 		GLint attribs[] = {
 		    GLX_CONTEXT_MAJOR_VERSION_ARB, 3,

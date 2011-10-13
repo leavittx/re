@@ -306,7 +306,7 @@ remath::Color3 NoisyScene::get_color(float h)
 void NoisyScene::SetTab1()
 {
 	int i;
-	srand((unsigned int)time(NULL));
+	srand((unsigned int)time(0));
 	for (i = 0; i < SIZE; i ++)
 		Tab1[i] = (float)rand() / RAND_MAX;
 }
