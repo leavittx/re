@@ -26,7 +26,10 @@ void InputManager::rejectKeyboardEvents(KeyboardEventsListener* who)
 	for (int i = 0; i < (int)m_keyboardListeners.size(); i++)
 	{
 		if (m_keyboardListeners[i] == who)
+		{
 			m_keyboardListeners.erase(m_keyboardListeners.begin() + i);
+			break;
+		}
 	}
 }
 
