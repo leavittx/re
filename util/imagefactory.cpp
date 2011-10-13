@@ -1,4 +1,5 @@
 #include "imagefactory.h"
+#include <cstring> // for memset()
 
 // Devil library headers
 #include <IL/il.h>
@@ -18,7 +19,6 @@ Image::Image()
 
 Image::~Image()
 {
-
 }
 
 void Image::clear()
@@ -27,6 +27,7 @@ void Image::clear()
 	m_height = 0;
 	m_data = 0;
 }
+
 void Image::releaseData()
 {
 	if (m_data)
@@ -43,7 +44,6 @@ void Image::releaseData()
 Image* ImageFactory::createEmpty(int width, int height)
 {
 	Image *image = new Image();
-	//create image and
 	image->m_width = width;
 	image->m_height = height;
 	image->m_data = new unsigned int [image->m_width * image->m_height];
@@ -51,44 +51,7 @@ Image* ImageFactory::createEmpty(int width, int height)
 	return image;
 }
 
-Image* ImageFactory::loadJPG(const std::string& filename)
-{
-	unsigned int imageID;
-	unsigned char *ptr = NULL, *dest = NULL;
-
-	ilInit();
-	ilGenImages(1, &imageID);
-	ilBindImage(imageID);
-
-	// Load image from a file
-	if (!ilLoadImage((char *)filename.c_str()))
-	{
-		g_debug << "loading image " << filename << " failed!" << std::endl;
-		return 0;
-	}
-
-	Image *image = new Image();
-	image->m_width = ilGetInteger(IL_IMAGE_WIDTH);
-	image->m_height = ilGetInteger(IL_IMAGE_HEIGHT);
-	image->m_data = new unsigned int[image->m_width*image->m_height];
-
-	ilConvertImage(IL_RGB, IL_UNSIGNED_BYTE);
-	ptr = ilGetData();
-	dest = (unsigned char *)image->m_data;
-
-	for (int i = 0; i < image->m_width*image->m_height; i++, dest++)
-	{
-		for (int bytes = 0; bytes <= 16; bytes += 8)
-			*dest |= (*ptr++ << bytes);
-		*dest |= 0xFF; //no alpha channel
-	}
-
-	ilDeleteImages(1, &imageID);
-
-	return image;
-}
-
-Image* ImageFactory::loadPNG(const std::string& filename)
+Image* ImageFactory::loadAny(const std::string& filename)
 {
 	unsigned int imageID;
 
@@ -99,67 +62,100 @@ Image* ImageFactory::loadPNG(const std::string& filename)
 	// Load image from a file
 	if (!ilLoadImage((char *)filename.c_str()))
 	{
-		g_debug << "loading image " << filename << " failed!" << std::endl;
+		g_debug << "ERROR: loading image " << filename << " failed" << std::endl;
+		return 0;
+	}
+
+	int dimH = ilGetInteger(IL_IMAGE_HEIGHT);
+	int dimW = ilGetInteger(IL_IMAGE_WIDTH);
+	int format = ilGetInteger(IL_IMAGE_FORMAT);
+	int type = ilGetInteger(IL_IMAGE_TYPE);
+//	int dSize = ilGetInteger(IL_IMAGE_SIZE_OF_DATA);
+
+	unsigned int typeSize = 0;
+	switch (type)
+	{
+	case IL_BYTE:
+		typeSize = sizeof(ILbyte);
+		break;
+	case IL_UNSIGNED_BYTE:
+		typeSize = sizeof(ILubyte);
+		break;
+	case IL_SHORT:
+		typeSize = sizeof(ILshort);
+		break;
+	case IL_UNSIGNED_SHORT:
+		typeSize = sizeof(ILushort);
+		break;
+	case IL_INT:
+		typeSize = sizeof(ILint);
+		break;
+	case IL_UNSIGNED_INT:
+		typeSize = sizeof(ILuint);
+		break;
+	case IL_HALF: // map half to float for memory
+	case IL_FLOAT:
+		typeSize = sizeof(ILfloat);
+		break;
+	case IL_DOUBLE:
+		typeSize = sizeof(ILdouble);
+		break;
+	default:
+		typeSize = 0;
+		break;
+	}
+	if (typeSize == 0)
+	{
+		g_debug << "ERROR: loading image " << filename << " failed (unknown type)" << std::endl;
+		return 0;
+	}
+
+	unsigned int channels = 0;
+	switch (format)
+	{
+	case IL_ALPHA:
+		channels = 1;
+		break;
+	case IL_LUMINANCE:
+		channels = 1;
+		break;
+	case IL_LUMINANCE_ALPHA:
+		channels = 2;
+		break;
+	case IL_RGB:
+		channels = 3;
+		break;
+	case IL_BGR:
+		channels = 3;
+		break;
+	case IL_RGBA:
+		channels = 4;
+		break;
+	case IL_BGRA:
+		channels = 4;
+		break;
+	case IL_COLOR_INDEX: // unsupported
+		g_debug << "WARNING: Indexed color images are unsupported" << std::endl;
+	default:
+		channels = 0;
+		break;
+	}
+	if (channels == 0)
+	{
+		g_debug << "ERROR: loading image " << filename << " failed (unknown format)" << std::endl;
 		return 0;
 	}
 
 	Image *image = new Image();
-	image->m_width = ilGetInteger(IL_IMAGE_WIDTH);
-	image->m_height = ilGetInteger(IL_IMAGE_HEIGHT);
-	image->m_data = new unsigned int[image->m_width*image->m_height];
+	image->m_width  = dimW;
+	image->m_height = dimH;
+	image->m_components = (channels == 4) ? IL_RGBA : IL_RGB;
+	image->m_format = (format == IL_ALPHA) || (format == IL_LUMINANCE) ? 0x1902 /* GL_DEPTH_COMPONENT */ :
+					  (format == IL_COLOR_INDEX) ? IL_RGB : format;
+	image->m_type = type;
+	image->m_data = (unsigned int *)malloc(dimH * dimW * channels * typeSize);
 
-	ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
-	unsigned char *source = (unsigned char *)ilGetData();
-	unsigned int *dest = image->m_data;
-	for (int i = 0; i < image->m_width * image->m_height; i++, dest++)
-	{
-//		*dest |= (*source++);       // R
-//		*dest |= (*source++ << 8);  // G
-//		*dest |= (*source++ << 16); // B
-//		*dest |= (*source++ << 24); // A
-		for (int bytes = 0; bytes <= 24; bytes += 8)
-		{
-			*dest |= (*source++ << bytes);
-		}
-	}
-
-	ilDeleteImages(1, &imageID);
-
-	return image;
-}
-
-Image* ImageFactory::loadBMP(const std::string& filename)
-{
-	unsigned int imageID;
-	unsigned char *ptr = NULL, *dest = NULL;
-
-	ilInit();
-	ilGenImages(1, &imageID);
-	ilBindImage(imageID);
-
-	// Load image from a file
-	if (!ilLoadImage((char *)filename.c_str()))
-	{
-		g_debug << "loading image " << filename << " failed!" << std::endl;
-		return 0;
-	}
-
-	Image *image = new Image();
-	image->m_width = ilGetInteger(IL_IMAGE_WIDTH);
-	image->m_height = ilGetInteger(IL_IMAGE_HEIGHT);
-	image->m_data = new unsigned int[image->m_width*image->m_height];
-
-	ilConvertImage(IL_RGB, IL_UNSIGNED_BYTE);
-	ptr = ilGetData();
-	dest = (unsigned char *)image->m_data;
-
-	for (int i = 0; i < image->m_width*image->m_height; i++, dest++)
-	{
-		for (int bytes = 0; bytes <= 16; bytes += 8)
-			*dest |= (*ptr++ << bytes);
-		*dest |= 0xFF; //no alpha channel
-	}
-
+	ilCopyPixels(0, 0, 0, dimW, dimH, 1, format, type, image->m_data);
 	ilDeleteImages(1, &imageID);
 
 	return image;

@@ -77,8 +77,8 @@ void TextureManager::bindTexture(const string& name, int texunit)
 //		}
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		m_textures[name]->bind(texunit);
 		m_lastBoundTexture[texunitoffset] = name;
 	}
@@ -152,35 +152,11 @@ void TextureManager::loadImages()
 	{
 		string filename = *it;
 		string path = directory + filename;
-		string suffix = filename.substr(filename.length()-3, filename.length());
 
-		if (suffix == "jpg")
+		Image* image = ImageFactory::loadAny(path);
+		if (image != 0)
 		{
-			Image *image = ImageFactory::loadJPG(path);
-			if (image != 0)
-			{
-				addImage(filename, image);
-			}
-		}
-		else if (suffix == "png")
-		{
-			Image *image = ImageFactory::loadPNG(path);
-			if (image != 0)
-			{
-				addImage(filename, image);
-			}
-		}
-		else if (suffix == "bmp")
-		{
-			Image *image = ImageFactory::loadBMP(path);
-			if (image != 0)
-			{
-				addImage(filename, image);
-			}
-		}
-		else
-		{
-			g_debug << "non-image file " << filename << " found in graphics directory!" << endl;
+			addImage(filename, image);
 		}
 	}
 }
@@ -255,7 +231,7 @@ void TextureManager::bindTextureFBO(const string& name)
 {
 	//find texture data
 	Image& i = *m_images[name];
-	Texture &t = *m_textures[name];
+	Texture& t = *m_textures[name];
 
 	int width = i.getWidth();
 	int height = i.getHeight();

@@ -58,9 +58,26 @@ void Texture::upload(Image &sourceImage, TextureParameters &params)
 	glGenTextures(1, &m_ID);
 	glBindTexture(GL_TEXTURE_2D, m_ID);
 
-	int width = sourceImage.getWidth();
-	int height = sourceImage.getHeight();
+//	GLint components = GL_RGB;
+//	GLenum format    = GL_RGBA;
+	GLenum minFilter = GL_LINEAR;
+	GLenum magFilter = GL_LINEAR;
+	GLenum wrapMode  = GL_REPEAT;//GL_CLAMP_TO_EDGE
 
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMode);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMode);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, sourceImage.getComponents(),
+				 sourceImage.getWidth(), sourceImage.getHeight(), 0,
+				 sourceImage.getFormat(), sourceImage.getType(),//GL_UNSIGNED_BYTE
+				 sourceImage.getData());
+
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+#ifdef __DEPRECATED_PROFILE__
 	if (((width == 1024 && height == 1024) ||
 		 (width == 512 && height == 512) ||
 		 (width == 256 && height == 256) ||
@@ -75,8 +92,8 @@ void Texture::upload(Image &sourceImage, TextureParameters &params)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
 		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S, wrap);
 		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T, wrap);
-//		glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, sourceImage.getData());
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, sourceImage.getData());
+		glTexImage2D(GL_TEXTURE_2D, 0, 0, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, sourceImage.getData());
+//		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, sourceImage.getData());
 	}
 	else
 	{
@@ -89,5 +106,6 @@ void Texture::upload(Image &sourceImage, TextureParameters &params)
 		//! DEPRECATED
 //		gluBuild2DMipmaps(GL_TEXTURE_2D, 4, width, height, GL_RGBA, GL_UNSIGNED_BYTE, sourceImage.getData());
 	}
+#endif // ifdef __DEPRECATED_PROFILE__
 	m_params = params;
 }
