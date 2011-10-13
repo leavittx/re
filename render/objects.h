@@ -1,8 +1,23 @@
 #pragma once
 
 #include "batch/trianglebatch.h"
+#include "batch/batch.h"
+#include "math/math3d.h"
 
 namespace render {
+
+static inline void MakeFullscreenQuad(GLBatch& fsQuadBatch)
+{
+	fsQuadBatch.Begin(GL_TRIANGLE_STRIP, 5);
+
+		fsQuadBatch.Vertex3f(-1.0f,  1.0f, 0.0f);
+		fsQuadBatch.Vertex3f(-1.0f, -1.0f, 0.0f);
+		fsQuadBatch.Vertex3f( 1.0f, -1.0f, 0.0f);
+		fsQuadBatch.Vertex3f(-1.0f,  1.0f, 0.0f);
+		fsQuadBatch.Vertex3f( 1.0f,  1.0f, 0.0f);
+
+	fsQuadBatch.End();
+}
 
 // Draw a torus (doughnut)  at z = fZVal... torus is in xy plane
 static inline void MakeTorus(GLTriangleBatch& torusBatch, GLfloat majorRadius, GLfloat minorRadius, GLint numMajor, GLint numMinor)
