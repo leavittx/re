@@ -8,12 +8,21 @@ namespace render {
 
 static inline void MakeFullscreenQuad(GLBatch& fsQuadBatch)
 {
-	fsQuadBatch.Begin(GL_TRIANGLE_STRIP, 5);
+	fsQuadBatch.Begin(GL_TRIANGLE_STRIP, 5, 1);
 
+		fsQuadBatch.MultiTexCoord2f(0, 0.0f, 1.0f);
 		fsQuadBatch.Vertex3f(-1.0f,  1.0f, 0.0f);
+
+		fsQuadBatch.MultiTexCoord2f(0, 0.0f, 0.0f);
 		fsQuadBatch.Vertex3f(-1.0f, -1.0f, 0.0f);
+
+		fsQuadBatch.MultiTexCoord2f(0, 1.0f, 0.0f);
 		fsQuadBatch.Vertex3f( 1.0f, -1.0f, 0.0f);
+
+		fsQuadBatch.MultiTexCoord2f(0, 0.0f, 1.0f);
 		fsQuadBatch.Vertex3f(-1.0f,  1.0f, 0.0f);
+
+		fsQuadBatch.MultiTexCoord2f(0, 1.0f, 1.0f);
 		fsQuadBatch.Vertex3f( 1.0f,  1.0f, 0.0f);
 
 	fsQuadBatch.End();
