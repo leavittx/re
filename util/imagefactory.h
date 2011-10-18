@@ -19,7 +19,7 @@ public:
 	int getComponents()		{ return m_components; }
 	int getFormat()			{ return m_format; }
 	int getType()			{ return m_type; }
-	unsigned int* getData() { return m_data; }
+	unsigned char* getData() { return m_data; }
 
 private:
 	int m_width;
@@ -27,7 +27,7 @@ private:
 	int m_components;
 	int m_format;
 	int m_type;
-	unsigned int* m_data;
+	unsigned char* m_data;
 };
 
 class ImageFactory

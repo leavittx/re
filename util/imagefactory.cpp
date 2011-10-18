@@ -46,8 +46,8 @@ Image* ImageFactory::createEmpty(int width, int height)
 	Image *image = new Image();
 	image->m_width = width;
 	image->m_height = height;
-	image->m_data = new unsigned int [image->m_width * image->m_height];
-	memset(image->m_data, 0, image->m_width*image->m_height*sizeof(unsigned int));
+	image->m_data = new unsigned char [image->m_width * image->m_height];
+	memset(image->m_data, 0, image->m_width*image->m_height*sizeof(unsigned char));
 	return image;
 }
 
@@ -153,10 +153,10 @@ Image* ImageFactory::loadAny(const std::string& filename)
 	image->m_format = (format == IL_ALPHA) || (format == IL_LUMINANCE) ? 0x1902 /* GL_DEPTH_COMPONENT */ :
 					  (format == IL_COLOR_INDEX) ? IL_RGB : format;
 	image->m_type = type;
-	image->m_data = (unsigned int *)malloc(dimH * dimW * channels * typeSize);
+	image->m_data = new unsigned char [dimH * dimW * channels];
+	//(unsigned int *)malloc(dimH * dimW * channels * typeSize);
 
 	ilCopyPixels(0, 0, 0, dimW, dimH, 1, format, type, image->m_data);
 	ilDeleteImages(1, &imageID);
-
 	return image;
 }
