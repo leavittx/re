@@ -5,12 +5,10 @@
 #include "render/texturemanager.h"
 #include "render/shadermanager.h"
 
-#include "fx/test.h"
-#include "fx/noisy.h"
-#include "fx/sphere.h"
 #include "fx/testcoreprofile.h"
 #include "fx/terrain.h"
 #include "fx/heightmap.h"
+#include "fx/warping.h"
 
 using namespace recore;
 using namespace redemo;
@@ -31,14 +29,17 @@ int main()
 		TextureManager::inst().loadImages();
 		ShaderManager::inst().init();
 
-		demo->addScene("core", new TestCoreProfileScene());
-		demo->addSceneToTimeline("core", 0, 1000000, 0);
+//		demo->addScene("core", new TestCoreProfileScene());
+//		demo->addSceneToTimeline("core", 0, 1000000, 0);
 
 //		demo->addScene("terrain", new TerrainScene());
 //		demo->addSceneToTimeline("terrain", 0, 1000000, 0);
 
-//		demo->addScene("heightmap", new HeightMapScene());
-//		demo->addSceneToTimeline("heightmap", 0, 1000000, 0);
+		demo->addScene("heightmap", new HeightMapScene());
+		demo->addSceneToTimeline("heightmap", 0, 1000000, 0);
+
+//		demo->addScene("warping", new WarpingScene());
+//		demo->addSceneToTimeline("warping", 0, 1000000, 0);
 
 		TextureManager::inst().uploadImages();
 		ShaderManager::inst().loadShaders();

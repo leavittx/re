@@ -24,7 +24,9 @@ SOURCES += \
     fx/terrain.cpp \
     render/batch/trianglebatch.cpp \
     render/batch/batch.cpp \
-    math/math3d.cpp
+    math/math3d.cpp \
+    fx/warping.cpp \
+    fx/heightmap.cpp
 
 HEADERS += \
     core/glwindow.h \
@@ -72,7 +74,9 @@ HEADERS += \
     render/frustum.h \
     render/objects.h \
 	math/aabbox3d.h \
-    util/tga.h
+    util/tga.h \
+    fx/warping.h \
+    fx/heightmap.h
 
 LIBS += \
     -lSDL \
@@ -84,6 +88,16 @@ INCLUDEPATH += \
     /usr/include/ \
     /usr/include/c++/4.6.1/ \
     /usr/lib/gcc/x86_64-pc-linux-gnu/4.5.3/include/g++-v4/
+
+OTHER_FILES += \
+    data/shaders/fx_warping.frag \
+    data/shaders/fx_warping.vert
+
+
+
+
+
+
 
 
 
