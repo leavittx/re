@@ -1,7 +1,9 @@
 #include "heightmap.h"
 #include "core/system.h"
 #include "core/time.h"
+#include "render/shadermanager.h"
 #include "util/imagefactory.h"
+#include "util/tga.h"
 
 using namespace redemo;
 using namespace recore;
@@ -12,7 +14,8 @@ using namespace std;
 
 void HeightMapScene::init()
 {
-	terrain.loadHeightMap("data/graphics/terrain-heightmap.bmp");
+	terrain.loadHeightMap("data/graphics/terrain-heightmap.tga");
+//	terrain.loadHeightMap("data/graphics/terrain.bmp");
 
 	m_projectionMatrix.LoadMatrix(Matrix4f(gl::m_viewFrustum.GetProjectionMatrix()).ptr());
 	m_transformPipeline.SetMatrixStacks(m_modelViewMatrix, m_projectionMatrix);
@@ -42,15 +45,16 @@ void HeightMapScene::draw()
 	m_cameraFrame.GetCameraMatrix(mCamera);
 	m_modelViewMatrix.PushMatrix(mCamera);
 
-	m_modelViewMatrix.Translate(0.0f, 0.0f, -2.5f);
+	m_modelViewMatrix.Translate(-0.5f, -0.3f, -0.5f);
+//	m_modelViewMatrix.Rotate(-45.0f, 1.0f, 0.0f, 0.0f);
 
 	ShaderManager::inst().UseStockShader(GLT_SHADER_SHADED,
-										 StockShaderUniforms(Matrix4f(m_transformPipeline.GetModelViewProjectionMatrix()).ptr()));
+		StockShaderUniforms(Matrix4f(m_transformPipeline.GetModelViewProjectionMatrix()).ptr()));
 
 //	GLfloat vRed[] = { 0.0f, 1.0f, 0.0f, 1.0f };
 
 //	ShaderManager::inst().UseStockShader(GLT_SHADER_FLAT,
-//										 StockShaderUniforms(Matrix4f(m_transformPipeline.GetModelViewProjectionMatrix()).ptr(), vRed));
+//		StockShaderUniforms(Matrix4f(m_transformPipeline.GetModelViewProjectionMatrix()).ptr(), vRed));
 
 	terrain.getMesh().Draw();
 
@@ -61,7 +65,7 @@ void HeightMapScene::draw()
 
 void HeightMapScene::handleKeyboardEvent(Key key)
 {
-	float linear = 0.5f;
+	float linear = 0.01f;
 	float angular = deg2rad(10.0f);
 
 	switch (key) {
@@ -124,7 +128,6 @@ Terrain::~Terrain()
 {
 	delete [] TerrainData.Patches;
 
-
 	//	if (Mesh)
 	//		Mesh->drop();
 
@@ -139,7 +142,12 @@ bool Terrain::loadHeightMap(const string& path, Color4 vertexColor, int smoothFa
 	if (HeightmapFile.empty())
 		return false;
 
-	Image* heightMap = ImageFactory::loadBMP(HeightmapFile);
+	Image* heightMap = ImageFactory::loadAny(HeightmapFile);
+
+//	GLint width, height, components;
+//	GLenum format;
+//	GLbyte* data;
+//	data = reutil::ReadTGABits(HeightmapFile.c_str(), &width, &height, &components, &format, NULL);
 
 	if (!heightMap)
 	{
@@ -150,56 +158,114 @@ bool Terrain::loadHeightMap(const string& path, Color4 vertexColor, int smoothFa
 	// Get the dimension of the heightmap data
 	TerrainData.Size = heightMap->getWidth();
 
-	switch (TerrainData.PatchSize)
-	{
+//	int nPixels = heightMap->getWidth() * heightMap->getHeight();
+
+	switch (TerrainData.PatchSize) {
 	case ETPS_9:
-		if (TerrainData.MaxLOD > 3)
-		{
-			TerrainData.MaxLOD = 3;
-		}
+		if (TerrainData.MaxLOD > 3) TerrainData.MaxLOD = 3;
 		break;
 	case ETPS_17:
-		if (TerrainData.MaxLOD > 4)
-		{
-			TerrainData.MaxLOD = 4;
-		}
+		if (TerrainData.MaxLOD > 4) TerrainData.MaxLOD = 4;
 		break;
 	case ETPS_33:
-		if (TerrainData.MaxLOD > 5)
-		{
-			TerrainData.MaxLOD = 5;
-		}
+		if (TerrainData.MaxLOD > 5) TerrainData.MaxLOD = 5;
 		break;
 	case ETPS_65:
-		if (TerrainData.MaxLOD > 6)
-		{
-			TerrainData.MaxLOD = 6;
-		}
+		if (TerrainData.MaxLOD > 6) TerrainData.MaxLOD = 6;
 		break;
 	case ETPS_129:
-		if (TerrainData.MaxLOD > 7)
-		{
-			TerrainData.MaxLOD = 7;
-		}
+		if (TerrainData.MaxLOD > 7) TerrainData.MaxLOD = 7;
 		break;
 	}
 
-	const unsigned int numVertices = TerrainData.Size * TerrainData.Size;
+	const unsigned int numVertices = TerrainData.Size * TerrainData.Size * 6;
 
-	Mesh.BeginMesh(numVertices);
+//	Mesh.BeginMesh(numVertices);
+
+	float *vVerts = new float[numVertices * 3];
+	float *vCols = new float[numVertices * 4];
 
 	// Read the heightmap to get the vertex data
 	// Apply positions changes, scaling changes
-	const float tdSize = 1.0f/(float)(TerrainData.Size-1);
-	int index = 0;
-	float fx=0.f;
-	float fx2=0.f;
+	const float tdSize = 2.0f / (float)(TerrainData.Size - 1);
+	int idxV = 0, idxC = 0;
+	float fx = 0.f;
+	float fx2 = 0.f;
 	for (int x = 0; x < TerrainData.Size; ++x)
 	{
-		float fz=0.f;
-		float fz2=0.f;
+		float fz = 0.f;
+		float fz2 = 0.f;
+
 		for (int z = 0; z < TerrainData.Size; ++z)
 		{
+			static Vector3f Normal, Vertex;
+			static Vector2f TexCoord;
+
+//			glPatchParameteri
+
+			for (int i = 0; i < 6; ++i)
+			{
+				Normal = Vector3f(0.0f, 1.0f, 0.0f);
+
+				Vertex.x = fx2 + ((i == 1 || i == 2 || i == 5) ? tdSize : 0.0f);
+				Vertex.y = fz2 + ((i == 2 || i == 4 || i == 5) ? tdSize : 0.0f);
+
+				int idx = (TerrainData.Size-x-1) * TerrainData.Size + z;
+
+				unsigned int pixel;
+				unsigned int pixelThis  = heightMap->getData()[idx];
+				unsigned int pixelLeft  = heightMap->getData()[idx - 1];
+				unsigned int pixelRight = heightMap->getData()[idx + 1];
+				unsigned int pixelUp    = heightMap->getData()[idx + TerrainData.Size];
+				unsigned int pixelDown  = heightMap->getData()[idx - TerrainData.Size];
+				unsigned int p1 = heightMap->getData()[idx - TerrainData.Size - 1];
+				unsigned int p2 = heightMap->getData()[idx - TerrainData.Size + 1];
+				unsigned int p3 = heightMap->getData()[idx + TerrainData.Size - 1];
+				unsigned int p4 = heightMap->getData()[idx + TerrainData.Size + 1];
+
+				switch (i) {
+				case 0:
+				case 3:
+					pixel = pixelLeft;
+//					Batch.Color4f(1.0f, 0.0f, 0.0f, 1.0f);
+					break;
+				case 1:
+					pixel = p1;
+//					Batch.Color4f(0.0f, 1.0f, 0.0f, 1.0f);
+					break;
+				case 2:
+				case 5:
+					pixel = pixelDown;
+//					Batch.Color4f(0.0f, 0.0f, 1.0f, 1.0f);
+					break;
+				case 4:
+					pixel = pixelThis;
+//					Batch.Color4f(0.0f, 1.0f, 1.0f, 1.0f);
+					break;
+				}
+
+				Vertex.z = getLightness(pixel);
+
+				vVerts[idxV + 3*i + 0] = Vertex.x;
+				vVerts[idxV + 3*i + 1] = Vertex.y;
+				vVerts[idxV + 3*i + 2] = Vertex.z;
+
+				vCols[idxC + 4*i + 0] = 1.0f - 0.01f / Vertex.z;
+				vCols[idxC + 4*i + 1] = 0.0f;
+				vCols[idxC + 4*i + 2] = 1.0 - 0.01f / Vertex.z;
+				vCols[idxC + 4*i + 3] = 1.0f;
+
+				//Batch.Color4f(1.0f - 0.01f / Vertex.z, 0.0f, 1.0 - 0.01f / Vertex.z, 1.0f);
+				//Batch.Vertex3f(Vertex.x, Vertex.y, Vertex.z);
+				//Batch.Normal3f(Normal.x, Normal.y, Normal.z);
+			}
+
+			idxV += 18;
+			idxC += 24;
+
+			++fz;
+			fz2 += tdSize;
+#if 0
 			static int i = 0;
 			static Vector3f Normal[3], Vertex[3];
 			static Vector2f TexCoord[3];
@@ -210,13 +276,21 @@ bool Terrain::loadHeightMap(const string& path, Color4 vertexColor, int smoothFa
 			//			vertex.Color = vertexColor;
 
 			unsigned int pixel = heightMap->getData()[(TerrainData.Size-x-1) * TerrainData.Size + z];
+//			if (pixel != 0 && pixel != 4294967295)
+//			{
+//				g_debug << "hmm" << endl;
+//			}
 
-			//			Vertex.x = fx;
-			//			Vertex.y =
-			//			Vertex.z = fz;
+//			Vertex.x = fx;
+//			Vertex.y =
+//			Vertex.z = fz;
 
 			Vertex[i].x = fx;
+//			Vertex[i].y = fz;
 			Vertex[i].y = getLightness(pixel);
+//			Vertex[i].y = getLightness(data[(TerrainData.Size-x-1) * TerrainData.Size + z + 0],
+//									   data[(TerrainData.Size-x-1) * TerrainData.Size + z + 1],
+//									   data[(TerrainData.Size-x-1) * TerrainData.Size + z + 2]);
 			Vertex[i].z = fz;
 
 			//			vertex.Pos.X = fx;
@@ -233,12 +307,17 @@ bool Terrain::loadHeightMap(const string& path, Color4 vertexColor, int smoothFa
 			fz2 += tdSize;
 
 			// Flush a triangle if counted three vertices
-			i++;
-			if (i == 3)
-			{
-				Mesh.AddTriangle(Vertex, Normal, TexCoord);
-				i = 0;
-			}
+//			i++;
+//			if (i == 3)
+//			{
+//				Mesh.AddTriangle(Vertex, Normal, TexCoord);
+//				i = 0;
+//			}
+
+			Batch.Vertex3fv(&Vertex[i].x);
+			Batch.Normal3fv(&Normal[i].x);
+			Batch.Color4f(1.0f, 0.0f, 0.0f, 1.0f);
+#endif
 		}
 		++fx;
 		fx2 += tdSize;
@@ -246,7 +325,15 @@ bool Terrain::loadHeightMap(const string& path, Color4 vertexColor, int smoothFa
 
 	smoothTerrain(smoothFactor);
 
-	Mesh.End();
+//	Mesh.End();
+
+	Batch.Begin(GL_TRIANGLES, numVertices);
+	Batch.CopyVertexData3f(vVerts);
+	Batch.CopyColorData4f(vCols);
+	Batch.End();
+
+	delete [] vVerts;
+	delete [] vCols;
 
 	// calculate smooth normals for the vertices
 //	calculateNormals();
@@ -392,11 +479,17 @@ void Terrain::calculateDistanceThresholds(bool scalechanged)
 //! Get lightness of the color in the range [0,255]
 float Terrain::getLightness(unsigned int color) const
 {
-	unsigned int r, g, b;
+//	unsigned int r, g, b;
 
-	r = (color>>16) & 0xff;
-	g = (color>>8) & 0xff;
-	b = color & 0xff;
+//	r = (color >> 16) & 0xff;
+//	g = (color >> 8) & 0xff;
+//	b = color & 0xff;
 
-	return 0.5f*(max_(max_(r, g), b) + min_(min_(r, g), b));
+//	return 0.5f / (max_(max_(r, g), b) + min_(min_(r, g), b));
+	return 0.5f / color;
 }
+
+//float Terrain::getLightness(unsigned int r, unsigned int g, unsigned int b) const
+//{
+//	return 0.5f*(max_(max_(r, g), b) + min_(min_(r, g), b));
+//}

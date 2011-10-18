@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../globals.h"
-
+#include "render/glhelper.h"
 
 /////////////////////////////////////////////////////////////////
 // Terrain class
@@ -32,7 +32,7 @@ public:
 	~Terrain();
 
 	bool loadHeightMap(const std::string& path, remath::Color4 vertexColor = remath::Color4(1.0f, 1.0f, 1.0f, 1.0f), int smoothFactor = 0);
-	render::GLBatchBase& getMesh() { return Mesh; }
+	render::GLBatchBase& getMesh() { return Batch/*Mesh*/; }
 
 private:
 	struct SPatch
@@ -87,6 +87,7 @@ private:
 	STerrainData TerrainData;
 //	SMesh* Mesh;
 	render::GLTriangleBatch Mesh;
+	render::GLBatch Batch;
 
 //	IDynamicMeshBuffer *RenderBuffer;
 
@@ -114,6 +115,7 @@ private:
 
 	//TODO: make separate color handling class
 	float getLightness(unsigned int color) const;
+	float getLightness(unsigned int r, unsigned int g, unsigned int b) const;
 };
 
 
