@@ -104,7 +104,7 @@ public:
 //		glClearColor(1.0f, 1.0f, 1.0f, 1.0f );
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f );
 		glEnable(GL_DEPTH_TEST);
-		glLineWidth(2.5f);
+//		glLineWidth(2.5f);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
@@ -147,8 +147,8 @@ public:
 		setViewport(0, (m_height - h) / 2, w, h);
 
 		// Small fNear -> cool artifacts (0.00....01)
-//		m_viewFrustum.SetPerspective(90.0f, m_aspectratio, 0.001f, 1000.0f);
-		m_viewFrustum.SetOrthographic(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f);
+		m_viewFrustum.SetPerspective(90.0f, m_aspectratio, 0.001f, 1000.0f);
+//		m_viewFrustum.SetOrthographic(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f);
 
 #ifdef __DEPRECATED_PROFILE__
 		glMatrixMode(GL_PROJECTION);
