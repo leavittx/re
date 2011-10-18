@@ -162,7 +162,7 @@ void GLBatch::End(void)
 	// Set up the vertex array object
 	glBindVertexArray(vertexArrayObject);
 
-	if (uiVertexArray !=0) {
+	if (uiVertexArray != 0) {
 		glEnableVertexAttribArray(GLT_ATTRIBUTE_VERTEX);
 		glBindBuffer(GL_ARRAY_BUFFER, uiVertexArray);
 		glVertexAttribPointer(GLT_ATTRIBUTE_VERTEX, 3, GL_FLOAT, GL_FALSE, 0, 0);

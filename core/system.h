@@ -27,6 +27,8 @@ public:
 
 	int getTime();
 
+//	remath::Vector2f getResolution();
+
 	virtual void handleKeyboardEvent(Key key);
 
 private:
@@ -49,6 +51,7 @@ private:
 
 	bool escape;
 
+//	remath::Vector2f m_resolution;
 };
 
 } // end of namespace 'recore'
